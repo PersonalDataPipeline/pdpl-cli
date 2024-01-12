@@ -28,7 +28,7 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = require(`./src/apis/${apiName}`);
+const apiHandler = require(`./src/apis/${apiName}/index.js`);
 
 const axiosConfig = {
   baseURL: apiHandler.baseUrl,
