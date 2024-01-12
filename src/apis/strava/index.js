@@ -1,6 +1,6 @@
 module.exports = {
-  authStrategy: "authHeader",
-  authHeaderName: "Authorization",
-  authHeaderValue: "Bearer ",
-  baseUrl: "https://cloud.ouraring.com/v2/"
+  getApiBaseUrl: () => "https://www.strava.com/api/v3/",
+  getApiAuthHeaders: () => ({
+    Authorization: `Bearer ${`${apiName.toUpperCase()}_AUTH_TOKEN`}`
+  }),
 }

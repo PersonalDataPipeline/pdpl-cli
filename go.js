@@ -31,15 +31,8 @@ if (!apisSupported.includes(apiName)) {
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
 
 const axiosConfig = {
-  baseURL: apiHandler.baseUrl,
-  headers: {}
-}
-
-switch (apiHandler.authStrategy) {
-  case "bearerToken":
-    const envName = `${apiName.toUpperCase()}_AUTH_TOKEN`;
-    axiosConfig.headers.Authorization = `Bearer ${`${apiName.toUpperCase()}_AUTH_TOKEN`}`;
-    break;
+  baseURL: apiHandler.getApiBaseUrl(),
+  headers: { ...apiHandler.getApiAuthHeaders() }
 }
 
 console.log(axiosConfig);
