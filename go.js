@@ -36,10 +36,9 @@ const axiosConfig = {
 }
 
 switch (apiHandler.authStrategy) {
-  case "authHeader":
+  case "bearerToken":
     const envName = `${apiName.toUpperCase()}_AUTH_TOKEN`;
-    const authHeaderValue = (apiHandler.authHeaderValue || "") + process.env[envName];
-    axiosConfig.headers[apiHandler.authHeaderName] = authHeaderValue;
+    axiosConfig.headers.Authorization = `Bearer ${`${apiName.toUpperCase()}_AUTH_TOKEN`}`;
     break;
 }
 
