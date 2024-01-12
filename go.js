@@ -30,10 +30,11 @@ if (!apisSupported.includes(apiName)) {
 
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
 
-const axiosConfig = {
-  baseURL: apiHandler.getApiBaseUrl(),
-  headers: { ...apiHandler.getApiAuthHeaders() }
-}
-
-console.log(axiosConfig);
-console.log(`🎉🎉🎉`);
+(async () => {
+  const axiosConfig = {};
+  axiosConfig.baseURL = apiHandler.getApiBaseUrl();
+  axiosConfig.headers = await apiHandler.getApiAuthHeaders();
+  
+  console.log(axiosConfig);
+  console.log(`🎉🎉🎉`);
+})();
