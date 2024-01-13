@@ -13,12 +13,20 @@ module.exports = {
         end_date: getFormattedDate(),
       }),
       successHandler: (responseData) => {
-        const { data } = responseData;
-        console.log(JSON.stringify(data, null, 2));
+        const dailyData = {};
+        const workouts = responseData.data.data;
+        workouts.forEach((workout) => {
+          if (!dailyData[workout.day]) {
+            dailyData[workout.day] = [];
+          }
+          dailyData[workout.day].push(workout);
+        });
+        return [dailyData, {
+          total: workouts.length,
+          days: Object.keys(dailyData).length,
+        }];
       },
       errorHandler: (error) => {
-        console.log("❌ Error in handler:");
-        console.log(error.message);
         console.log(JSON.stringify(error.data || {}));
       }
     }
