@@ -1,6 +1,9 @@
 require("dotenv").config();
+
 const axios = require("axios");
 const { readdirSync } = require("fs");
+
+const Logger = require("./src/utils/logger");
 
 const apisSupported = readdirSync("src/apis");
 
@@ -29,7 +32,7 @@ if (!apisSupported.includes(apiName)) {
 }
 
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
-
+const runLogger = new Logger();
 
 (async () => {
   const axiosBaseConfig = {};
@@ -59,7 +62,8 @@ const apiHandler = require(`./src/apis/${apiName}/index.js`);
       console.log(`❌ Handler error in ${apiName} -> ${endpoint}: ${error.message}`);
     }
 
-    console.log(handlerOutput);
-    console.log(runMetadata);
+    runLogger.addRun(apiName, endpoint, runMetadata);
   };
+
+  runLogger.shutdown();
 })();
