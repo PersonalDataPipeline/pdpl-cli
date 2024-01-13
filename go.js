@@ -30,23 +30,36 @@ if (!apisSupported.includes(apiName)) {
 
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
 
+
 (async () => {
-  const axiosConfig = {};
-  axiosConfig.baseURL = apiHandler.getApiBaseUrl();
-  axiosConfig.headers = await apiHandler.getApiAuthHeaders();
+  const axiosBaseConfig = {};
+  axiosBaseConfig.baseURL = apiHandler.getApiBaseUrl();
+  axiosBaseConfig.headers = await apiHandler.getApiAuthHeaders();
 
   for (const endpoint in apiHandler.endpoints) {
-    const axiosConfigPerCall = JSON.parse(JSON.stringify(axiosConfig));
-    axiosConfigPerCall.method = apiHandler.endpoints[endpoint].method || "get";
-    axiosConfigPerCall.url = endpoint;
-    axiosConfigPerCall.params = apiHandler.endpoints[endpoint].getParams();
-    console.log(axiosConfigPerCall);
+    const axiosConfig = JSON.parse(JSON.stringify(axiosBaseConfig));
+
+    axiosConfig.url = endpoint;
+    axiosConfig.method = apiHandler.endpoints[endpoint].method || "get";
+    axiosConfig.params = apiHandler.endpoints[endpoint].getParams();
+
+    let apiResponse;
     try {
-      apiHandler.endpoints[endpoint].successHandler(await axios(axiosConfigPerCall));
+      apiResponse = await axios(axiosConfig);
     } catch (error) {
+      console.log(`❌ HTTP error in ${apiName} -> ${endpoint}: ${error.message}`);
       apiHandler.endpoints[endpoint].errorHandler(error);
     }
+
+    let handlerOutput;
+    let runMetadata;
+    try {
+      [ handlerOutput, runMetadata ] = apiHandler.endpoints[endpoint].successHandler(apiResponse);
+    } catch (error) {
+      console.log(`❌ Handler error in ${apiName} -> ${endpoint}: ${error.message}`);
+    }
+
+    console.log(handlerOutput);
+    console.log(runMetadata);
   };
-  
-  console.log(`🎉🎉🎉`);
 })();
