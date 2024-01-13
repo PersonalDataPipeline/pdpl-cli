@@ -1,5 +1,25 @@
 const { getFormattedDate } = require("../../utils/date");
 
+const defaultParams = {
+  start_date: getFormattedDate(-30),
+  end_date: getFormattedDate(),
+};
+
+const defaultSuccessHandler = (responseData) => {
+  const dailyData = {};
+  const items = responseData.data.data;
+  items.forEach((item) => {
+    if (!dailyData[item.day]) {
+      dailyData[item.day] = [];
+    }
+    dailyData[item.day].push(item);
+  });
+  return [dailyData, {
+    total: items.length,
+    days: Object.keys(dailyData).length,
+  }];
+}
+
 module.exports = {
   getApiBaseUrl: () => "https://api.ouraring.com/v2/",
   getApiAuthHeaders: () => ({
@@ -7,25 +27,28 @@ module.exports = {
   }),
   endpoints: {
     "usercollection/workout": {
-      method: "get",
-      getParams: () => ({
-        start_date: getFormattedDate(-30),
-        end_date: getFormattedDate(),
-      }),
-      successHandler: (responseData) => {
-        const dailyData = {};
-        const workouts = responseData.data.data;
-        workouts.forEach((workout) => {
-          if (!dailyData[workout.day]) {
-            dailyData[workout.day] = [];
-          }
-          dailyData[workout.day].push(workout);
-        });
-        return [dailyData, {
-          total: workouts.length,
-          days: Object.keys(dailyData).length,
-        }];
-      }
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
+    },
+    "usercollection/sleep": {
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
+    },
+    "usercollection/daily_stress": {
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
+    },
+    "usercollection/daily_readiness": {
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
+    },
+    "usercollection/daily_activity": {
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
+    },
+    "usercollection/daily_spo2": {
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
     }
   }
 }
