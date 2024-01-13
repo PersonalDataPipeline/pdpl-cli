@@ -51,7 +51,7 @@ const runLogger = new Logger();
       apiResponse = await axios(axiosConfig);
     } catch (error) {
       console.log(`❌ HTTP error in ${apiName} -> ${endpoint}: ${error.message}`);
-      apiHandler.endpoints[endpoint].errorHandler(error);
+      console.log(JSON.stringify(error.data || {}));
     }
 
     let handlerOutput;

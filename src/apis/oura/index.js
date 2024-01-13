@@ -25,9 +25,6 @@ module.exports = {
           total: workouts.length,
           days: Object.keys(dailyData).length,
         }];
-      },
-      errorHandler: (error) => {
-        console.log(JSON.stringify(error.data || {}));
       }
     }
   }
