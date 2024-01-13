@@ -49,6 +49,31 @@ module.exports = {
     "usercollection/daily_spo2": {
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
+    },
+    "usercollection/sleep_time": {
+      getParams: () => defaultParams,
+      successHandler: defaultSuccessHandler
+    },
+    "usercollection/heartrate": {
+      getParams: () => ({
+        start_datetime: getFormattedDate(-3) + "T00:00:00-08:00",
+        end_datetime: getFormattedDate() + "T00:00:00-08:00",
+      }),
+      successHandler: (responseData) => {
+        const dailyData = {};
+        const items = responseData.data.data;
+        items.forEach((item) => {
+          const day = item.timestamp.split("T")[0];
+          if (!dailyData[day]) {
+            dailyData[day] = [];
+          }
+          dailyData[day].push(item);
+        });
+        return [dailyData, {
+          total: items.length,
+          days: Object.keys(dailyData).length,
+        }];
+      }
     }
   }
 }
