@@ -5,7 +5,8 @@ class Logger {
     this.log = {
       dateTime: date.toISOString(),
       startTimeMs: Date.now(),
-      runs: []
+      runs: [],
+      errors: [],
     };
   }
 
@@ -13,6 +14,12 @@ class Logger {
     runData.apiName = apiName;
     runData.endpoint = endpoint;
     this.log.runs.push(runData)
+  }
+
+  addError(apiName, endpoint, errorData) {
+    runData.apiName = apiName;
+    runData.endpoint = endpoint;
+    this.log.errors.push(runData)
   }
 
   shutdown() {

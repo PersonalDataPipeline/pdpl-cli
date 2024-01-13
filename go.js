@@ -50,8 +50,12 @@ const runLogger = new Logger();
     try {
       apiResponse = await axios(axiosConfig);
     } catch (error) {
-      console.log(`❌ HTTP error in ${apiName} -> ${endpoint}: ${error.message}`);
-      console.log(JSON.stringify(error.data || {}));
+      runLogger.addError(apiName, endpoint, {
+        type: "http",
+        message: error.message,
+        data: error.data || {}
+      });
+      continue;
     }
 
     let handlerOutput;
@@ -59,7 +63,11 @@ const runLogger = new Logger();
     try {
       [ handlerOutput, runMetadata ] = apiHandler.endpoints[endpoint].successHandler(apiResponse);
     } catch (error) {
-      console.log(`❌ Handler error in ${apiName} -> ${endpoint}: ${error.message}`);
+      runLogger.addError(apiName, endpoint, {
+        type: "handler",
+        message: error.message
+      });
+      continue;
     }
 
     runLogger.addRun(apiName, endpoint, runMetadata);
