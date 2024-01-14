@@ -1,9 +1,12 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { readdirSync } = require("fs");
+const { readdirSync, writeFileSync } = require("fs");
+const path = require("path");
 
 const Logger = require("./src/utils/logger");
+const { ensurePath } = require("./src/utils/fs");
+const { fileSafeDateTime } = require("./src/utils/date");
 
 const apisSupported = readdirSync("src/apis");
 
@@ -12,7 +15,7 @@ const apisSupported = readdirSync("src/apis");
 // 
 
 const config = {
-  outputDir: "data"
+  outputDir: "/Users/joshcanhelp/Scripts/cortex/_data"
 }
 
 //
@@ -31,8 +34,9 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
+const runEndpoint = process.argv[3];
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
-const runLogger = new Logger();
+const runLogger = new Logger(config);
 
 (async () => {
   const axiosBaseConfig = {};
@@ -40,7 +44,12 @@ const runLogger = new Logger();
   axiosBaseConfig.headers = await apiHandler.getApiAuthHeaders();
 
   for (const endpoint in apiHandler.endpoints) {
+    if (runEndpoint && runEndpoint !== endpoint) {
+      continue;
+    }
+    
     const axiosConfig = JSON.parse(JSON.stringify(axiosBaseConfig));
+    const runDateTime = fileSafeDateTime();
 
     axiosConfig.url = endpoint;
     axiosConfig.method = apiHandler.endpoints[endpoint].method || "get";
@@ -70,6 +79,15 @@ const runLogger = new Logger();
       continue;
     }
 
+    const createPathParts = [apiName, apiHandler.endpoints[endpoint].getDirName()];
+    ensurePath(config.outputDir, createPathParts);
+    for (const day in handlerOutput) {
+      const fileName = day + "--run-" + runDateTime + ".json";
+      const createPath = [config.outputDir, ...createPathParts, fileName].join(path.sep);
+      writeFileSync(createPath, JSON.stringify(handlerOutput[day], null, 2));
+    }
+
+    runMetadata.dateTime = runDateTime;
     runLogger.addRun(apiName, endpoint, runMetadata);
   };
 

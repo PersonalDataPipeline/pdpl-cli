@@ -13,6 +13,9 @@ const getFormattedDate = (adjustDays = 0) => {
   return `${yyyy}-${padLeftZero(mm)}-${padLeftZero(dd)}`;
 };
 
+const fileSafeDateTime = () => (new Date()).toISOString().split(".")[0].replaceAll(":", "-");
+
 module.exports = {
-  getFormattedDate
+  getFormattedDate,
+  fileSafeDateTime
 }
