@@ -6,7 +6,7 @@ const path = require("path");
 
 const Logger = require("./src/utils/logger");
 const { ensurePath } = require("./src/utils/fs");
-const { fileSafeDateTime } = require("./src/utils/date");
+const { fileNameDateTime } = require("./src/utils/date");
 
 const apisSupported = readdirSync("src/apis");
 
@@ -49,7 +49,7 @@ const runLogger = new Logger(config);
       continue;
     }
     
-    const runDateTime = fileSafeDateTime();
+    const runDateTime = fileNameDateTime();
     const axiosConfig = {
       ...axiosBaseConfig,
       url: endpoint,

@@ -13,9 +13,20 @@ const getFormattedDate = (adjustDays = 0) => {
   return `${yyyy}-${padLeftZero(mm)}-${padLeftZero(dd)}`;
 };
 
-const fileSafeDateTime = () => (new Date()).toISOString().split(".")[0].replaceAll(":", "-");
+const getFormattedTime = () => {
+  let date = new Date();
+  const hh = date.getHours();
+  const mm = date.getMinutes();
+  const ss = date.getSeconds();
+  const tz = date.getTimezoneOffset() / -60;
+  return `${padLeftZero(hh)}:${padLeftZero(mm)}:${padLeftZero(ss)}GMT${tz}`;
+};
+
+const fileNameDateTime = () => `${getFormattedDate()}T` + 
+  `${getFormattedTime().replaceAll(":", "-")}`;
 
 module.exports = {
   getFormattedDate,
-  fileSafeDateTime
+  getFormattedTime,
+  fileNameDateTime
 }
