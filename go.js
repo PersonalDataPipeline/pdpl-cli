@@ -39,21 +39,23 @@ const apiHandler = require(`./src/apis/${apiName}/index.js`);
 const runLogger = new Logger(config);
 
 (async () => {
-  const axiosBaseConfig = {};
-  axiosBaseConfig.baseURL = apiHandler.getApiBaseUrl();
-  axiosBaseConfig.headers = await apiHandler.getApiAuthHeaders();
+  const axiosBaseConfig = {
+    baseURL: apiHandler.getApiBaseUrl(),
+    headers: await apiHandler.getApiAuthHeaders()
+  };
 
   for (const endpoint in apiHandler.endpoints) {
     if (runEndpoint && runEndpoint !== endpoint) {
       continue;
     }
     
-    const axiosConfig = JSON.parse(JSON.stringify(axiosBaseConfig));
     const runDateTime = fileSafeDateTime();
-
-    axiosConfig.url = endpoint;
-    axiosConfig.method = apiHandler.endpoints[endpoint].method || "get";
-    axiosConfig.params = apiHandler.endpoints[endpoint].getParams();
+    const axiosConfig = {
+      ...axiosBaseConfig,
+      url: endpoint,
+      method: apiHandler.endpoints[endpoint].method || "get",
+      params: apiHandler.endpoints[endpoint].getParams(),
+    };
 
     let apiResponse;
     try {

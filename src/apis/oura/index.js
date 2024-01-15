@@ -64,6 +64,8 @@ module.exports = {
     "usercollection/heartrate": {
       getDirName: () => "user--heartrate",
       getParams: () => ({
+        // Date/time returned from the API is always UTC,
+        // even is a different timezone is indicated.
         start_datetime: getFormattedDate(-5) + "T00:00:00-08:00",
         end_datetime: getFormattedDate(-1) + "T23:59:59-08:00",
       }),
