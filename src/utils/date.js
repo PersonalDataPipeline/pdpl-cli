@@ -1,7 +1,6 @@
 const { padLeftZero } = require("./string");
 
-const getFormattedDate = (adjustDays = 0) => {
-  let date = new Date();
+const getFormattedDate = (adjustDays = 0, date = new Date()) => {
   if (adjustDays) {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + adjustDays);
@@ -13,8 +12,7 @@ const getFormattedDate = (adjustDays = 0) => {
   return `${yyyy}-${padLeftZero(mm)}-${padLeftZero(dd)}`;
 };
 
-const getFormattedTime = () => {
-  let date = new Date();
+const getFormattedTime = (date = new Date()) => {
   const hh = date.getHours();
   const mm = date.getMinutes();
   const ss = date.getSeconds();
@@ -22,8 +20,10 @@ const getFormattedTime = () => {
   return `${padLeftZero(hh)}:${padLeftZero(mm)}:${padLeftZero(ss)}GMT${tz}`;
 };
 
-const fileNameDateTime = () => `${getFormattedDate()}T` + 
-  `${getFormattedTime().replaceAll(":", "-")}`;
+const fileNameDateTime = () => {
+  const date = new Date();
+  return `${getFormattedDate(0, date)}T${getFormattedTime(date).replaceAll(":", "-")}`
+}
 
 module.exports = {
   getFormattedDate,

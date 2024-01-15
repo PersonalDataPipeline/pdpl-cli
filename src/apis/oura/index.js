@@ -74,11 +74,11 @@ module.exports = {
         const items = responseData.data.data;
 
         items.forEach((item) => {
-          const day = item.timestamp.split("T")[0];
-          if (!dailyData[day]) {
-            dailyData[day] = [];
+          item.day = getFormattedDate(0, new Date(item.timestamp));
+          if (!dailyData[item.day]) {
+            dailyData[item.day] = [];
           }
-          dailyData[day].push(item);
+          dailyData[item.day].push(item);
         });
 
         return [dailyData, {
