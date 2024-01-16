@@ -1,5 +1,7 @@
-const { readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
+const { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } = require("fs");
 const path = require("path");
+
+const config = require("./config");
 
 const envStringReplace = (key, currentValue, newValue) => {
   const envPath = path.join(__dirname, "../../.env");
@@ -11,7 +13,8 @@ const envStringReplace = (key, currentValue, newValue) => {
   writeFileSync(envPath, newContents);
 }
 
-const ensurePath = (basePath, createPath) => {
+const ensureOutputPath = (createPath) => {
+  let basePath = config.outputDir;
   createPath.forEach((pathpart) => {
     basePath = path.join(basePath, pathpart);
     if (!existsSync(basePath)) {
@@ -20,7 +23,18 @@ const ensurePath = (basePath, createPath) => {
   });
 }
 
+const writeOutputFile = (createPathParts, fileContents) => {
+  const fullSavePath = config.outputDir + path.sep + createPathParts.join(path.sep);
+  const fileContentsString = config.compressJson ? 
+    JSON.stringify(fileContents) : 
+    JSON.stringify(fileContents, null, 2);
+
+  writeFileSync(fullSavePath, fileContentsString);
+}
+
 module.exports = {
   envStringReplace,
-  ensurePath,
+  ensureOutputPath,
+  getLatestDayFile,
+  writeOutputFile,
 }

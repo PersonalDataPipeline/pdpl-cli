@@ -1,14 +1,12 @@
-const { writeFileSync } = require("fs");
 const path = require("path");
 
 const { fileNameDateTime } = require("./date");
-const { ensurePath } = require("./fs");
+const { ensureOutputPath, writeOutputFile } = require("./fs");
 
 class Logger {
 
-  constructor(config) {
+  constructor() {
     const date = new Date();
-    this.config = config;
     this.log = {
       dateTime: date.toISOString(),
       startTimeMs: Date.now(),
@@ -33,11 +31,8 @@ class Logger {
     const date = new Date();
     this.log.endTimeMs = Date.now();
     this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
-    ensurePath(this.config.outputDir, ["_runs"]);
-    writeFileSync(
-      path.join(this.config.outputDir, "_runs", fileNameDateTime() + ".json"), 
-      JSON.stringify(this.log, null, 2)
-    );
+    ensureOutputPath(["_runs"]);
+    writeOutputFile(["_runs", fileNameDateTime() + ".json"], this.log);
   }
 }
 
