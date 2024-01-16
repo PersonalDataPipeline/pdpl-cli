@@ -22,11 +22,14 @@ const getFormattedTime = (date = new Date()) => {
 
 const fileNameDateTime = () => {
   const date = new Date();
-  return `${getFormattedDate(0, date)}T${getFormattedTime(date).replaceAll(":", "-")}`
-}
+  return `${getFormattedDate(0, date)}T${getFormattedTime(date).replaceAll(
+    ":",
+    "-"
+  )}`;
+};
 
 module.exports = {
   getFormattedDate,
   getFormattedTime,
-  fileNameDateTime
-}
+  fileNameDateTime,
+};

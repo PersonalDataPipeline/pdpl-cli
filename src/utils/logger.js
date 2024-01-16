@@ -4,7 +4,6 @@ const { fileNameDateTime } = require("./date");
 const { ensureOutputPath, writeOutputFile } = require("./fs");
 
 class Logger {
-
   constructor() {
     const date = new Date();
     this.log = {
@@ -18,13 +17,13 @@ class Logger {
   addRun(apiName, endpoint, runData) {
     runData.apiName = apiName;
     runData.endpoint = endpoint;
-    this.log.runs.push(runData)
+    this.log.runs.push(runData);
   }
 
   addError(apiName, endpoint, errorData) {
     runData.apiName = apiName;
     runData.endpoint = endpoint;
-    this.log.errors.push(runData)
+    this.log.errors.push(runData);
   }
 
   shutdown() {

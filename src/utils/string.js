@@ -3,5 +3,5 @@ const padLeftZero = (string) => {
 };
 
 module.exports = {
-  padLeftZero
-}
+  padLeftZero,
+};

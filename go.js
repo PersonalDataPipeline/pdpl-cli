@@ -5,7 +5,11 @@ const { readdirSync, readFileSync } = require("fs");
 const path = require("path");
 
 const Logger = require("./src/utils/logger");
-const { ensureOutputPath, writeOutputFile, getLatestDayFileContents } = require("./src/utils/fs");
+const {
+  ensureOutputPath,
+  writeOutputFile,
+  getLatestDayFileContents,
+} = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
 
 const apisSupported = readdirSync("src/apis");
@@ -33,14 +37,14 @@ const runLogger = new Logger();
 (async () => {
   const axiosBaseConfig = {
     baseURL: apiHandler.getApiBaseUrl(),
-    headers: await apiHandler.getApiAuthHeaders()
+    headers: await apiHandler.getApiAuthHeaders(),
   };
 
   for (const endpoint in apiHandler.endpoints) {
     if (runEndpoint && runEndpoint !== endpoint) {
       continue;
     }
-    
+
     const runDateTime = fileNameDateTime();
     const axiosConfig = {
       ...axiosBaseConfig,
@@ -56,7 +60,7 @@ const runLogger = new Logger();
       runLogger.addError(apiName, endpoint, {
         type: "http",
         message: error.message,
-        data: error.data || {}
+        data: error.data || {},
       });
       continue;
     }
@@ -64,26 +68,29 @@ const runLogger = new Logger();
     let handlerOutput;
     let runMetadata;
     try {
-      [ handlerOutput, runMetadata ] = apiHandler.endpoints[endpoint].successHandler(apiResponse);
+      [handlerOutput, runMetadata] =
+        apiHandler.endpoints[endpoint].successHandler(apiResponse);
     } catch (error) {
       runLogger.addError(apiName, endpoint, {
         type: "handler",
-        message: error.message
+        message: error.message,
       });
       continue;
     }
 
     const apiPath = apiHandler.endpoints[endpoint].getDirName();
     ensureOutputPath(apiPath);
-    
+
     for (const day in handlerOutput) {
       const fileName = day + "--run-" + runDateTime + ".json";
-      writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], { checkDuplicate: true });
+      writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], {
+        checkDuplicate: true,
+      });
     }
 
     runMetadata.dateTime = runDateTime;
     runLogger.addRun(apiName, endpoint, runMetadata);
-  };
+  }
 
   runLogger.shutdown();
 })();

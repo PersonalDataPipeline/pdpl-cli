@@ -1,4 +1,10 @@
-const { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } = require("fs");
+const {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+} = require("fs");
 const path = require("path");
 
 const config = require("./config");
@@ -11,7 +17,7 @@ const envStringReplace = (key, currentValue, newValue) => {
     `${key}="${newValue}"`
   );
   writeFileSync(envPath, newContents);
-}
+};
 
 const ensureOutputPath = (createPath) => {
   let basePath = config.outputDir;
@@ -21,14 +27,14 @@ const ensureOutputPath = (createPath) => {
       mkdirSync(basePath);
     }
   });
-}
+};
 
 const writeOutputFile = (writePath, fileContents, options = {}) => {
   const fullSavePath = path.join(config.outputDir, writePath);
 
-  const fileContentsString = config.compressJson ? 
-    JSON.stringify(fileContents) : 
-    JSON.stringify(fileContents, null, 2);
+  const fileContentsString = config.compressJson
+    ? JSON.stringify(fileContents)
+    : JSON.stringify(fileContents, null, 2);
 
   if (options.checkDuplicate) {
     const latestDayFileContents = getLatestDayFileContents(writePath);
@@ -40,7 +46,7 @@ const writeOutputFile = (writePath, fileContents, options = {}) => {
 
   console.log(`Writing ${writePath}`);
   writeFileSync(fullSavePath, fileContentsString);
-}
+};
 
 const getLatestDayFileContents = (writePath) => {
   const pathParts = writePath.split(path.sep);
@@ -48,18 +54,20 @@ const getLatestDayFileContents = (writePath) => {
 
   const fullPath = path.join(config.outputDir, ...pathParts);
   const latestDayFile = readdirSync(fullPath)
-    .filter(file => {
+    .filter((file) => {
       return file.startsWith(day) && file.split(".")[1] === "json";
     })
-    .sort((a, b) => a > b ? -1 : b > a ? 1 : 0)
+    .sort((a, b) => (a > b ? -1 : b > a ? 1 : 0))
     .at(0);
 
-  return latestDayFile ? readFileSync(path.join(fullPath, latestDayFile), "utf8") : "";
-}
+  return latestDayFile
+    ? readFileSync(path.join(fullPath, latestDayFile), "utf8")
+    : "";
+};
 
 module.exports = {
   envStringReplace,
   ensureOutputPath,
   getLatestDayFileContents,
   writeOutputFile,
-}
+};
