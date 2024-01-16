@@ -1,4 +1,7 @@
+const path = require("path");
 const { getFormattedDate } = require("../../utils/date");
+
+const apiName = "oura";
 
 const defaultParams = {
   start_date: getFormattedDate(-30),
@@ -20,6 +23,8 @@ const defaultSuccessHandler = (responseData) => {
   }];
 }
 
+const apiDirName = (endpoint) => path.join(apiName, endpoint);
+
 module.exports = {
   getApiBaseUrl: () => "https://api.ouraring.com/v2/",
   getApiAuthHeaders: () => ({
@@ -27,42 +32,42 @@ module.exports = {
   }),
   endpoints: {
     "usercollection/workout": {
-      getDirName: () => "user--workouts",
+      getDirName: () => apiDirName("user--workouts"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/sleep": {
-      getDirName: () => "user--sleep",
+      getDirName: () => apiDirName("user--sleep"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/daily_stress": {
-      getDirName: () => "user--daily-stress",
+      getDirName: () => apiDirName("user--daily-stress"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/daily_readiness": {
-      getDirName: () => "user--daily-readiness",
+      getDirName: () => apiDirName("user--daily-readiness"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/daily_activity": {
-      getDirName: () => "user--daily-activity",
+      getDirName: () => apiDirName("user--daily-activity"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/daily_spo2": {
-      getDirName: () => "user--daily-spo2",
+      getDirName: () => apiDirName("user--daily-spo2"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/sleep_time": {
-      getDirName: () => "user--sleep-time",
+      getDirName: () => apiDirName("user--sleep-time"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler
     },
     "usercollection/heartrate": {
-      getDirName: () => "user--heartrate",
+      getDirName: () => apiDirName("user--heartrate"),
       getParams: () => ({
         // Date/time returned from the API is always UTC,
         // even is a different timezone is indicated.

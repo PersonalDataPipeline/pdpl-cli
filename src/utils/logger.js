@@ -31,8 +31,8 @@ class Logger {
     const date = new Date();
     this.log.endTimeMs = Date.now();
     this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
-    ensureOutputPath(["_runs"]);
-    writeOutputFile(["_runs", fileNameDateTime() + ".json"], this.log);
+    ensureOutputPath("_runs");
+    writeOutputFile(path.join("_runs", fileNameDateTime() + ".json"), this.log);
   }
 }
 

@@ -1,11 +1,11 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { readdirSync } = require("fs");
+const { readdirSync, readFileSync } = require("fs");
 const path = require("path");
 
 const Logger = require("./src/utils/logger");
-const { ensureOutputPath, writeOutputFile } = require("./src/utils/fs");
+const { ensureOutputPath, writeOutputFile, getLatestDayFileContents } = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
 
 const apisSupported = readdirSync("src/apis");
@@ -73,12 +73,12 @@ const runLogger = new Logger();
       continue;
     }
 
-    const createPathParts = [apiName, apiHandler.endpoints[endpoint].getDirName()];
-    ensureOutputPath(createPathParts);
+    const apiPath = apiHandler.endpoints[endpoint].getDirName();
+    ensureOutputPath(apiPath);
     
     for (const day in handlerOutput) {
       const fileName = day + "--run-" + runDateTime + ".json";
-      writeOutputFile([...createPathParts, fileName], handlerOutput[day]);
+      writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], { checkDuplicate: true });
     }
 
     runMetadata.dateTime = runDateTime;
