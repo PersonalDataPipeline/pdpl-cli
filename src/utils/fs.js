@@ -14,9 +14,9 @@ const envWrite = (key, newValue, replaceValue) => {
   const currentContents = readFileSync(envPath, "utf8");
 
   let newContents;
-  if (typeof replaceValue !== "string") {
+  if (typeof replaceValue === "string") {
     newContents = currentContents.replace(
-      `${key}="${currentValue}"`,
+      `${key}="${replaceValue}"`,
       `${key}="${newValue}"`
     );
   } else {

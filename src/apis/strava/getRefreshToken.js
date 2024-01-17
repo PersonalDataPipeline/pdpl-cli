@@ -4,11 +4,13 @@ const crypto = require("crypto");
 const axios = require("axios");
 
 const { authorizeUrl, tokenUrl } = require("./index.js");
+const { envWrite } = require("../../utils/fs.js");
 
 const {
   STRAVA_AUTHORIZE_CLIENT_ID,
   STRAVA_AUTHORIZE_CLIENT_SECRET,
   STRAVA_LOCAL_SERVER_PORT,
+  STRAVA_REFRESH_TOKEN,
 } = process.env;
 
 const localServerPort = STRAVA_LOCAL_SERVER_PORT
@@ -40,8 +42,6 @@ http
 
     if (codeParam) {
       if (stateParam !== authorizeState) {
-        console.log("Param:" + stateParam);
-        console.log("Stored:" + authorizeState);
         response.writeHead(400, responseHeaders);
         response.write("State parameter mis-match.");
         response.write('<br><a href="/">Try again</a>');
@@ -67,14 +67,20 @@ http
       }
 
       response.writeHead(200, responseHeaders);
-      response.write(
-        `Refresh token for <strong>${tokenResponse.data.athlete.username}</strong>:`
+      envWrite(
+        "STRAVA_REFRESH_TOKEN",
+        tokenResponse.data.refresh_token,
+        STRAVA_REFRESH_TOKEN
       );
-      response.write(`<br><br><code>${tokenResponse.data.refresh_token}</code>`);
+      response.write(
+        `Refresh token for <strong>${
+          tokenResponse.data.athlete.username
+        }</strong> written to .env.`
+      );
       return response.end();
     }
 
-    const authorizeUrlInstance = new URL(authorizeUrlInstance);
+    const authorizeUrlInstance = new URL(authorizeUrl);
     authorizeUrlInstance.searchParams.append(
       "client_id",
       STRAVA_AUTHORIZE_CLIENT_ID
@@ -94,6 +100,12 @@ http
     authorizeUrlInstance.searchParams.append("state", authorizeState);
 
     response.writeHead(200, responseHeaders);
+    if (STRAVA_REFRESH_TOKEN) {
+      response.write(
+        `<p><code>STRAVA_REFRESH_TOKEN</code> already exists. ` +
+        `Re-authorizing will replace the existing token.</p>`
+      );
+    }
     response.write(
       `<a href="${authorizeUrlInstance.toString()}">Click to authorize</a>`
     );
