@@ -21,9 +21,9 @@ class Logger {
   }
 
   addError(apiName, endpoint, errorData) {
-    runData.apiName = apiName;
-    runData.endpoint = endpoint;
-    this.log.errors.push(runData);
+    errorData.apiName = apiName;
+    errorData.endpoint = endpoint;
+    this.log.errors.push(errorData);
   }
 
   shutdown() {
