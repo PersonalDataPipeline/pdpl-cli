@@ -4,7 +4,7 @@ const { getFormattedDate } = require("../../utils/date");
 const apiName = "oura";
 
 const defaultParams = {
-  start_date: getFormattedDate(-30),
+  start_date: getFormattedDate(-180),
   end_date: getFormattedDate(),
 };
 

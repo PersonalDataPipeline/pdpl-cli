@@ -81,11 +81,15 @@ const runLogger = new Logger();
     const apiPath = apiHandler.endpoints[endpoint].getDirName();
     ensureOutputPath(apiPath);
 
+    runMetadata.filesWritten = 0;
+    runMetadata.filesSkipped = 0;
     for (const day in handlerOutput) {
       const fileName = day + "--run-" + runDateTime + ".json";
-      writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], {
+      const written = writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], {
         checkDuplicate: true,
       });
+      runMetadata.filesWritten += written ? 1 : 0;
+      runMetadata.filesSkipped += written ? 0 : 1;
     }
 
     runMetadata.dateTime = runDateTime;

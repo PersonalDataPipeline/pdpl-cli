@@ -36,6 +36,13 @@ const ensureOutputPath = (createPath) => {
   });
 };
 
+/**
+ * 
+ * @param {string} writePath
+ * @param {string} fileContents
+ * @param {object} options 
+ * @returns {boolean} - False if skipped as duplicate, true if written.
+ */
 const writeOutputFile = (writePath, fileContents, options = {}) => {
   const fullSavePath = path.join(config.outputDir, writePath);
 
@@ -47,12 +54,13 @@ const writeOutputFile = (writePath, fileContents, options = {}) => {
     const latestDayFileContents = getLatestDayFileContents(writePath);
     if (fileContentsString === latestDayFileContents) {
       console.log(`Skipping duplicate ${writePath}`);
-      return;
+      return false;
     }
   }
 
   console.log(`Writing ${writePath}`);
   writeFileSync(fullSavePath, fileContentsString);
+  return true;
 };
 
 const getLatestDayFileContents = (writePath) => {
