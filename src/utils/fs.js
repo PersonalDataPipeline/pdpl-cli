@@ -9,13 +9,20 @@ const path = require("path");
 
 const config = require("./config");
 
-const envStringReplace = (key, currentValue, newValue) => {
+const envWrite = (key, newValue, replaceValue) => {
   const envPath = path.join(__dirname, "../../.env");
   const currentContents = readFileSync(envPath, "utf8");
-  const newContents = currentContents.replace(
-    `${key}="${currentValue}"`,
-    `${key}="${newValue}"`
-  );
+
+  let newContents;
+  if (typeof replaceValue !== "string") {
+    newContents = currentContents.replace(
+      `${key}="${currentValue}"`,
+      `${key}="${newValue}"`
+    );
+  } else {
+    newContents = currentContents + `\n${key}="${newValue}"`;
+  }
+  
   writeFileSync(envPath, newContents);
 };
 
@@ -66,7 +73,7 @@ const getLatestDayFileContents = (writePath) => {
 };
 
 module.exports = {
-  envStringReplace,
+  envWrite,
   ensureOutputPath,
   getLatestDayFileContents,
   writeOutputFile,

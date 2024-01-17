@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { envStringReplace } = require("../../utils/fs");
+const { envWrite } = require("../../utils/fs");
 
 let accessToken = "";
 
@@ -34,7 +34,7 @@ module.exports = {
       });
       accessToken = tokenResponse.data.access_token;
       const newRefreshToken = tokenResponse.data.refresh_token;
-      envStringReplace(
+      envWrite(
         "STRAVA_REFRESH_TOKEN",
         STRAVA_REFRESH_TOKEN,
         newRefreshToken
