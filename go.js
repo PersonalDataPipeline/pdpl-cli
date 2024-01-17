@@ -8,7 +8,6 @@ const Logger = require("./src/utils/logger");
 const {
   ensureOutputPath,
   writeOutputFile,
-  getLatestDayFileContents,
 } = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
 
@@ -83,13 +82,21 @@ const runLogger = new Logger();
 
     runMetadata.filesWritten = 0;
     runMetadata.filesSkipped = 0;
-    for (const day in handlerOutput) {
-      const fileName = day + "--run-" + runDateTime + ".json";
-      const written = writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], {
+
+    if (typeof runMetadata.days === "undefined") {
+      // Point-in-time snapshot
+      const fileName = runDateTime + ".json";
+      writeOutputFile(path.join(apiPath, fileName), handlerOutput, {
         checkDuplicate: true,
-      });
-      runMetadata.filesWritten += written ? 1 : 0;
-      runMetadata.filesSkipped += written ? 0 : 1;
+      }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
+    } else if (runMetadata.days > 0) {
+      // Per-day output
+      for (const day in handlerOutput) {
+        const fileName = day + "--run-" + runDateTime + ".json";
+        writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], {
+          checkDuplicate: true,
+        }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
+      }
     }
 
     runMetadata.dateTime = runDateTime;

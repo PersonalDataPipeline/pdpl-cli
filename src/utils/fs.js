@@ -51,7 +51,7 @@ const writeOutputFile = (writePath, fileContents, options = {}) => {
     : JSON.stringify(fileContents, null, 2);
 
   if (options.checkDuplicate) {
-    const latestDayFileContents = getLatestDayFileContents(writePath);
+    const latestDayFileContents = getLatestFileContents(writePath);
     if (fileContentsString === latestDayFileContents) {
       console.log(`Skipping duplicate ${writePath}`);
       return false;
@@ -63,16 +63,20 @@ const writeOutputFile = (writePath, fileContents, options = {}) => {
   return true;
 };
 
-const getLatestDayFileContents = (writePath) => {
+const getLatestFileContents = (writePath) => {
   const pathParts = writePath.split(path.sep);
-  const day = pathParts.pop().split("--")[0];
+  const fileName = pathParts.pop();
+  const day = fileName.includes("--") ? fileName.split("--")[0] : null;
 
   const fullPath = path.join(config.outputDir, ...pathParts);
   const latestDayFile = readdirSync(fullPath)
-    .filter((file) => {
-      return file.startsWith(day) && file.split(".")[1] === "json";
-    })
+    // Look for a specific day, if not a snapshot file
+    .filter((file) => day ? file.startsWith(day) : true)
+    // JSON files only
+    .filter((file) => file.split(".")[1] === "json")
+    // Sort file names descending
     .sort((a, b) => (a > b ? -1 : b > a ? 1 : 0))
+    // Get the first one
     .at(0);
 
   return latestDayFile
@@ -83,6 +87,6 @@ const getLatestDayFileContents = (writePath) => {
 module.exports = {
   envWrite,
   ensureOutputPath,
-  getLatestDayFileContents,
+  getLatestFileContents,
   writeOutputFile,
 };
