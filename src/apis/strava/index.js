@@ -77,6 +77,14 @@ module.exports = {
     };
   },
   endpoints: {
+    "athlete": {
+      getDirName: () => apiDirName("athlete"),
+      getParams: () => ({}),
+      successHandler: (responseData) => [
+        responseData.data,
+        { total: 1 },
+      ],
+    },
     "athlete/activities": {
       getDirName: () => apiDirName("athlete--activities"),
       getParams: () => defaultParams,
