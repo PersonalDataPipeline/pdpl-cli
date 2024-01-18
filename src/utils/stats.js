@@ -3,7 +3,7 @@ const path = require("path");
 const { fileNameDateTime } = require("./date");
 const { ensureOutputPath, writeOutputFile } = require("./fs");
 
-class Logger {
+class Stats {
   constructor() {
     const date = new Date();
     this.log = {
@@ -35,4 +35,4 @@ class Logger {
   }
 }
 
-module.exports = Logger;
+module.exports = Stats;

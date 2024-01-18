@@ -1,10 +1,10 @@
 require("dotenv").config();
 
 const axios = require("axios");
-const { readdirSync, readFileSync } = require("fs");
+const { readdirSync } = require("fs");
 const path = require("path");
 
-const Logger = require("./src/utils/logger");
+const Stats = require("./src/utils/stats");
 const {
   ensureOutputPath,
   writeOutputFile,
@@ -27,7 +27,7 @@ if (!apisSupported.includes(apiName)) {
 }
 
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
-const runLogger = new Logger();
+const runStats = new Stats();
 
 (async () => {
   const axiosBaseConfig = {
@@ -52,7 +52,7 @@ const runLogger = new Logger();
     try {
       apiResponse = await axios(axiosConfig);
     } catch (error) {
-      runLogger.addError(apiName, endpoint, {
+      runStats.addError(apiName, endpoint, {
         type: "http",
         message: error.message,
         data: error.data || {},
@@ -66,7 +66,7 @@ const runLogger = new Logger();
       [handlerOutput, runMetadata] =
         apiHandler.endpoints[endpoint].successHandler(apiResponse);
     } catch (error) {
-      runLogger.addError(apiName, endpoint, {
+      runStats.addError(apiName, endpoint, {
         type: "handler",
         message: error.message,
       });
@@ -96,8 +96,8 @@ const runLogger = new Logger();
     }
 
     runMetadata.dateTime = runDateTime;
-    runLogger.addRun(apiName, endpoint, runMetadata);
+    runStats.addRun(apiName, endpoint, runMetadata);
   }
 
-  runLogger.shutdown();
+  runStats.shutdown();
 })();
