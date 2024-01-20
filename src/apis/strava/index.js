@@ -100,6 +100,26 @@ module.exports = {
         per_page: 2,
       }),
       parseDayFromEntity: (singleItem) => singleItem.start_date_local.split("T")[0],
+      enrichEntity: [
+        {
+          getParams: (entity) => ({}),
+          getEndpoint: (entity) => `activities/${entity.id}`,
+          enrichEntity: (entity, response) => response.data
+        },
+        {
+          getParams: (entity) => ({
+            keys: "latlng,time,altitude,distance",
+          }),
+          getEndpoint: (entity) => `activities/${entity.id}/streams`,
+          enrichEntity: (entity, response) => {
+            entity.streams = {};
+            response.data.forEach((stream) => {
+              entity.streams[stream.type] = stream;
+            });
+            return entity;
+          }
+        },
+      ]
     },
   },
 };

@@ -131,6 +131,12 @@ const runStats = new Stats();
     }
 
     runStats.addRun(apiName, endpoint, runMetadata);
+
+    if (thisEndpoint.enrichEntity) {
+      for (enrichFunction of thisEndpoint.enrichEntity) {
+
+      }
+    }
   }
 
   runStats.shutdown();
