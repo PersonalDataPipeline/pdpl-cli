@@ -76,12 +76,18 @@ const runStats = new Stats();
       filesWritten: 0,
       filesSkipped: 0,
     };
-    let apiResponseParsed = apiResponse.data;
+
+    const [ 
+      apiResponseData, 
+      apiResponseHeaders,
+    ] = typeof thisEndpoint.transformResponse === "function" ? 
+      thisEndpoint.transformResponse(apiResponse) :
+      [ apiResponse.data, apiResponse.headers ];
 
     // Need to parse to days if not a snapshot
     if (typeof thisEndpoint.parseDayFromEntity === "function") {
-      apiResponseParsed = {};
-      const entities = apiResponse.data;
+      const apiResponseParsed = {};
+      const entities = apiResponseData;
 
       if (!Array.isArray(entities)) {
         runStats.addError(apiName, endpoint, {
@@ -120,7 +126,7 @@ const runStats = new Stats();
     } else {
       runMetadata.total = 1;
       const fileName = runDateTime + ".json";
-      writeOutputFile(path.join(apiPath, fileName), apiResponseParsed, {
+      writeOutputFile(path.join(apiPath, fileName), apiResponseData, {
         checkDuplicate: true,
       })
         ? runMetadata.filesWritten++

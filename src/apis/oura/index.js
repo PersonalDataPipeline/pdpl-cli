@@ -10,6 +10,10 @@ const defaultParams = {
 
 const apiDirName = (endpoint) => path.join(apiName, endpoint);
 const parseDayFromEntity = (singleItem) => singleItem.day;
+const transformResponse = (apiResponse) => [
+  apiResponse.data.data,
+  apiResponse.headers
+];
 
 module.exports = {
   getApiBaseUrl: () => "https://api.ouraring.com/v2/",
@@ -20,38 +24,44 @@ module.exports = {
     "usercollection/workout": {
       getDirName: () => apiDirName("user--workouts"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/sleep": {
       getDirName: () => apiDirName("user--sleep"),
       getParams: () => defaultParams,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/daily_stress": {
       getDirName: () => apiDirName("user--daily-stress"),
       getParams: () => defaultParams,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/daily_readiness": {
       getDirName: () => apiDirName("user--daily-readiness"),
       getParams: () => defaultParams,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/daily_activity": {
       getDirName: () => apiDirName("user--daily-activity"),
       getParams: () => defaultParams,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/daily_spo2": {
       getDirName: () => apiDirName("user--daily-spo2"),
       getParams: () => defaultParams,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/sleep_time": {
       getDirName: () => apiDirName("user--sleep-time"),
       getParams: () => defaultParams,
       parseDayFromEntity,
+      transformResponse,
     },
     "usercollection/heartrate": {
       getDirName: () => apiDirName("user--heartrate"),
@@ -62,6 +72,7 @@ module.exports = {
         end_datetime: getFormattedDate(-1) + "T23:59:59-08:00",
       }),
       parseDayFromEntity: (singleItem) => getFormattedDate(0, new Date(singleItem.timestamp)),
+      transformResponse,
     },
   },
 };
