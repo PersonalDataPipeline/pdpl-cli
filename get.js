@@ -81,7 +81,8 @@ const runStats = new Stats();
         ? thisEndpoint.transformResponse(apiResponse)
         : [apiResponse.data, apiResponse.headers];
 
-    // Need to parse to days if not a snapshot
+    // Need to parse returned to days if not a snapshot
+    const filesGenerated = {};
     if (typeof thisEndpoint.parseDayFromEntity === "function") {
       const apiResponseParsed = {};
       const entities = apiResponseData;
@@ -119,6 +120,8 @@ const runStats = new Stats();
         })
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
+        
+        filesGenerated[outputPath] = apiResponseParsed[day];
       }
     } else {
       runMetadata.total = 1;
@@ -128,13 +131,61 @@ const runStats = new Stats();
       })
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
+
+      filesGenerated[outputPath] = apiResponseData;
     }
 
     runStats.addRun(apiName, endpoint, runMetadata);
 
     if (thisEndpoint.enrichEntity) {
-      for (enrichFunction of thisEndpoint.enrichEntity) {
+      for (const dayEntityFile in filesGenerated) {
+        // dayEntityFile is file name, value is an array of entity objects
+        const dayEntityData = filesGenerated[dayEntityFile];
 
+        for (const entity of dayEntityData) {
+          const newEntityData = [];
+
+          const enrichRunMetadata = {
+            dateTime: runDateTime,
+            filesWritten: 0,
+            filesSkipped: 0,
+            enrichUrls: []
+          };
+
+          for (const enrichFunction of thisEndpoint.enrichEntity) {
+
+            const enrichAxiosConfig = {
+              ...axiosBaseConfig,
+              url: enrichFunction.getEndpoint(entity),
+              method: enrichFunction.method || "get",
+              params: enrichFunction.getParams(entity),
+            };
+
+            enrichRunMetadata.enrichUrls.push(enrichAxiosConfig.url);
+
+            let enrichApiResponse;
+            try {
+              enrichApiResponse = await axios(enrichAxiosConfig);
+            } catch (error) {
+              runStats.addError(apiName, enrichAxiosConfig.url, {
+                type: "http",
+                message: error.message,
+                data: error.data || {},
+              });
+              continue;
+            }
+
+            newEntityData.push(enrichFunction.enrichEntity(entity, enrichApiResponse));
+          }
+
+          writeOutputFile(dayEntityFile, newEntityData, {
+            checkDuplicate: true,
+          })
+            ? enrichRunMetadata.filesWritten++
+            : enrichRunMetadata.filesSkipped++;
+
+          runStats.addRun(apiName, `enrich ${endpoint}`, enrichRunMetadata);
+        }
       }
     }
   }
