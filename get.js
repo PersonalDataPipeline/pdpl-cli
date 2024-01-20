@@ -93,11 +93,11 @@ const runStats = new Stats();
 
       try {
         for (const entity of entities) {
-          const day = thisEndpoint.parseDayFromEntity(entity);
-          if (!apiResponseParsed[day]) {
-            apiResponseParsed[day] = [];
+          entity.day = thisEndpoint.parseDayFromEntity(entity);
+          if (!apiResponseParsed[entity.day]) {
+            apiResponseParsed[entity.day] = [];
           }
-          apiResponseParsed[day].push(entity);
+          apiResponseParsed[entity.day].push(entity);
         }
       } catch (error) {
         runStats.addError(apiName, endpoint, {

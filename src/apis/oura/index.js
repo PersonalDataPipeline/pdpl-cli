@@ -8,25 +8,8 @@ const defaultParams = {
   end_date: getFormattedDate(),
 };
 
-const defaultSuccessHandler = (responseData) => {
-  const dailyData = {};
-  const items = responseData.data.data;
-  items.forEach((item) => {
-    if (!dailyData[item.day]) {
-      dailyData[item.day] = [];
-    }
-    dailyData[item.day].push(item);
-  });
-  return [
-    dailyData,
-    {
-      total: items.length,
-      days: Object.keys(dailyData).length,
-    },
-  ];
-};
-
 const apiDirName = (endpoint) => path.join(apiName, endpoint);
+const parseDayFromEntity = (singleItem) => singleItem.day;
 
 module.exports = {
   getApiBaseUrl: () => "https://api.ouraring.com/v2/",
@@ -38,36 +21,37 @@ module.exports = {
       getDirName: () => apiDirName("user--workouts"),
       getParams: () => defaultParams,
       successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/sleep": {
       getDirName: () => apiDirName("user--sleep"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/daily_stress": {
       getDirName: () => apiDirName("user--daily-stress"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/daily_readiness": {
       getDirName: () => apiDirName("user--daily-readiness"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/daily_activity": {
       getDirName: () => apiDirName("user--daily-activity"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/daily_spo2": {
       getDirName: () => apiDirName("user--daily-spo2"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/sleep_time": {
       getDirName: () => apiDirName("user--sleep-time"),
       getParams: () => defaultParams,
-      successHandler: defaultSuccessHandler,
+      parseDayFromEntity,
     },
     "usercollection/heartrate": {
       getDirName: () => apiDirName("user--heartrate"),
@@ -77,26 +61,7 @@ module.exports = {
         start_datetime: getFormattedDate(-5) + "T00:00:00-08:00",
         end_datetime: getFormattedDate(-1) + "T23:59:59-08:00",
       }),
-      successHandler: (responseData) => {
-        const dailyData = {};
-        const items = responseData.data.data;
-
-        items.forEach((item) => {
-          item.day = getFormattedDate(0, new Date(item.timestamp));
-          if (!dailyData[item.day]) {
-            dailyData[item.day] = [];
-          }
-          dailyData[item.day].push(item);
-        });
-
-        return [
-          dailyData,
-          {
-            total: items.length,
-            days: Object.keys(dailyData).length,
-          },
-        ];
-      },
+      parseDayFromEntity: (singleItem) => getFormattedDate(0, new Date(singleItem.timestamp)),
     },
   },
 };
