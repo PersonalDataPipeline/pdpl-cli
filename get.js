@@ -25,7 +25,7 @@ if (!apisSupported.includes(apiName)) {
 }
 
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
-const allEndpoints = apiHandler.endpoints;
+const allEndpoints = Object.keys(apiHandler.endpoints);
 
 if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
   console.log(`❌ Unsupported endpoint "${runEndpoint}" for API "${apiName}"`);
