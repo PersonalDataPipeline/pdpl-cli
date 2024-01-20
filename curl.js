@@ -20,7 +20,6 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
 (async () => {
   let curlCommand = "curl";
@@ -29,6 +28,6 @@ const apiHandler = require(`./src/apis/${apiName}/index.js`);
   for (const header in authHeaders) {
     curlCommand += ` -H "${header}: ${authHeaders[header]}"`;
   }
-  
+
   console.log(`${curlCommand} ${apiHandler.getApiBaseUrl()}`);
 })();

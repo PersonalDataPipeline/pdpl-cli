@@ -22,7 +22,7 @@ const envWrite = (key, newValue, replaceValue) => {
   } else {
     newContents = currentContents + `\n${key}="${newValue}"`;
   }
-  
+
   writeFileSync(envPath, newContents);
 };
 
@@ -37,10 +37,10 @@ const ensureOutputPath = (createPath) => {
 };
 
 /**
- * 
+ *
  * @param {string} writePath
  * @param {string} fileContents
- * @param {object} options 
+ * @param {object} options
  * @returns {boolean} - False if skipped as duplicate, true if written.
  */
 const writeOutputFile = (writePath, fileContents, options = {}) => {
@@ -71,7 +71,7 @@ const getLatestFileContents = (writePath) => {
   const fullPath = path.join(getConfig().outputDir, ...pathParts);
   const latestDayFile = readdirSync(fullPath)
     // Look for a specific day, if not a snapshot file
-    .filter((file) => day ? file.startsWith(day) : true)
+    .filter((file) => (day ? file.startsWith(day) : true))
     // JSON files only
     .filter((file) => file.split(".")[1] === "json")
     // Sort file names descending

@@ -10,6 +10,6 @@ const getConfig = () => {
     config.outputDir = "/Users/joshcanhelp/Scripts/cortex/_data_debug";
   }
   return config;
-}
+};
 
 module.exports = getConfig;

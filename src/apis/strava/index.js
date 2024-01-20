@@ -37,23 +37,19 @@ const getApiAuthHeaders = async () => {
     });
     accessToken = tokenResponse.data.access_token;
     const newRefreshToken = tokenResponse.data.refresh_token;
-    envWrite(
-      "STRAVA_REFRESH_TOKEN",
-      STRAVA_REFRESH_TOKEN,
-      newRefreshToken
-    );
+    envWrite("STRAVA_REFRESH_TOKEN", STRAVA_REFRESH_TOKEN, newRefreshToken);
   }
 
   return {
     Authorization: `Bearer ${accessToken}`,
   };
-}
+};
 
 const enrichActivity = async (activity) => {
   const headers = await getApiAuthHeaders();
   try {
     activityResponse = await axios.get(`${apiBaseUrl}/activities/${item.id}`, {
-      headers
+      headers,
     });
   } catch (error) {
     console.log(`❌ Error getting activity detail for ${item.id}: ${error.message}`);
@@ -64,23 +60,26 @@ const enrichActivity = async (activity) => {
 
   let streamsResponse = { data: [] };
   try {
-    streamsResponse = await axios.get(`${apiBaseUrl}/activities/${item.id}/streams`, {
-      params: {
-        keys: "latlng,time,altitude,distance"
-      },
-      headers
-    });
+    streamsResponse = await axios.get(
+      `${apiBaseUrl}/activities/${item.id}/streams`,
+      {
+        params: {
+          keys: "latlng,time,altitude,distance",
+        },
+        headers,
+      }
+    );
   } catch (error) {
     console.log(`❌ Error getting stream detail for ${item.id}: ${error.message}`);
     return activity;
   }
-  
+
   actvity.streams = {};
-  streamsResponse.data.forEach(stream => {
+  streamsResponse.data.forEach((stream) => {
     actvity.streams[stream.type] = stream;
   });
   return actvity;
-}
+};
 
 module.exports = {
   authorizeUrl,
@@ -102,5 +101,5 @@ module.exports = {
       }),
       parseResponseToDays: (singleItem) => singleItem.start_date_local.split("T")[0],
     },
-  }
+  },
 };

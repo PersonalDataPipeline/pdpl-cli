@@ -73,9 +73,7 @@ http
         STRAVA_REFRESH_TOKEN
       );
       response.write(
-        `Refresh token for <strong>${
-          tokenResponse.data.athlete.username
-        }</strong> written to .env.`
+        `Refresh token for <strong>${tokenResponse.data.athlete.username}</strong> written to .env.`
       );
       return response.end();
     }
@@ -103,7 +101,7 @@ http
     if (STRAVA_REFRESH_TOKEN) {
       response.write(
         `<p><code>STRAVA_REFRESH_TOKEN</code> already exists. ` +
-        `Re-authorizing will replace the existing token.</p>`
+          `Re-authorizing will replace the existing token.</p>`
       );
     }
     response.write(

@@ -5,10 +5,7 @@ const { readdirSync } = require("fs");
 const path = require("path");
 
 const Stats = require("./src/utils/stats");
-const {
-  ensureOutputPath,
-  writeOutputFile,
-} = require("./src/utils/fs");
+const { ensureOutputPath, writeOutputFile } = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
 const getConfig = require("./src/utils/config");
 
@@ -79,7 +76,7 @@ const runStats = new Stats();
       apiResponseParsed = {};
       const entities = apiResponse.data;
 
-      if (!Array.isArray(entities)){
+      if (!Array.isArray(entities)) {
         runStats.addError(apiName, endpoint, {
           type: "parsing_response",
           message: `Cannot iterate through data from ${endpoint}.`,
@@ -109,14 +106,18 @@ const runStats = new Stats();
         const fileName = day + "--run-" + runDateTime + ".json";
         writeOutputFile(path.join(apiPath, fileName), apiResponseParsed[day], {
           checkDuplicate: true,
-        }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
+        })
+          ? runMetadata.filesWritten++
+          : runMetadata.filesSkipped++;
       }
     } else {
       runMetadata.total = 1;
       const fileName = runDateTime + ".json";
       writeOutputFile(path.join(apiPath, fileName), apiResponseParsed, {
         checkDuplicate: true,
-      }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
+      })
+        ? runMetadata.filesWritten++
+        : runMetadata.filesSkipped++;
     }
 
     runStats.addRun(apiName, endpoint, runMetadata);
