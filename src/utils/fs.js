@@ -70,6 +70,8 @@ const getLatestFileContents = (writePath) => {
 
   const fullPath = path.join(getConfig().outputDir, ...pathParts);
   const latestDayFile = readdirSync(fullPath)
+    // Exclude current file
+    .filter((file) => file !== fileName)
     // Look for a specific day, if not a snapshot file
     .filter((file) => (day ? file.startsWith(day) : true))
     // JSON files only
