@@ -12,7 +12,7 @@ const apiDirName = (endpoint) => path.join(apiName, endpoint);
 const parseDayFromEntity = (singleItem) => singleItem.day;
 const transformResponse = (apiResponse) => [
   apiResponse.data.data,
-  apiResponse.headers
+  apiResponse.headers,
 ];
 
 module.exports = {
@@ -71,7 +71,8 @@ module.exports = {
         start_datetime: getFormattedDate(-5) + "T00:00:00-08:00",
         end_datetime: getFormattedDate(-1) + "T23:59:59-08:00",
       }),
-      parseDayFromEntity: (singleItem) => getFormattedDate(0, new Date(singleItem.timestamp)),
+      parseDayFromEntity: (singleItem) =>
+        getFormattedDate(0, new Date(singleItem.timestamp)),
       transformResponse,
     },
   },

@@ -32,7 +32,6 @@ if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
   process.exit();
 }
 
-
 const runStats = new Stats();
 
 (async () => {
@@ -77,12 +76,10 @@ const runStats = new Stats();
       filesSkipped: 0,
     };
 
-    const [ 
-      apiResponseData, 
-      apiResponseHeaders,
-    ] = typeof thisEndpoint.transformResponse === "function" ? 
-      thisEndpoint.transformResponse(apiResponse) :
-      [ apiResponse.data, apiResponse.headers ];
+    const [apiResponseData, apiResponseHeaders] =
+      typeof thisEndpoint.transformResponse === "function"
+        ? thisEndpoint.transformResponse(apiResponse)
+        : [apiResponse.data, apiResponse.headers];
 
     // Need to parse to days if not a snapshot
     if (typeof thisEndpoint.parseDayFromEntity === "function") {
