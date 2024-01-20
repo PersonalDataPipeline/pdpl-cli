@@ -58,68 +58,16 @@ module.exports = {
     "athlete": {
       getDirName: () => apiDirName("athlete"),
       getParams: () => ({}),
-      successHandler: (responseData) => [
-        responseData.data,
-        { total: 1 },
-      ],
     },
     "athlete/activities": {
       getDirName: () => apiDirName("athlete--activities"),
       getParams: () => ({
         before: Math.floor(Date.now() / 1000),
         after: 0,
-        page: 10,
-        per_page: 29,
+        page: 1,
+        per_page: 2,
       }),
-      successHandler: async (responseData) => {
-        const dailyData = {};
-        const items = responseData.data;
-
-        const headers = await getApiAuthHeaders();
-
-        for (const item of items) {
-          const day = item.start_date_local.split("T")[0];
-          if (!dailyData[day]) {
-            dailyData[day] = [];
-          }
-          
-          let activityResponse;
-          try {
-            activityResponse = await axios.get(`${apiBaseUrl}/activities/${item.id}`, {
-              headers
-            });
-          } catch (error) {
-            console.log(`❌ Error getting activity detail for ${item.id}`);
-            continue;
-          }
-
-          let streamsResponse = { data: [] };
-          try {
-            streamsResponse = await axios.get(`${apiBaseUrl}/activities/${item.id}/streams`, {
-              params: {
-                keys: "latlng,time,altitude,distance"
-              },
-              headers
-            });
-          } catch (error) {
-            console.log(`❌ Error getting stream detail for ${item.id}`);
-          }
-          
-          activityResponse.data.streams = {};
-          streamsResponse.data.forEach(stream => {
-            activityResponse.data.streams[stream.type] = stream;
-          });
-          dailyData[day].push(activityResponse.data);
-        };
-
-        return [
-          dailyData,
-          {
-            total: items.length,
-            days: Object.keys(dailyData).length,
-          },
-        ];
-      },
+      parseResponseToDays: (singleItem) => singleItem.start_date_local.split("T")[0],
     },
   }
 };

@@ -41,12 +41,14 @@ const runStats = new Stats();
       continue;
     }
 
+    const thisEndpoint = apiHandler.endpoints[endpoint];
     const runDateTime = fileNameDateTime();
+
     const axiosConfig = {
       ...axiosBaseConfig,
       url: endpoint,
-      method: apiHandler.endpoints[endpoint].method || "get",
-      params: apiHandler.endpoints[endpoint].getParams(),
+      method: thisEndpoint.method || "get",
+      params: thisEndpoint.getParams(),
     };
 
     let apiResponse;
@@ -61,42 +63,62 @@ const runStats = new Stats();
       continue;
     }
 
-    let handlerOutput;
-    let runMetadata;
-    try {
-      [handlerOutput, runMetadata] =
-        await apiHandler.endpoints[endpoint].successHandler(apiResponse);
-    } catch (error) {
-      runStats.addError(apiName, endpoint, {
-        type: "handler",
-        message: error.message,
-      });
-      continue;
-    }
-
-    const apiPath = apiHandler.endpoints[endpoint].getDirName();
+    const apiPath = thisEndpoint.getDirName();
     ensureOutputPath(apiPath);
 
-    runMetadata.filesWritten = 0;
-    runMetadata.filesSkipped = 0;
+    // Default here is for snapshot-type data
+    let runMetadata = {
+      dateTime: runDateTime,
+      filesWritten: 0,
+      filesSkipped: 0,
+    };
+    let apiResponseParsed = apiResponse.data;
 
-    if (typeof runMetadata.days === "undefined") {
-      // Point-in-time snapshot
-      const fileName = runDateTime + ".json";
-      writeOutputFile(path.join(apiPath, fileName), handlerOutput, {
-        checkDuplicate: true,
-      }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
-    } else if (runMetadata.days > 0) {
-      // Per-day output
-      for (const day in handlerOutput) {
+    // Need to parse to days if not a snapshot
+    if (typeof thisEndpoint.parseResponseToDays === "function") {
+      apiResponseParsed = {};
+      const entities = apiResponse.data;
+
+      if (!Array.isArray(entities)){
+        runStats.addError(apiName, endpoint, {
+          type: "parsing_response",
+          message: `Cannot iterate through data from ${endpoint}.`,
+        });
+        continue;
+      }
+
+      try {
+        for (const entity of entities) {
+          const day = thisEndpoint.parseResponseToDays(entity);
+          if (!apiResponseParsed[day]) {
+            apiResponseParsed[day] = [];
+          }
+          apiResponseParsed[day].push(entity);
+        }
+      } catch (error) {
+        runStats.addError(apiName, endpoint, {
+          type: "parsing_response",
+          message: `Cannot parse data from ${endpoint} into days: ${error.message}`,
+        });
+        continue;
+      }
+
+      runMetadata.total = entities.length;
+      runMetadata.days = Object.keys(apiResponseParsed).length;
+      for (const day in apiResponseParsed) {
         const fileName = day + "--run-" + runDateTime + ".json";
-        writeOutputFile(path.join(apiPath, fileName), handlerOutput[day], {
+        writeOutputFile(path.join(apiPath, fileName), apiResponseParsed[day], {
           checkDuplicate: true,
         }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
       }
+    } else {
+      runMetadata.total = 1;
+      const fileName = runDateTime + ".json";
+      writeOutputFile(path.join(apiPath, fileName), apiResponseParsed, {
+        checkDuplicate: true,
+      }) ? runMetadata.filesWritten++ : runMetadata.filesSkipped++;
     }
 
-    runMetadata.dateTime = runDateTime;
     runStats.addRun(apiName, endpoint, runMetadata);
   }
 
