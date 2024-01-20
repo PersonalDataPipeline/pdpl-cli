@@ -64,7 +64,7 @@ const runStats = new Stats();
     let runMetadata;
     try {
       [handlerOutput, runMetadata] =
-        apiHandler.endpoints[endpoint].successHandler(apiResponse);
+        await apiHandler.endpoints[endpoint].successHandler(apiResponse);
     } catch (error) {
       runStats.addError(apiName, endpoint, {
         type: "handler",

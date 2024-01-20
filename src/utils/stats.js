@@ -32,6 +32,7 @@ class Stats {
     this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
     ensureOutputPath("_runs");
     writeOutputFile(path.join("_runs", fileNameDateTime() + ".json"), this.log);
+    console.log(JSON.stringify(this.log, null, 2));
   }
 }
 
