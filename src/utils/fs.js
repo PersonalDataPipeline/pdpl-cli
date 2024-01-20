@@ -7,7 +7,7 @@ const {
 } = require("fs");
 const path = require("path");
 
-const config = require("./config");
+const getConfig = require("./config");
 
 const envWrite = (key, newValue, replaceValue) => {
   const envPath = path.join(__dirname, "../../.env");
@@ -27,7 +27,7 @@ const envWrite = (key, newValue, replaceValue) => {
 };
 
 const ensureOutputPath = (createPath) => {
-  let basePath = config.outputDir;
+  let basePath = getConfig().outputDir;
   createPath.split(path.sep).forEach((pathpart) => {
     basePath = path.join(basePath, pathpart);
     if (!existsSync(basePath)) {
@@ -44,9 +44,9 @@ const ensureOutputPath = (createPath) => {
  * @returns {boolean} - False if skipped as duplicate, true if written.
  */
 const writeOutputFile = (writePath, fileContents, options = {}) => {
-  const fullSavePath = path.join(config.outputDir, writePath);
+  const fullSavePath = path.join(getConfig().outputDir, writePath);
 
-  const fileContentsString = config.compressJson
+  const fileContentsString = getConfig().compressJson
     ? JSON.stringify(fileContents)
     : JSON.stringify(fileContents, null, 2);
 
@@ -68,7 +68,7 @@ const getLatestFileContents = (writePath) => {
   const fileName = pathParts.pop();
   const day = fileName.includes("--") ? fileName.split("--")[0] : null;
 
-  const fullPath = path.join(config.outputDir, ...pathParts);
+  const fullPath = path.join(getConfig().outputDir, ...pathParts);
   const latestDayFile = readdirSync(fullPath)
     // Look for a specific day, if not a snapshot file
     .filter((file) => day ? file.startsWith(day) : true)

@@ -10,6 +10,7 @@ const {
   writeOutputFile,
 } = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
+const getConfig = require("./src/utils/config");
 
 const apisSupported = readdirSync("src/apis");
 
