@@ -99,7 +99,7 @@ module.exports = {
         page: 1,
         per_page: 2,
       }),
-      parseResponseToDays: (singleItem) => singleItem.start_date_local.split("T")[0],
+      parseDayFromEntity: (singleItem) => singleItem.start_date_local.split("T")[0],
     },
   },
 };

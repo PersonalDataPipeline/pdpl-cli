@@ -71,7 +71,6 @@ const runStats = new Stats();
     const apiPath = thisEndpoint.getDirName();
     ensureOutputPath(apiPath);
 
-    // Default here is for snapshot-type data
     let runMetadata = {
       dateTime: runDateTime,
       filesWritten: 0,
@@ -80,7 +79,7 @@ const runStats = new Stats();
     let apiResponseParsed = apiResponse.data;
 
     // Need to parse to days if not a snapshot
-    if (typeof thisEndpoint.parseResponseToDays === "function") {
+    if (typeof thisEndpoint.parseDayFromEntity === "function") {
       apiResponseParsed = {};
       const entities = apiResponse.data;
 
@@ -94,7 +93,7 @@ const runStats = new Stats();
 
       try {
         for (const entity of entities) {
-          const day = thisEndpoint.parseResponseToDays(entity);
+          const day = thisEndpoint.parseDayFromEntity(entity);
           if (!apiResponseParsed[day]) {
             apiResponseParsed[day] = [];
           }
