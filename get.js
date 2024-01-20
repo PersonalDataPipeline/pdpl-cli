@@ -24,6 +24,12 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
+const allEndpoints = apiHandler.endpoints;
+if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
+  console.log(`❌ Unsupported endpoint "${runEndpoint}" for API "${apiName}"`);
+  process.exit();
+}
+
 const apiHandler = require(`./src/apis/${apiName}/index.js`);
 const runStats = new Stats();
 
