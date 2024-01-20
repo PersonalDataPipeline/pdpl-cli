@@ -84,9 +84,15 @@ const getLatestFileContents = (writePath) => {
     : "";
 };
 
+const makeOutputPath = (apiPath, day, run) => path.join(
+  apiPath, 
+  day ? `${day}--run-${run}` : run + ".json"
+);
+
 module.exports = {
   envWrite,
   ensureOutputPath,
   getLatestFileContents,
   writeOutputFile,
+  makeOutputPath
 };

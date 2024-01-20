@@ -5,7 +5,7 @@ const { readdirSync } = require("fs");
 const path = require("path");
 
 const Stats = require("./src/utils/stats");
-const { ensureOutputPath, writeOutputFile } = require("./src/utils/fs");
+const { ensureOutputPath, writeOutputFile, makeOutputPath } = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
 const getConfig = require("./src/utils/config");
 
@@ -113,8 +113,8 @@ const runStats = new Stats();
       runMetadata.total = entities.length;
       runMetadata.days = Object.keys(apiResponseParsed).length;
       for (const day in apiResponseParsed) {
-        const fileName = day + "--run-" + runDateTime + ".json";
-        writeOutputFile(path.join(apiPath, fileName), apiResponseParsed[day], {
+        const outputPath = makeOutputPath(apiPath, day, runDateTime);
+        writeOutputFile(outputPath, apiResponseParsed[day], {
           checkDuplicate: true,
         })
           ? runMetadata.filesWritten++
@@ -122,8 +122,8 @@ const runStats = new Stats();
       }
     } else {
       runMetadata.total = 1;
-      const fileName = runDateTime + ".json";
-      writeOutputFile(path.join(apiPath, fileName), apiResponseData, {
+      const outputPath = makeOutputPath(apiPath, null, runDateTime);
+      writeOutputFile(outputPath, apiResponseData, {
         checkDuplicate: true,
       })
         ? runMetadata.filesWritten++
