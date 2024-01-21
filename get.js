@@ -141,17 +141,17 @@ const runStats = new Stats();
       for (const dayEntityFile in filesGenerated) {
         // dayEntityFile is file name, value is an array of entity objects
         const dayEntityData = filesGenerated[dayEntityFile];
+        const newEntityData = [];
+
+        const enrichRunMetadata = {
+          dateTime: runDateTime,
+          filesWritten: 0,
+          filesSkipped: 0,
+          enrichUrls: []
+        };
 
         for (const entity of dayEntityData) {
-          const newEntityData = [];
-
-          const enrichRunMetadata = {
-            dateTime: runDateTime,
-            filesWritten: 0,
-            filesSkipped: 0,
-            enrichUrls: []
-          };
-
+          let enrichedEntity = {};
           for (const enrichFunction of thisEndpoint.enrichEntity) {
 
             const enrichAxiosConfig = {
@@ -163,7 +163,6 @@ const runStats = new Stats();
 
             enrichRunMetadata.enrichUrls.push(enrichAxiosConfig.url);
 
-            let enrichApiResponse;
             try {
               enrichApiResponse = await axios(enrichAxiosConfig);
             } catch (error) {
@@ -175,18 +174,20 @@ const runStats = new Stats();
               continue;
             }
 
-            newEntityData.push(enrichFunction.enrichEntity(entity, enrichApiResponse));
-          }
+            enrichedEntity = enrichFunction.enrichEntity(entity, enrichApiResponse);
 
-          writeOutputFile(dayEntityFile, newEntityData, {
-            checkDuplicate: true,
-          })
-            ? enrichRunMetadata.filesWritten++
-            : enrichRunMetadata.filesSkipped++;
+          } // END enrich functions
+          newEntityData.push(enrichedEntity);
+        } // END days
 
-          runStats.addRun(apiName, `enrich ${endpoint}`, enrichRunMetadata);
-        }
-      }
+        writeOutputFile(dayEntityFile, newEntityData, {
+          checkDuplicate: true,
+        })
+          ? enrichRunMetadata.filesWritten++
+          : enrichRunMetadata.filesSkipped++;
+
+        runStats.addRun(apiName, `enrich ${endpoint}`, enrichRunMetadata);
+      } // END files
     }
   }
 

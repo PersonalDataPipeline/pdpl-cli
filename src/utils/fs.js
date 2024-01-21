@@ -4,6 +4,7 @@ const {
   existsSync,
   mkdirSync,
   readdirSync,
+  rmSync
 } = require("fs");
 const path = require("path");
 
@@ -54,6 +55,7 @@ const writeOutputFile = (writePath, fileContents, options = {}) => {
     const latestDayFileContents = getLatestFileContents(writePath);
     if (fileContentsString === latestDayFileContents) {
       console.log(`Skipping duplicate ${writePath}`);
+      rmSync(fullSavePath, { force: true });
       return false;
     }
   }
