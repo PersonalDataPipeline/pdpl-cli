@@ -45,42 +45,6 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const enrichActivity = async (activity) => {
-  const headers = await getApiAuthHeaders();
-  try {
-    activityResponse = await axios.get(`${apiBaseUrl}/activities/${item.id}`, {
-      headers,
-    });
-  } catch (error) {
-    console.log(`❌ Error getting activity detail for ${item.id}: ${error.message}`);
-    return activity;
-  }
-
-  actvity = activityResponse.data;
-
-  let streamsResponse = { data: [] };
-  try {
-    streamsResponse = await axios.get(
-      `${apiBaseUrl}/activities/${item.id}/streams`,
-      {
-        params: {
-          keys: "latlng,time,altitude,distance",
-        },
-        headers,
-      }
-    );
-  } catch (error) {
-    console.log(`❌ Error getting stream detail for ${item.id}: ${error.message}`);
-    return activity;
-  }
-
-  actvity.streams = {};
-  streamsResponse.data.forEach((stream) => {
-    actvity.streams[stream.type] = stream;
-  });
-  return actvity;
-};
-
 module.exports = {
   authorizeUrl,
   tokenUrl,
