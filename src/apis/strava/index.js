@@ -53,7 +53,6 @@ module.exports = {
   endpoints: {
     "athlete": {
       getDirName: () => apiDirName("athlete"),
-      getParams: () => ({}),
     },
     "athlete/activities": {
       getDirName: () => apiDirName("athlete--activities"),
@@ -66,7 +65,6 @@ module.exports = {
       parseDayFromEntity: (singleItem) => singleItem.start_date_local.split("T")[0],
       enrichEntity: [
         {
-          getParams: (entity) => ({}),
           getEndpoint: (entity) => `activities/${entity.id}`,
           enrichEntity: (entity, response) => response.data
         },

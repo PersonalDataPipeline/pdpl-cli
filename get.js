@@ -52,7 +52,7 @@ const runStats = new Stats();
       ...axiosBaseConfig,
       url: endpoint,
       method: thisEndpoint.method || "get",
-      params: thisEndpoint.getParams(),
+      params: typeof thisEndpoint.getParams === "function" ? thisEndpoint.getParams() : {},
     };
 
     let apiResponse;
@@ -158,7 +158,7 @@ const runStats = new Stats();
               ...axiosBaseConfig,
               url: enrichFunction.getEndpoint(entity),
               method: enrichFunction.method || "get",
-              params: enrichFunction.getParams(entity),
+              params: typeof enrichFunction.getParams === "function" ? enrichFunction.getParams(entity) : {},
             };
 
             enrichRunMetadata.enrichUrls.push(enrichAxiosConfig.url);
