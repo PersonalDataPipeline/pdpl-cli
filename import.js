@@ -1,6 +1,13 @@
 const { existsSync, readFileSync, readdirSync } = require("fs");
 const { parse } = require("csv-parse/sync");
-const getConfig = require("./src/utils/config");
+
+const { fileNameDateTime } = require("./src/utils/date");
+const {
+  makeOutputPath,
+  writeOutputFile,
+  ensureOutputPath,
+} = require("./src/utils/fs");
+const Stats = require("./src/utils/stats");
 
 const importsSupported = readdirSync("src/imports");
 
@@ -14,7 +21,7 @@ if (!importName) {
 }
 
 if (!importsSupported.includes(importName)) {
-  console.log(`❌ Unsupported iport "${importName}"`);
+  console.log(`❌ Unsupported import "${importName}"`);
   process.exit();
 }
 
@@ -34,29 +41,48 @@ if (!importFile || !existsSync(importFile)) {
 }
 
 const fileContents = readFileSync(importFile, "utf8");
+const runDateTime = fileNameDateTime();
+const runStats = new Stats();
 
 (async () => {
-  const orders = await parse(fileContents, { columns: true, bom: true });
-  const dailyData = {};
+  const entities = await parse(fileContents, { columns: true, bom: true });
+  const thisHandler = importHandler.importTypes[importType];
 
-  for (const order of orders) {
-    if ("Cancelled" === order["Order Status"]) {
+  const savePath = thisHandler.getDirName();
+  ensureOutputPath(savePath);
+
+  const dailyData = {};
+  const runMetadata = {
+    dateTime: runDateTime,
+    filesWritten: 0,
+    filesSkipped: 0,
+    importFile,
+  };
+
+  for (const entity of entities) {
+    const transformedEntity = thisHandler.transformEntity(entity);
+
+    if (!transformedEntity) {
       continue;
     }
 
-    for (const label in order) {
-      if (["Not Available", "Not Applicable"].includes(order[label])) {
-        delete order[label];
-      }
+    if (!dailyData[transformedEntity.day]) {
+      dailyData[transformedEntity.day] = [];
     }
 
-    const day = order["Order Date"].split("T")[0];
-    if (!dailyData[day]) {
-      dailyData[day] = [];
-    }
-
-    dailyData[day].push(order);
+    dailyData[transformedEntity.day].push(entity);
   }
 
-  console.log(dailyData);
+  runMetadata.total = entities.length;
+  runMetadata.days = Object.keys(dailyData).length;
+  for (const day in dailyData) {
+    const outputPath = makeOutputPath(savePath, day, runDateTime);
+    writeOutputFile(outputPath, dailyData[day], {
+      checkDuplicate: true,
+    })
+      ? runMetadata.filesWritten++
+      : runMetadata.filesSkipped++;
+  }
+
+  runStats.addRun(importName, importType, runMetadata);
 })();
