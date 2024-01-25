@@ -60,7 +60,7 @@ module.exports = {
         before: Math.floor(Date.now() / 1000),
         after: 0,
         page: 1,
-        per_page: 2,
+        per_page: 50,
       }),
       parseDayFromEntity: (singleItem) => singleItem.start_date_local.split("T")[0],
       enrichEntity: [
