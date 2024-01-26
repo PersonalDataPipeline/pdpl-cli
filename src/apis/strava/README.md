@@ -12,7 +12,7 @@ First, create a Strava application using [the steps in section B here](https://d
 # .env
 STRAVA_AUTHORIZE_CLIENT_ID="Replace with API application Client ID"
 STRAVA_AUTHORIZE_CLIENT_SECRET="Replace with API application Client Secret"
-STRAVA_LOCAL_SERVER_PORT="If needed, default is 8888"
+AUTHORIZE_APP_SERVER_PORT="If needed, default is 8888"
 ```
 
 Next, start the local server:

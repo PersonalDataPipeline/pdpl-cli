@@ -5,8 +5,8 @@ const { envWrite } = require("../../utils/fs");
 
 let accessToken = "";
 
-const authorizeUrl = "https://www.strava.com/oauth/authorize";
-const tokenUrl = "https://www.strava.com/oauth/token";
+const authorizeEndpoint = "https://www.strava.com/oauth/authorize";
+const tokenEndpoint = "https://www.strava.com/oauth/token";
 
 const {
   STRAVA_REFRESH_TOKEN,
@@ -29,7 +29,7 @@ const getApiAuthHeaders = async () => {
 
   let tokenResponse = {};
   if (!accessToken) {
-    tokenResponse = await axios.post(tokenUrl, {
+    tokenResponse = await axios.post(tokenEndpoint, {
       client_id: STRAVA_AUTHORIZE_CLIENT_ID,
       client_secret: STRAVA_AUTHORIZE_CLIENT_SECRET,
       refresh_token: STRAVA_REFRESH_TOKEN,
@@ -46,8 +46,8 @@ const getApiAuthHeaders = async () => {
 };
 
 module.exports = {
-  authorizeUrl,
-  tokenUrl,
+  authorizeEndpoint,
+  tokenEndpoint,
   getApiBaseUrl: () => apiBaseUrl,
   getApiAuthHeaders,
   endpoints: {
