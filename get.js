@@ -115,9 +115,7 @@ const runStats = new Stats();
       runMetadata.days = Object.keys(apiResponseParsed).length;
       for (const day in apiResponseParsed) {
         const outputPath = makeOutputPath(apiPath, day, runDateTime);
-        writeOutputFile(outputPath, apiResponseParsed[day], {
-          checkDuplicate: true,
-        })
+        writeOutputFile(outputPath, apiResponseParsed[day])
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
         
@@ -126,9 +124,7 @@ const runStats = new Stats();
     } else {
       runMetadata.total = 1;
       const outputPath = makeOutputPath(apiPath, null, runDateTime);
-      writeOutputFile(outputPath, apiResponseData, {
-        checkDuplicate: true,
-      })
+      writeOutputFile(outputPath, apiResponseData)
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
 
@@ -180,9 +176,7 @@ const runStats = new Stats();
           newEntityData.push(enrichedEntity);
         } // END days
 
-        writeOutputFile(dayEntityFile, newEntityData, {
-          checkDuplicate: true,
-        })
+        writeOutputFile(dayEntityFile, newEntityData)
           ? enrichRunMetadata.filesWritten++
           : enrichRunMetadata.filesSkipped++;
 

@@ -41,23 +41,20 @@ const ensureOutputPath = (createPath) => {
  *
  * @param {string} writePath
  * @param {string} fileContents
- * @param {object} options
  * @returns {boolean} - False if skipped as duplicate, true if written.
  */
-const writeOutputFile = (writePath, fileContents, options = {}) => {
+const writeOutputFile = (writePath, fileContents) => {
   const fullSavePath = path.join(getConfig().outputDir, writePath);
 
   const fileContentsString = getConfig().compressJson
     ? JSON.stringify(fileContents)
     : JSON.stringify(fileContents, null, 2);
 
-  if (options.checkDuplicate) {
-    const latestDayFileContents = getLatestFileContents(writePath);
-    if (fileContentsString === latestDayFileContents) {
-      console.log(`Skipping duplicate ${writePath}`);
-      rmSync(fullSavePath, { force: true });
-      return false;
-    }
+  const latestDayFileContents = getLatestFileContents(writePath);
+  if (fileContentsString === latestDayFileContents) {
+    console.log(`Skipping duplicate ${writePath}`);
+    rmSync(fullSavePath, { force: true });
+    return false;
   }
 
   console.log(`Writing ${writePath}`);

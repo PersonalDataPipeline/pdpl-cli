@@ -77,9 +77,7 @@ const runStats = new Stats();
   runMetadata.days = Object.keys(dailyData).length;
   for (const day in dailyData) {
     const outputPath = makeOutputPath(savePath, day, runDateTime);
-    writeOutputFile(outputPath, dailyData[day], {
-      checkDuplicate: true,
-    })
+    writeOutputFile(outputPath, dailyData[day])
       ? runMetadata.filesWritten++
       : runMetadata.filesSkipped++;
   }
