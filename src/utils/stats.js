@@ -1,13 +1,14 @@
 const path = require("path");
+const { writeFileSync } = require("fs");
 
 const { fileNameDateTime } = require("./date");
-const { ensureOutputPath, writeOutputFile } = require("./fs");
+const { ensureOutputPath } = require("./fs");
+const getConfig = require("./config");
 
 class Stats {
   constructor() {
-    const date = new Date();
     this.log = {
-      dateTime: date.toISOString(),
+      dateTime: fileNameDateTime(),
       startTimeMs: Date.now(),
       runs: [],
       errors: [],
@@ -27,12 +28,15 @@ class Stats {
   }
 
   shutdown() {
-    const date = new Date();
     this.log.endTimeMs = Date.now();
     this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
+    const savePath = path.join(
+      getConfig().outputDir,
+      "_runs",
+      this.log.dateTime + ".json"
+    );
     ensureOutputPath("_runs");
-    writeOutputFile(path.join("_runs", fileNameDateTime() + ".json"), this.log);
-    console.log(JSON.stringify(this.log, null, 2));
+    writeFileSync(savePath, JSON.stringify(this.log, null, 2));
   }
 }
 
