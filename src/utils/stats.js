@@ -6,9 +6,9 @@ const { ensureOutputPath } = require("./fs");
 const getConfig = require("./config");
 
 class Stats {
-  constructor(apiName) {
+  constructor(name) {
     this.log = {
-      apiName,
+      name,
       dateTime: fileNameDateTime(),
       startTimeMs: Date.now(),
       runs: [],

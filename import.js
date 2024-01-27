@@ -42,7 +42,7 @@ if (!importFile || !existsSync(importFile)) {
 
 const fileContents = readFileSync(importFile, "utf8");
 const runDateTime = fileNameDateTime();
-const runStats = new Stats();
+const runStats = new Stats(importName);
 
 (async () => {
   const entities = await parse(fileContents, { columns: true, bom: true });
