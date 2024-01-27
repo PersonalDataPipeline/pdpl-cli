@@ -1,13 +1,7 @@
-const path = require("path");
-
-const apiName = "amazon";
-
-const apiDirName = (importType) => path.join(apiName, importType);
-
 module.exports = {
   importTypes: {
     "Retail.OrderHistory": {
-      getDirName: () => apiDirName("retail--order-history"),
+      getDirName: () => "retail--order-history",
       transformEntity: (entity) => {
         if ("Cancelled" === entity["Order Status"]) {
           return null;

@@ -1,5 +1,4 @@
 const axios = require("axios");
-const path = require("path");
 
 const { envWrite } = require("../../utils/fs");
 
@@ -14,10 +13,7 @@ const {
   WAHOO_REFRESH_TOKEN,
 } = process.env;
 
-const apiName = "wahoo";
 const apiBaseUrl = "https://api.wahooligan.com/v1/";
-
-const apiDirName = (endpoint) => path.join(apiName, endpoint);
 
 const getApiAuthHeaders = async () => {
   if (!WAHOO_REFRESH_TOKEN) {

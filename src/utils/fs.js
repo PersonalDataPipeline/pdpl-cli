@@ -29,7 +29,7 @@ const envWrite = (key, newValue, replaceValue) => {
 
 const ensureOutputPath = (createPath) => {
   let basePath = getConfig().outputDir;
-  createPath.split(path.sep).forEach((pathpart) => {
+  createPath.forEach((pathpart) => {
     basePath = path.join(basePath, pathpart);
     if (!existsSync(basePath)) {
       mkdirSync(basePath);
@@ -86,7 +86,7 @@ const getLatestFileContents = (writePath) => {
 };
 
 const makeOutputPath = (apiPath, day, run) => path.join(
-  apiPath, 
+  ...apiPath, 
   (day ? `${day}--run-${run}` : run) + ".json"
 );
 

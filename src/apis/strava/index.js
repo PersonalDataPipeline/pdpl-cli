@@ -14,10 +14,7 @@ const {
   STRAVA_AUTHORIZE_CLIENT_SECRET,
 } = process.env;
 
-const apiName = "strava";
 const apiBaseUrl = "https://www.strava.com/api/v3/";
-
-const apiDirName = (endpoint) => path.join(apiName, endpoint);
 
 const getApiAuthHeaders = async () => {
   if (!STRAVA_REFRESH_TOKEN) {
@@ -52,10 +49,10 @@ module.exports = {
   getApiAuthHeaders,
   endpoints: {
     "athlete": {
-      getDirName: () => apiDirName("athlete"),
+      getDirName: () => "athlete",
     },
     "athlete/activities": {
-      getDirName: () => apiDirName("athlete--activities"),
+      getDirName: () => "athlete--activities",
       getParams: () => ({
         before: Math.floor(Date.now() / 1000),
         after: 0,

@@ -7,7 +7,6 @@ const path = require("path");
 const Stats = require("./src/utils/stats");
 const { ensureOutputPath, writeOutputFile, makeOutputPath } = require("./src/utils/fs");
 const { fileNameDateTime } = require("./src/utils/date");
-const getConfig = require("./src/utils/config");
 
 const apisSupported = readdirSync("src/apis");
 
@@ -67,8 +66,8 @@ const runStats = new Stats(apiName);
       continue;
     }
 
-    const apiPath = thisEndpoint.getDirName();
-    ensureOutputPath(apiPath);
+    const savePath = [apiName, thisEndpoint.getDirName()];
+    ensureOutputPath(savePath);
 
     let runMetadata = {
       dateTime: runDateTime,
@@ -114,7 +113,7 @@ const runStats = new Stats(apiName);
       runMetadata.total = entities.length;
       runMetadata.days = Object.keys(apiResponseParsed).length;
       for (const day in apiResponseParsed) {
-        const outputPath = makeOutputPath(apiPath, day, runDateTime);
+        const outputPath = makeOutputPath(savePath, day, runDateTime);
         writeOutputFile(outputPath, apiResponseParsed[day])
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
@@ -123,7 +122,7 @@ const runStats = new Stats(apiName);
       }
     } else {
       runMetadata.total = 1;
-      const outputPath = makeOutputPath(apiPath, null, runDateTime);
+      const outputPath = makeOutputPath(savePath, null, runDateTime);
       writeOutputFile(outputPath, apiResponseData)
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;

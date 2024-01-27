@@ -48,7 +48,7 @@ const runStats = new Stats(importName);
   const entities = await parse(fileContents, { columns: true, bom: true });
   const thisHandler = importHandler.importTypes[importType];
 
-  const savePath = thisHandler.getDirName();
+  const savePath = [importName, thisHandler.getDirName()];
   ensureOutputPath(savePath);
 
   const dailyData = {};

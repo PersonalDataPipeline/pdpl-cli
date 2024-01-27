@@ -29,13 +29,16 @@ class Stats {
   shutdown() {
     this.log.endTimeMs = Date.now();
     this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
-    const savePath = path.join(
-      getConfig().outputDir,
-      "_runs",
-      this.log.dateTime + ".json"
+    const savePath = [this.log.name, "_runs"];
+    ensureOutputPath(savePath);
+    writeFileSync(
+      path.join(
+        getConfig().outputDir,
+        ...savePath,
+        this.log.dateTime + ".json"
+      ), 
+      JSON.stringify(this.log, null, 2)
     );
-    ensureOutputPath("_runs");
-    writeFileSync(savePath, JSON.stringify(this.log, null, 2));
   }
 }
 
