@@ -6,8 +6,8 @@ const apiDirName = (importType) => path.join(apiName, importType);
 
 module.exports = {
   importTypes: {
-    productsRetail: {
-      getDirName: () => apiDirName("products--retail"),
+    "Retail.OrderHistory": {
+      getDirName: () => apiDirName("retail--order-history"),
       transformEntity: (entity) => {
         if ("Cancelled" === entity["Order Status"]) {
           return null;
