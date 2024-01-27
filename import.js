@@ -83,4 +83,5 @@ const runStats = new Stats();
   }
 
   runStats.addRun(importType, runMetadata);
+  runStats.shutdown();
 })();
