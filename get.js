@@ -32,7 +32,7 @@ if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
   process.exit();
 }
 
-const runStats = new Stats();
+const runStats = new Stats(apiName);
 
 (async () => {
   const axiosBaseConfig = {
@@ -59,7 +59,7 @@ const runStats = new Stats();
     try {
       apiResponse = await axios(axiosConfig);
     } catch (error) {
-      runStats.addError(apiName, endpoint, {
+      runStats.addError(endpoint, {
         type: "http",
         message: error.message,
         data: error.data || {},
@@ -88,7 +88,7 @@ const runStats = new Stats();
       const entities = apiResponseData;
 
       if (!Array.isArray(entities)) {
-        runStats.addError(apiName, endpoint, {
+        runStats.addError(endpoint, {
           type: "parsing_response",
           message: `Cannot iterate through data from ${endpoint}.`,
         });
@@ -104,7 +104,7 @@ const runStats = new Stats();
           apiResponseParsed[entity.day].push(entity);
         }
       } catch (error) {
-        runStats.addError(apiName, endpoint, {
+        runStats.addError(endpoint, {
           type: "parsing_response",
           message: `Cannot parse data from ${endpoint} into days: ${error.message}`,
         });
@@ -131,7 +131,7 @@ const runStats = new Stats();
       filesGenerated[outputPath] = apiResponseData;
     }
 
-    runStats.addRun(apiName, endpoint, runMetadata);
+    runStats.addRun(endpoint, runMetadata);
 
     if (thisEndpoint.enrichEntity) {
       for (const dayEntityFile in filesGenerated) {
@@ -162,7 +162,7 @@ const runStats = new Stats();
             try {
               enrichApiResponse = await axios(enrichAxiosConfig);
             } catch (error) {
-              runStats.addError(apiName, enrichAxiosConfig.url, {
+              runStats.addError(enrichAxiosConfig.url, {
                 type: "http",
                 message: error.message,
                 data: error.data || {},
@@ -180,7 +180,7 @@ const runStats = new Stats();
           ? enrichRunMetadata.filesWritten++
           : enrichRunMetadata.filesSkipped++;
 
-        runStats.addRun(apiName, `enrich ${endpoint}`, enrichRunMetadata);
+        runStats.addRun(`enrich ${endpoint}`, enrichRunMetadata);
       } // END files
     }
   }

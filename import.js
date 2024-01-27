@@ -82,5 +82,5 @@ const runStats = new Stats();
       : runMetadata.filesSkipped++;
   }
 
-  runStats.addRun(importName, importType, runMetadata);
+  runStats.addRun(importType, runMetadata);
 })();
