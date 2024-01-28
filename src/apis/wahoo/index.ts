@@ -1,11 +1,6 @@
-const axios = require("axios");
+import axios, { AxiosResponse } from "axios";
 
-const { envWrite } = require("../../utils/fs");
-
-let accessToken = "";
-
-const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
-const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
+import { envWrite } from "../../utils/fs.js";
 
 const {
   WAHOO_AUTHORIZE_CLIENT_ID,
@@ -13,8 +8,10 @@ const {
   WAHOO_REFRESH_TOKEN,
 } = process.env;
 
-const apiBaseUrl = "https://api.wahooligan.com/v1/";
+export const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
+export const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
 
+let accessToken = "";
 const getApiAuthHeaders = async () => {
   if (!WAHOO_REFRESH_TOKEN) {
     console.log(
@@ -23,7 +20,7 @@ const getApiAuthHeaders = async () => {
     process.exit();
   }
 
-  let tokenResponse = {};
+  let tokenResponse: AxiosResponse;
   if (!accessToken) {
     tokenResponse = await axios.post(tokenEndpoint, {
       client_id: WAHOO_AUTHORIZE_CLIENT_ID,
@@ -44,9 +41,7 @@ const getApiAuthHeaders = async () => {
 module.exports = {
   authorizeEndpoint,
   tokenEndpoint,
-  getApiBaseUrl: () => apiBaseUrl,
+  getApiBaseUrl: () => "https://api.wahooligan.com/v1/",
   getApiAuthHeaders,
-  endpoints: {
-    
-  },
+  endpoints: {},
 };

@@ -1,16 +1,25 @@
-const {
+import {
   readFileSync,
   writeFileSync,
   existsSync,
   mkdirSync,
   readdirSync,
-  rmSync
-} = require("fs");
-const path = require("path");
+  rmSync,
+} from "fs";
 
-const getConfig = require("./config");
+import path from "path";
+import { fileURLToPath } from "url";
 
-const envWrite = (key, newValue, replaceValue) => {
+import getConfig from "./config.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const envWrite = (
+  key: string,
+  newValue: string,
+  replaceValue: string
+): void => {
   const envPath = path.join(__dirname, "../../.env");
   const currentContents = readFileSync(envPath, "utf8");
 
@@ -27,7 +36,7 @@ const envWrite = (key, newValue, replaceValue) => {
   writeFileSync(envPath, newContents);
 };
 
-const ensureOutputPath = (createPath) => {
+export const ensureOutputPath = (createPath: string[]): void => {
   let basePath = getConfig().outputDir;
   createPath.forEach((pathpart) => {
     basePath = path.join(basePath, pathpart);
@@ -37,13 +46,10 @@ const ensureOutputPath = (createPath) => {
   });
 };
 
-/**
- *
- * @param {string} writePath
- * @param {string} fileContents
- * @returns {boolean} - False if skipped as duplicate, true if written.
- */
-const writeOutputFile = (writePath, fileContents) => {
+export const writeOutputFile = (
+  writePath: string,
+  fileContents: unknown
+): boolean => {
   const fullSavePath = path.join(getConfig().outputDir, writePath);
 
   const fileContentsString = getConfig().compressJson
@@ -62,9 +68,9 @@ const writeOutputFile = (writePath, fileContents) => {
   return true;
 };
 
-const getLatestFileContents = (writePath) => {
+export const getLatestFileContents = (writePath: string) => {
   const pathParts = writePath.split(path.sep);
-  const fileName = pathParts.pop();
+  const fileName = pathParts.pop() || "";
   const day = fileName.includes("--") ? fileName.split("--")[0] : null;
 
   const fullPath = path.join(getConfig().outputDir, ...pathParts);
@@ -85,15 +91,5 @@ const getLatestFileContents = (writePath) => {
     : "";
 };
 
-const makeOutputPath = (apiPath, day, run) => path.join(
-  ...apiPath, 
-  (day ? `${day}--run-${run}` : run) + ".json"
-);
-
-module.exports = {
-  envWrite,
-  ensureOutputPath,
-  getLatestFileContents,
-  writeOutputFile,
-  makeOutputPath
-};
+export const makeOutputPath = (apiPath: string[], day: string | null, run: string) =>
+  path.join(...apiPath, (day ? `${day}--run-${run}` : run) + ".json");

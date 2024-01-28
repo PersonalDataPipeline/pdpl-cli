@@ -5,13 +5,21 @@
   "main": "go.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "caddy": "caddy run --envfile .env"
+    "caddy": "caddy run --envfile .env",
+    "build": "tsc",
+    "dev": "tsc -w"
   },
   "author": "",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
     "axios": "^1.6.5",
     "csv": "^6.3.6",
     "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

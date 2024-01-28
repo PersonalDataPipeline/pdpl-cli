@@ -1,11 +1,27 @@
-const { existsSync } = require("fs");
+import { existsSync } from "fs";
 
-const config = {
+const { DEBUG = false } = process.env;
+
+////
+/// Types
+//
+
+interface Config {
+  outputDir: string;
+  compressJson: boolean;
+  debug?: boolean;
+}
+
+////
+/// Helpers
+//
+
+const config: Config = {
   outputDir: "/Users/joshcanhelp/Scripts/cortex/_data",
   compressJson: true,
 };
 
-if (process.env.DEBUG === "true") {
+if (DEBUG === "true") {
   config.debug = true;
   config.compressJson = false;
   config.outputDir = "/Users/joshcanhelp/Scripts/cortex/_data_debug";
@@ -16,8 +32,6 @@ if (!existsSync(config.outputDir)) {
   process.exit();
 }
 
-const getConfig = () => {
+export default (): Config => {
   return config;
 };
-
-module.exports = getConfig;

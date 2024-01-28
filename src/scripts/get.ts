@@ -1,12 +1,17 @@
-require("dotenv").config();
+import { config } from "dotenv";
+config();
 
-const axios = require("axios");
-const { readdirSync } = require("fs");
-const path = require("path");
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { readdirSync } from "fs";
 
-const Stats = require("./src/utils/stats");
-const { ensureOutputPath, writeOutputFile, makeOutputPath } = require("./src/utils/fs");
-const { fileNameDateTime } = require("./src/utils/date");
+import Stats, { StatsRunData } from "../utils/stats.js";
+import { ensureOutputPath, writeOutputFile, makeOutputPath } from "../utils/fs.js";
+import { fileNameDateTime } from "../utils/date.js";
+import { DailyData } from "../utils/types.js";
+
+////
+/// Helpers
+//
 
 const apisSupported = readdirSync("src/apis");
 
@@ -23,7 +28,7 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = require(`./src/apis/${apiName}/index.js`);
+const apiHandler = await import(`../apis/${apiName}/index.js`);
 const allEndpoints = Object.keys(apiHandler.endpoints);
 
 if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
@@ -51,13 +56,14 @@ const runStats = new Stats(apiName);
       ...axiosBaseConfig,
       url: endpoint,
       method: thisEndpoint.method || "get",
-      params: typeof thisEndpoint.getParams === "function" ? thisEndpoint.getParams() : {},
+      params:
+        typeof thisEndpoint.getParams === "function" ? thisEndpoint.getParams() : {},
     };
 
     let apiResponse;
     try {
       apiResponse = await axios(axiosConfig);
-    } catch (error) {
+    } catch (error: AxiosError | any) {
       runStats.addError(endpoint, {
         type: "http",
         message: error.message,
@@ -69,21 +75,21 @@ const runStats = new Stats(apiName);
     const savePath = [apiName, thisEndpoint.getDirName()];
     ensureOutputPath(savePath);
 
-    let runMetadata = {
+    const runMetadata: StatsRunData = {
       dateTime: runDateTime,
       filesWritten: 0,
       filesSkipped: 0,
     };
 
-    const [apiResponseData, apiResponseHeaders] =
+    const [apiResponseData] =
       typeof thisEndpoint.transformResponse === "function"
         ? thisEndpoint.transformResponse(apiResponse)
         : [apiResponse.data, apiResponse.headers];
 
     // Need to parse returned to days if not a snapshot
-    const filesGenerated = {};
+    const filesGenerated: DailyData = {};
     if (typeof thisEndpoint.parseDayFromEntity === "function") {
-      const apiResponseParsed = {};
+      const dailyData: DailyData = {};
       const entities = apiResponseData;
 
       if (!Array.isArray(entities)) {
@@ -97,12 +103,12 @@ const runStats = new Stats(apiName);
       try {
         for (const entity of entities) {
           entity.day = thisEndpoint.parseDayFromEntity(entity);
-          if (!apiResponseParsed[entity.day]) {
-            apiResponseParsed[entity.day] = [];
+          if (!dailyData[entity.day]) {
+            dailyData[entity.day] = [entity];
           }
-          apiResponseParsed[entity.day].push(entity);
+          dailyData[entity.day]!.push(entity);
         }
-      } catch (error) {
+      } catch (error: AxiosError | any) {
         runStats.addError(endpoint, {
           type: "parsing_response",
           message: `Cannot parse data from ${endpoint} into days: ${error.message}`,
@@ -111,14 +117,15 @@ const runStats = new Stats(apiName);
       }
 
       runMetadata.total = entities.length;
-      runMetadata.days = Object.keys(apiResponseParsed).length;
-      for (const day in apiResponseParsed) {
+      runMetadata.days = Object.keys(dailyData).length;
+
+      for (const day in dailyData) {
         const outputPath = makeOutputPath(savePath, day, runDateTime);
-        writeOutputFile(outputPath, apiResponseParsed[day])
+        writeOutputFile(outputPath, dailyData[day])
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
-        
-        filesGenerated[outputPath] = apiResponseParsed[day];
+
+        filesGenerated[outputPath] = dailyData[day]!;
       }
     } else {
       runMetadata.total = 1;
@@ -138,29 +145,32 @@ const runStats = new Stats(apiName);
         const dayEntityData = filesGenerated[dayEntityFile];
         const newEntityData = [];
 
-        const enrichRunMetadata = {
+        const enrichRunMetadata: StatsRunData = {
           dateTime: runDateTime,
           filesWritten: 0,
           filesSkipped: 0,
-          enrichUrls: []
         };
 
-        for (const entity of dayEntityData) {
+        const enrichUrls = [];
+        for (const entity of dayEntityData!) {
           let enrichedEntity = {};
           for (const enrichFunction of thisEndpoint.enrichEntity) {
-
             const enrichAxiosConfig = {
               ...axiosBaseConfig,
               url: enrichFunction.getEndpoint(entity),
               method: enrichFunction.method || "get",
-              params: typeof enrichFunction.getParams === "function" ? enrichFunction.getParams(entity) : {},
+              params:
+                typeof enrichFunction.getParams === "function"
+                  ? enrichFunction.getParams(entity)
+                  : {},
             };
 
-            enrichRunMetadata.enrichUrls.push(enrichAxiosConfig.url);
+            enrichUrls.push(enrichAxiosConfig.url);
 
+            let enrichApiResponse: AxiosResponse;
             try {
               enrichApiResponse = await axios(enrichAxiosConfig);
-            } catch (error) {
+            } catch (error: AxiosError | any) {
               runStats.addError(enrichAxiosConfig.url, {
                 type: "http",
                 message: error.message,
@@ -169,8 +179,7 @@ const runStats = new Stats(apiName);
               continue;
             }
 
-            enrichedEntity = enrichFunction.enrichEntity(entity, enrichApiResponse);
-
+            enrichedEntity = enrichFunction.enrichEntity(enrichApiResponse, entity);
           } // END enrich functions
           newEntityData.push(enrichedEntity);
         } // END days
@@ -179,7 +188,7 @@ const runStats = new Stats(apiName);
           ? enrichRunMetadata.filesWritten++
           : enrichRunMetadata.filesSkipped++;
 
-        runStats.addRun(`enrich ${endpoint}`, enrichRunMetadata);
+        runStats.addRun(`enrich ${endpoint}`, { ...enrichRunMetadata, enrichUrls });
       } // END files
     }
   }

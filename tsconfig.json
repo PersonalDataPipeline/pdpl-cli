@@ -1,0 +1,43 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022"],
+    "module": "node16",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+		"moduleResolution": "nodenext",
+		"moduleDetection": "force",
+		"declaration": true,
+		"newLine": "lf",
+		"stripInternal": true,
+    "noImplicitAny": true,
+    "allowUnreachableCode": false, 
+    "allowUnusedLabels": false,
+    "removeComments": true,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noEmitOnError": true,
+		"useDefineForClassFields": true,
+		"forceConsistentCasingInFileNames": true,
+    "declarationMap": true,                          
+    "sourceMap": true,                                
+    "importsNotUsedAsValues": "remove",  
+    "isolatedModules": true
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true,
+    "files": true,
+    "experimentalResolver": true
+  }
+}

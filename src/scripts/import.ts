@@ -1,18 +1,19 @@
-const { existsSync, readFileSync, readdirSync } = require("fs");
-const { parse } = require("csv-parse/sync");
+import { existsSync, readFileSync, readdirSync } from "fs";
+import { parse } from "csv-parse/sync";
 
-const { fileNameDateTime } = require("./src/utils/date");
-const {
-  makeOutputPath,
-  writeOutputFile,
-  ensureOutputPath,
-} = require("./src/utils/fs");
-const Stats = require("./src/utils/stats");
+import { fileNameDateTime } from "../utils/date.js";
+import { makeOutputPath, writeOutputFile, ensureOutputPath } from "../utils/fs.js";
+import Stats, { StatsRunData } from "../utils/stats.js";
+import { DailyData } from "../utils/types.js";
+
+////
+/// Helpers
+//
 
 const importsSupported = readdirSync("src/imports");
 
 const importName = process.argv[2];
-const importType = process.argv[3];
+const importType = process.argv[3] || "";
 const importFile = process.argv[4];
 
 if (!importName) {
@@ -25,7 +26,7 @@ if (!importsSupported.includes(importName)) {
   process.exit();
 }
 
-const importHandler = require(`./src/imports/${importName}/index.js`);
+const importHandler = await import(`../imports/${importName}/index.js`);
 const allImportTypes = Object.keys(importHandler.importTypes);
 
 if (!importType && !allImportTypes.includes(importType)) {
@@ -51,8 +52,8 @@ const runStats = new Stats(importName);
   const savePath = [importName, thisHandler.getDirName()];
   ensureOutputPath(savePath);
 
-  const dailyData = {};
-  const runMetadata = {
+  const dailyData: DailyData = {};
+  const runMetadata: StatsRunData = {
     dateTime: runDateTime,
     filesWritten: 0,
     filesSkipped: 0,
@@ -69,8 +70,7 @@ const runStats = new Stats(importName);
     if (!dailyData[transformedEntity.day]) {
       dailyData[transformedEntity.day] = [];
     }
-
-    dailyData[transformedEntity.day].push(entity);
+    dailyData[transformedEntity.day]!.push(entity);
   }
 
   runMetadata.total = entities.length;

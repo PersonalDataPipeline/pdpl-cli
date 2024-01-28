@@ -1,12 +1,9 @@
-require("dotenv").config();
+import { config } from "dotenv";
+config();
 
-const { readdirSync } = require("fs");
+import { readdirSync } from "fs";
 
 const apisSupported = readdirSync("./src/apis");
-
-//
-// Runtime
-//
 
 const apiName = process.argv[2];
 
@@ -20,8 +17,8 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = require(`./src/apis/${apiName}/index.js`);
 (async () => {
+  const apiHandler = await import(`../imports/${apiName}/index.js`);
   let curlCommand = "curl";
 
   const authHeaders = await apiHandler.getApiAuthHeaders();
