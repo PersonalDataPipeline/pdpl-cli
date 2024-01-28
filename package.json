@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "caddy": "caddy run --envfile .env",
     "build": "tsc",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "strava": "node ./dist/scripts/get.js strava",
+    "oura": "node ./dist/scripts/get.js oura",
+    "wahoo": "node ./dist/scripts/get.js wahoo"
   },
   "author": "",
   "license": "MIT",
