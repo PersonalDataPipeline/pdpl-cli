@@ -8,8 +8,10 @@ const {
   WAHOO_REFRESH_TOKEN,
 } = process.env;
 
-export const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
-export const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
+const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
+const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
+
+const getApiBaseUrl = () => "https://api.wahooligan.com/v1/";
 
 let accessToken = "";
 const getApiAuthHeaders = async () => {
@@ -38,10 +40,12 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-module.exports = {
+const endpoints = {};
+
+export {
   authorizeEndpoint,
   tokenEndpoint,
-  getApiBaseUrl: () => "https://api.wahooligan.com/v1/",
+  getApiBaseUrl,
   getApiAuthHeaders,
-  endpoints: {},
+  endpoints
 };
