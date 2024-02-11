@@ -1,7 +1,10 @@
 # devlog
 
 Notes taken during development, newest to oldest. 
+
 ## [[2024-02-01]]
+
+**Querying data:**
 
 I was chatting with a fellow note-taker with Big Plans (TM) and he asked a simple question:
 
@@ -18,6 +21,18 @@ So, here are the kinds of things I would like answers to with my life's data in 
 - Actual athletic performance gains based on the exercise that I'm doing, like an automated coach based on inputs (how much and what type of training) and outputs (how well did the next training session go). This could also be correlated with sleep data.
 
 In the end, I think the idea of being able to pull down and query personal data is just ... really neat and I like just knowing my “corpus” is complete, backed up, and accessible. That plus an answer for “when did this happen” feels like enough to keep making progress on this.
+
+**Investigate incorrect data after TS conversion**
+
+The script is now saving another copy of the activity data for Strava activities. This endpoint is different because it does the "enrichment" process (getting more data based on list data).
+
+Side note here: this is the kind of investigation that will happen on a pretty regular basis with this system ("why is this data different than before") so I'm going to keep an eye open for ways to make this easier to track down. 
+
+One issue is the compressed/not compressed data. If I reformat what's there then the next run sees it as different and saves a copy. Not a big deal, can use the debug mode to store in a new directory (if I remember to do that). 
+
+Looks like this is duplicating data whether there is a previous file or not. It also looks like it's duplicating in two different APIs so the problem is not enrichment. And it's skipping duplicates for other APIs so this might have been happening since before the TS conversion.
+
+I think having mock data would be a really nice way to test this out ... 
 
 ## [[2024-01-28]]
 

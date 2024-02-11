@@ -1,4 +1,5 @@
 .env
 
+__mocks__/api-data
 node_modules
 dist

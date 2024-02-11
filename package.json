@@ -10,7 +10,8 @@
     "dev": "tsc -w",
     "strava": "node ./dist/scripts/get.js strava",
     "oura": "node ./dist/scripts/get.js oura",
-    "wahoo": "node ./dist/scripts/get.js wahoo"
+    "wahoo": "node ./dist/scripts/get.js wahoo",
+    "genmocks": "node ./dist/scripts/generate-mocks.js"
   },
   "author": "",
   "license": "MIT",
