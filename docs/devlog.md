@@ -1,9 +1,9 @@
 
-[[Daily/2024/2024-01-28|2024-01-28]]
+## [[2024-01-28]]
 
 Lesson learned: if you know you want your project to be TypeScript, START IT IN TYPESCRIPT. 
 
-[[Daily/2024/2024-01-26|2024-01-26]]
+## [[2024-01-26]]
 
 Starting to feel the motivation slipping away a bit as the problem becomes larger so I want to do a little level-setting. I've made some great progress so far and am not that far off from the very basic milestone of a backup solution for cloud-based applications. I still really love this idea on a number of levels and am excited for the possibility, just feeling a little overwhelmed with what "has to" be done and want to avoid stressing myself out over a passion project. I've been kind of thinking about everything, everywhere, all at once and that is my kryptonite. 
 
@@ -40,11 +40,11 @@ And the other big things on the radar:
 - **Data querying:** I think it's a good idea to try this out before things get ultra serious, on the off chance that the way that I'm saving data is going to make it much, much harder to query.
 - **Timeline data:** I need to be able to add timeline events, like address changes, vacations, job changes, etc. There are a few facets here, though, like "on this date, what job and address did I have?" That's not just an event, that's a state. This is a key part of the "moment in time" functionality that I want.
 
-[[Daily/2024/2024-01-25|2024-01-25]]
+## [[2024-01-25]]
 
 For importing, it could be a strategy indicated, merge or re-run so the script knows whether to add the results to an existing file or compare and save or skip. Filename could still indicate the run date/time as the latest and still create a new file if there are changes.
 
-[[Daily/2024/2024-01-24|2024-01-24]]
+## [[2024-01-24]]
 
 Problems are stacking up!
 
@@ -54,7 +54,7 @@ I'm also having a tough time wrapping my head around how to query data in the sy
 
 It's also a little exhausting thinking about maintaining these APIs ... but it's ok. No emergencies or anything going on right now!
 
-[[Daily/2024/2024-01-20|2024-01-20]]
+## [[2024-01-20]]
 
 Thinking about this "enrichment" problem a little more ... It makes sense to have these different cases pre-built and ready to use by the API handlers so the logic is not repeated over and over. Order of operations:
 
@@ -92,7 +92,7 @@ In the get latest file method we need to get the latest *that is not the current
 
 Lots of nested `for` loops going on in here .... 
 
-[[Daily/2024/2024-01-19|2024-01-19]]
+## [[2024-01-19]]
 
 A lot to think through today ...
 
@@ -115,7 +115,7 @@ Third one being the "Strava problem." First two are working just fine but that t
 
 It really seems like these calls all need to be first class citizens. Maybe an in-app queue of some kind ... matches the format of an external one .... might be onto something here.
 
-[[Daily/2024/2024-01-18|2024-01-18]]
+## [[2024-01-18]]
 
 Seeing a bit of a problem with getting all data for Strava (and, I'm sure, other APIs as well). The "list activities for this athlete" only provides some of the data. You have to get an ID from each and then get each from a separate endpoint. So you'll need to get:
 
@@ -126,15 +126,15 @@ I wonder if it's worth it to download and keep everything or if that's just too 
 
 Looking at the low Strava API rate limits and thinking about the additional per-activity call had me worried that I’d need some new way of working with JSON that skipped the API call if the activity was already there. This would go against what I originally planned to do which was (is) to make the request and check it against already saved data in case anything had changed. Not the end of the world. But I also realized that this is meant to be long-running and asynchronous so no one should be waiting for the outcome. If this needs to wait minutes between each batch, so be it. The manual script running is only during development. It’s also making me think much more seriously about a queue and a worker instead of a single script.
 
-[[Daily/2024/2024-01-16|2024-01-16]]
+## [[2024-01-16]]
 
 [ADR 001: Use native JS Date or npm library](./adr/001-js-date-library.md)
 
-[[Daily/2024/2024-01-13|2024-01-13]] 
+## [[2024-01-13]] 
 
 After a few commits ... generally the plan is working well so far. Almost have this saving to files. Global logger concept feels like a big leg up in terms of having this run unattended. Runs that need repeating and repeatedly failing ones can be attended to. This also gives us reporting and alerts, in general. Doing a `thing`, saving the state, then having `thing` run against that state and so on feels like the right pattern. Right now this is running per API but I want to think about the idea of a full run, then per-API run, then per endpoint/day runs pretty quickly. Maybe some kind of queue for repairs? So trigger knows to always run XYZ, then check the "repair" "queue" for what else needs to be done 🤔 but feeling good about this so far. Also: pagination 🤢
 
-[[Daily/2024/2024-01-11|2024-01-11]]
+## [[2024-01-11]]
 
 Let's give this a try with Oura and Strava...
 
@@ -144,7 +144,7 @@ Let's give this a try with Oura and Strava...
 
 I want to hint at extensibility so it's not hard to add it later. First thing is authorization for the API. Oura is an easy bearer token so I made an auth strategy for that. Strava is a refresh token so I wrote a small authorize server and store the refresh token (rotating ...) in the env file.
 
-[[Daily/2024/2024-01-09|2024-01-09]]
+## [[2024-01-09]]
 
 The web getter! A critical part of this whole system.
 
