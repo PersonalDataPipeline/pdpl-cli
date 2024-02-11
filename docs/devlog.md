@@ -1,3 +1,23 @@
+# devlog
+
+Notes taken during development, newest to oldest. 
+## [[2024-02-01]]
+
+I was chatting with a fellow note-taker with Big Plans (TM) and he asked a simple question:
+
+> You collect a lot of historic data.  Curious ... do you have a concept of how you want to visualize historic data?  Are you thinking something similar to a traditional calendar / agenda, or something different, maybe more analytical in nature?
+
+It’s basically going to be querying JSON … or writing transforms to make it more queryable. I have a system in mind but I haven't done the work to write it all down properly outside of various bullet point lists. See the end of the [[2024-01-26]] note below about data querying. 
+
+But the question of "how will you use this data" is an important one and it depends entirely on the data I’m getting and what I’m using it for. I have to ask myself ... if I had everything all plugged in and ready to go, what would I do with it? At this point, I’m honestly a little worried that the answer would be “I don’t know.” I don’t know that I am, or will ever be “data driven” enough in my personal life for that to make sense. 
+
+So, here are the kinds of things I would like answers to with my life's data in a queryable format:
+
+- What did I do on this specific date? What photos were taken? What was going on in the world then? This is more fulfilling a constant curiosity than it is about changing the course of my life but it's important to me none-the-less. 
+- When did this specific thing happen? When were we in Hawaii that one time? What job did I have when we moved from here to there? Somewhat similar question but more around finding a date from an event.
+- Actual athletic performance gains based on the exercise that I'm doing, like an automated coach based on inputs (how much and what type of training) and outputs (how well did the next training session go). This could also be correlated with sleep data.
+
+In the end, I think the idea of being able to pull down and query personal data is just ... really neat and I like just knowing my “corpus” is complete, backed up, and accessible. That plus an answer for “when did this happen” feels like enough to keep making progress on this.
 
 ## [[2024-01-28]]
 
@@ -62,10 +82,10 @@ Thinking about this "enrichment" problem a little more ... It makes sense to hav
 2. If snapshot ...
 	1. Save (want to keep what's there in case we have an error enriching)
 	2. If enrich ...
-		3. Read file
-		4. Enrich
-		5. Overwrite original
-4. If list ...
+		1. Read file
+		2. Enrich
+		3. Overwrite original
+3. If list ...
 	1. Parse out days
 	2. Save files
 	3. If enrich ...
