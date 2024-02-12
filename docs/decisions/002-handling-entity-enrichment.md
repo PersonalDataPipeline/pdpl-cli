@@ -24,7 +24,7 @@ The nice parts of the current system are:
 
 ## Consequences
 
-- Output data format needs to stay as stable as possible
+- Output data format needs to stay as stable as possible, long term
 - Non-atomic transactions allow for incomplete entities with no record of the issue
 - Solving this needs to account for future API endpoints that may have similar functionality
 
@@ -32,4 +32,6 @@ The nice parts of the current system are:
 
 This system should be more atomic and error-resilient by making and saving calls for the enrichment data as separate files. This means the whole "enrichment" process needs to be re-thought and sooner rather than later so I can move forward with the rest of the system on stable data output. 
 
-The main problem to solve here how to generate a list of complete entities and provide those to future endpoint calls. There could be multiple types of entities 
+The main problem to solve here is how to generate a list of complete entities and provide those to future endpoint calls. The "enrichment" relies on existing entities for an identifier so it has to be a two-stage process. 
+
+I think the answer here is two separate groups of endpoints: primary for the main entities and secondary for the ones that rely on the primary ones. Secondary can be typed to extend the primary ones and add an indicator of which is their primary endpoint. This would allow all the calls to be atomic and failed calls to be easily re-queued and ran. All primary calls run, then secondary to ensure that the data we need is present.

@@ -2,7 +2,13 @@
 
 Notes taken during development, newest to oldest. 
 
-## [[2024-02-01]]
+## [[2024-02-12]]
+
+I'm excited to dig into the enrichment refactor but first I need to wire up the mock data to make testing easier and solve the current duplicate data problem. 
+
+Also thinking about this: [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
+
+## [[2024-02-11]]
 
 **Querying data:**
 
