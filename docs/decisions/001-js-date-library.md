@@ -18,7 +18,3 @@ I'm going to stick with the native library because:
 - I know the library and its pitfalls fairly well
 - Other libraries just have a different API to learn
 - The [Temporal API](https://tc39.es/proposal-temporal/docs/) is on its way
-
-## Consequences
-
-TBD

@@ -10,7 +10,7 @@ I was chatting with a fellow note-taker with Big Plans (TM) and he asked a simpl
 
 > You collect a lot of historic data.  Curious ... do you have a concept of how you want to visualize historic data?  Are you thinking something similar to a traditional calendar / agenda, or something different, maybe more analytical in nature?
 
-It’s basically going to be querying JSON … or writing transforms to make it more queryable. I have a system in mind but I haven't done the work to write it all down properly outside of various bullet point lists. See the end of the [[2024-01-26]] note below about data querying. 
+It’s basically going to be querying JSON … or writing transforms to make it more queryable. I have a system in mind but I haven't done the work to write it all down properly outside of various bullet point lists. See the end of the [2024-01-26](#2024-01-26) note below about data querying. 
 
 But the question of "how will you use this data" is an important one and it depends entirely on the data I’m getting and what I’m using it for. I have to ask myself ... if I had everything all plugged in and ready to go, what would I do with it? At this point, I’m honestly a little worried that the answer would be “I don’t know.” I don’t know that I am, or will ever be “data driven” enough in my personal life for that to make sense. 
 
@@ -33,6 +33,16 @@ One issue is the compressed/not compressed data. If I reformat what's there then
 Looks like this is duplicating data whether there is a previous file or not. It also looks like it's duplicating in two different APIs so the problem is not enrichment. And it's skipping duplicates for other APIs so this might have been happening since before the TS conversion.
 
 I think having mock data would be a really nice way to test this out ... 
+
+**Mock data generation + enrichment**
+
+Minor tangent here ... working through this problem to help with the troubleshooting above ... first, I realized that we can't have mock data stored in the repo because that will, by necessity, be personal. We could probably enforce randomized generation at some point when folks add new API connections but, for now, we'll keep it simple and make folks generate their own. 
+
+Second, this calls into question the problem with enrichment again so I started an ADR for it:
+
+[ADR 002: Enriching single entity data](./decisions/002-handling-entity-enrichment.md)
+
+See [2024-01-20](#2024-01-20) for original thinking about this.
 
 ## [[2024-01-28]]
 
