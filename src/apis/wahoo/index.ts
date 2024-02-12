@@ -11,6 +11,7 @@ const {
 const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
 const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
 
+const getApiName = () => "wahoo";
 const getApiBaseUrl = () => "https://api.wahooligan.com/v1/";
 
 let accessToken = "";
@@ -45,6 +46,7 @@ const endpoints = {};
 export {
   authorizeEndpoint,
   tokenEndpoint,
+  getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
   endpoints

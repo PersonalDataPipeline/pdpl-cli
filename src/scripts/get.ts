@@ -1,13 +1,14 @@
-import { config } from "dotenv";
-config();
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig();
 
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { readdirSync } from "fs";
 
 import Stats, { StatsRunData } from "../utils/stats.js";
 import { ensureOutputPath, writeOutputFile, makeOutputPath } from "../utils/fs.js";
 import { fileNameDateTime } from "../utils/date.js";
 import { DailyData } from "../utils/types.js";
+import { getApiData, MockAxiosResponse } from "../utils/data.js";
 
 ////
 /// Helpers
@@ -39,10 +40,6 @@ if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
 const runStats = new Stats(apiName);
 
 (async () => {
-  const axiosBaseConfig = {
-    baseURL: apiHandler.getApiBaseUrl(),
-    headers: await apiHandler.getApiAuthHeaders(),
-  };
 
   for (const endpoint in apiHandler.endpoints) {
     if (runEndpoint && runEndpoint !== endpoint) {
@@ -52,17 +49,9 @@ const runStats = new Stats(apiName);
     const thisEndpoint = apiHandler.endpoints[endpoint];
     const runDateTime = fileNameDateTime();
 
-    const axiosConfig = {
-      ...axiosBaseConfig,
-      url: endpoint,
-      method: thisEndpoint.method || "get",
-      params:
-        typeof thisEndpoint.getParams === "function" ? thisEndpoint.getParams() : {},
-    };
-
-    let apiResponse;
+    let apiResponse: AxiosResponse | MockAxiosResponse;
     try {
-      apiResponse = await axios(axiosConfig);
+      apiResponse = await getApiData(apiHandler, thisEndpoint);
     } catch (error: AxiosError | any) {
       runStats.addError(endpoint, {
         type: "http",
@@ -155,23 +144,15 @@ const runStats = new Stats(apiName);
         for (const entity of dayEntityData!) {
           let enrichedEntity = {};
           for (const enrichFunction of thisEndpoint.enrichEntity) {
-            const enrichAxiosConfig = {
-              ...axiosBaseConfig,
-              url: enrichFunction.getEndpoint(entity),
-              method: enrichFunction.method || "get",
-              params:
-                typeof enrichFunction.getParams === "function"
-                  ? enrichFunction.getParams(entity)
-                  : {},
-            };
+            const enrichEndpoint = enrichFunction.getEndpoint(entity);
 
-            enrichUrls.push(enrichAxiosConfig.url);
+            enrichUrls.push(enrichEndpoint);
 
-            let enrichApiResponse: AxiosResponse;
+            let enrichApiResponse: AxiosResponse | MockAxiosResponse;
             try {
-              enrichApiResponse = await axios(enrichAxiosConfig);
+              enrichApiResponse = await getApiData(apiHandler, enrichFunction, entity);
             } catch (error: AxiosError | any) {
-              runStats.addError(enrichAxiosConfig.url, {
+              runStats.addError(enrichEndpoint, {
                 type: "http",
                 message: error.message,
                 data: error.data || {},

@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 
 import { getFormattedDate } from "../../utils/date.js";
+import { ApiHandler } from "../../utils/types.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
 
@@ -34,6 +35,7 @@ const transformResponse = (apiResponse: AxiosResponse) => [
 /// Exports
 //
 
+const getApiName = () => "oura";
 const getApiBaseUrl = () => "https://api.ouraring.com/v2/";
 
 const getApiAuthHeaders = () => ({
@@ -42,48 +44,56 @@ const getApiAuthHeaders = () => ({
 
 const endpoints = {
   "usercollection/workout": {
+    getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/sleep": {
+    getEndpoint: () => "usercollection/sleep",
     getDirName: () => "user--sleep",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/daily_stress": {
+    getEndpoint: () => "usercollection/daily_stress",
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/daily_readiness": {
+    getEndpoint: () => "usercollection/daily_readiness",
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/daily_activity": {
+    getEndpoint: () => "usercollection/daily_activity",
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/daily_spo2": {
+    getEndpoint: () => "usercollection/daily_spo2",
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/sleep_time": {
+    getEndpoint: () => "usercollection/sleep_time",
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
   "usercollection/heartrate": {
+    getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
     getParams: () => ({
       // Date/time returned from the API is always UTC,
@@ -97,4 +107,13 @@ const endpoints = {
   },
 };
 
-export { getApiBaseUrl, getApiAuthHeaders, endpoints };
+export { getApiName, getApiBaseUrl, getApiAuthHeaders, endpoints };
+
+const handler: ApiHandler = {
+  getApiName,
+  getApiBaseUrl,
+  getApiAuthHeaders,
+  endpoints,
+};
+
+export default handler;

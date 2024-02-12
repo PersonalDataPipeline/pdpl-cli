@@ -34,6 +34,7 @@ interface StravaActivityEntity {
 const authorizeEndpoint = "https://www.strava.com/oauth/authorize";
 const tokenEndpoint = "https://www.strava.com/oauth/token";
 
+const getApiName = () => "strava";
 const getApiBaseUrl = () => "https://www.strava.com/api/v3/";
 
 let accessToken = "";
@@ -65,9 +66,11 @@ const getApiAuthHeaders = async () => {
 
 const endpoints = {
   "athlete": {
+    getEndpoint: () => "athlete",
     getDirName: () => "athlete",
   },
   "athlete/activities": {
+    getEndpoint: () => "athlete/activities",
     getDirName: () => "athlete--activities",
     getParams: () => ({
       before: Math.floor(Date.now() / 1000),
@@ -104,6 +107,7 @@ const endpoints = {
 export {
   authorizeEndpoint,
   tokenEndpoint,
+  getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
   endpoints,
