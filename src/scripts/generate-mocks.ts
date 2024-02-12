@@ -18,38 +18,37 @@ const mocksDirRelative = path.join(__dirname, "..", "..", "__mocks__", "api-data
 
     const apiHandler = await import(`../apis/${apiName}/index.js`);
   
-    for (const endpoint in apiHandler.endpoints) {
-      const thisEndpoint = apiHandler.endpoints[endpoint];
+    for (const endpointHandler of apiHandler.endpoints) {
 
       const axiosConfig = {
         baseURL: apiHandler.getApiBaseUrl(),
         headers: await apiHandler.getApiAuthHeaders(),
-        url: endpoint,
-        method: thisEndpoint.method || "get",
+        url: endpointHandler.getEndpoint(),
+        method: endpointHandler.method || "get",
         params:
-          typeof thisEndpoint.getParams === "function" ? thisEndpoint.getParams() : {},
+          typeof endpointHandler.getParams === "function" ? endpointHandler.getParams() : {},
       };
 
       let apiResponse = { data: {} };
       try {
         apiResponse = await axios(axiosConfig);
         writeFileSync(
-          path.join(saveDir, `${thisEndpoint.getDirName()}.json`), 
+          path.join(saveDir, `${endpointHandler.getDirName()}.json`), 
           JSON.stringify(apiResponse.data)
         );
       } catch (error: any) {
         console.log(`❌ Caught error for ${axiosConfig.url}: ${error.message}`);
       }
       
-      if (thisEndpoint.enrichEntity) {
+      if (endpointHandler.enrichEntity) {
         
-        const [ entityData ] = typeof thisEndpoint.transformResponse === "function" ?
-          thisEndpoint.transformResponse(apiResponse.data) : 
+        const [ entityData ] = typeof endpointHandler.transformResponse === "function" ?
+          endpointHandler.transformResponse(apiResponse.data) : 
           [ apiResponse.data ];
 
         for (const entity of entityData) {
           
-          for (const enrichFunction of thisEndpoint.enrichEntity) {
+          for (const enrichFunction of endpointHandler.enrichEntity) {
 
             const enrichAxiosConfig = {
               baseURL: apiHandler.getApiBaseUrl(),

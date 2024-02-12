@@ -12,9 +12,7 @@ export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => {};
-  endpoints: {
-    [key: string]: ApiEndpoint;
-  };
+  endpoints: ApiEndpoint[];
   authorizeEndpoint?: string;
   tokenEndpoint?: string;
 }

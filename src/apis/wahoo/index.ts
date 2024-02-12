@@ -41,7 +41,7 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpoints = {};
+const endpoints = [{}];
 
 export {
   authorizeEndpoint,

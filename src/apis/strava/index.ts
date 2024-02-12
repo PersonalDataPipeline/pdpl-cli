@@ -64,12 +64,12 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpoints = {
-  "athlete": {
+const endpoints = [
+  {
     getEndpoint: () => "athlete",
     getDirName: () => "athlete",
   },
-  "athlete/activities": {
+  {
     getEndpoint: () => "athlete/activities",
     getDirName: () => "athlete--activities",
     getParams: () => ({
@@ -102,7 +102,7 @@ const endpoints = {
       },
     ],
   },
-};
+];
 
 export {
   authorizeEndpoint,

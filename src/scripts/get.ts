@@ -41,19 +41,18 @@ const runStats = new Stats(apiName);
 
 (async () => {
 
-  for (const endpoint in apiHandler.endpoints) {
-    if (runEndpoint && runEndpoint !== endpoint) {
+  for (const endpointHandler of apiHandler.endpoints) {
+    if (runEndpoint && runEndpoint !== endpointHandler.getEndpoint()) {
       continue;
     }
 
-    const thisEndpoint = apiHandler.endpoints[endpoint];
     const runDateTime = fileNameDateTime();
 
     let apiResponse: AxiosResponse | MockAxiosResponse;
     try {
-      apiResponse = await getApiData(apiHandler, thisEndpoint);
+      apiResponse = await getApiData(apiHandler, endpointHandler);
     } catch (error: AxiosError | any) {
-      runStats.addError(endpoint, {
+      runStats.addError(endpointHandler.getEndpoint(), {
         type: "http",
         message: error.message,
         data: error.data || {},
@@ -61,7 +60,7 @@ const runStats = new Stats(apiName);
       continue;
     }
 
-    const savePath = [apiName, thisEndpoint.getDirName()];
+    const savePath = [apiName, endpointHandler.getDirName()];
     ensureOutputPath(savePath);
 
     const runMetadata: StatsRunData = {
@@ -71,36 +70,36 @@ const runStats = new Stats(apiName);
     };
 
     const [apiResponseData] =
-      typeof thisEndpoint.transformResponse === "function"
-        ? thisEndpoint.transformResponse(apiResponse)
+      typeof endpointHandler.transformResponse === "function"
+        ? endpointHandler.transformResponse(apiResponse)
         : [apiResponse.data, apiResponse.headers];
 
     // Need to parse returned to days if not a snapshot
     const filesGenerated: DailyData = {};
-    if (typeof thisEndpoint.parseDayFromEntity === "function") {
+    if (typeof endpointHandler.parseDayFromEntity === "function") {
       const dailyData: DailyData = {};
       const entities = apiResponseData;
 
       if (!Array.isArray(entities)) {
-        runStats.addError(endpoint, {
+        runStats.addError(endpointHandler.getEndpoint(), {
           type: "parsing_response",
-          message: `Cannot iterate through data from ${endpoint}.`,
+          message: `Cannot iterate through data from ${endpointHandler.getEndpoint()}.`,
         });
         continue;
       }
 
       try {
         for (const entity of entities) {
-          entity.day = thisEndpoint.parseDayFromEntity(entity);
+          entity.day = endpointHandler.parseDayFromEntity(entity);
           if (!dailyData[entity.day]) {
             dailyData[entity.day] = [entity];
           }
           dailyData[entity.day]!.push(entity);
         }
       } catch (error: AxiosError | any) {
-        runStats.addError(endpoint, {
+        runStats.addError(endpointHandler.getEndpoint(), {
           type: "parsing_response",
-          message: `Cannot parse data from ${endpoint} into days: ${error.message}`,
+          message: `Cannot parse data from ${endpointHandler.getEndpoint()} into days: ${error.message}`,
         });
         continue;
       }
@@ -126,9 +125,9 @@ const runStats = new Stats(apiName);
       filesGenerated[outputPath] = apiResponseData;
     }
 
-    runStats.addRun(endpoint, runMetadata);
+    runStats.addRun(endpointHandler.getEndpoint(), runMetadata);
 
-    if (thisEndpoint.enrichEntity) {
+    if (endpointHandler.enrichEntity) {
       for (const dayEntityFile in filesGenerated) {
         // dayEntityFile is file name, value is an array of entity objects
         const dayEntityData = filesGenerated[dayEntityFile];
@@ -143,7 +142,7 @@ const runStats = new Stats(apiName);
         const enrichUrls = [];
         for (const entity of dayEntityData!) {
           let enrichedEntity = {};
-          for (const enrichFunction of thisEndpoint.enrichEntity) {
+          for (const enrichFunction of endpointHandler.enrichEntity) {
             const enrichEndpoint = enrichFunction.getEndpoint(entity);
 
             enrichUrls.push(enrichEndpoint);
@@ -169,7 +168,7 @@ const runStats = new Stats(apiName);
           ? enrichRunMetadata.filesWritten++
           : enrichRunMetadata.filesSkipped++;
 
-        runStats.addRun(`enrich ${endpoint}`, { ...enrichRunMetadata, enrichUrls });
+        runStats.addRun(`enrich ${endpointHandler.getEndpoint()}`, { ...enrichRunMetadata, enrichUrls });
       } // END files
     }
   }

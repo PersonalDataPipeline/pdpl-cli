@@ -42,57 +42,57 @@ const getApiAuthHeaders = () => ({
   Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
 });
 
-const endpoints = {
-  "usercollection/workout": {
+const endpoints = [
+  {
     getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/sleep": {
+  {
     getEndpoint: () => "usercollection/sleep",
     getDirName: () => "user--sleep",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/daily_stress": {
+  {
     getEndpoint: () => "usercollection/daily_stress",
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/daily_readiness": {
+  {
     getEndpoint: () => "usercollection/daily_readiness",
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/daily_activity": {
+  {
     getEndpoint: () => "usercollection/daily_activity",
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/daily_spo2": {
+  {
     getEndpoint: () => "usercollection/daily_spo2",
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/sleep_time": {
+  {
     getEndpoint: () => "usercollection/sleep_time",
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
     parseDayFromEntity,
     transformResponse,
   },
-  "usercollection/heartrate": {
+  {
     getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
     getParams: () => ({
@@ -105,7 +105,7 @@ const endpoints = {
       getFormattedDate(0, new Date(entity.timestamp)),
     transformResponse,
   },
-};
+];
 
 export { getApiName, getApiBaseUrl, getApiAuthHeaders, endpoints };
 
