@@ -12,8 +12,8 @@ import { fileURLToPath } from "url";
 
 import getConfig from "./config.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export const __filename = fileURLToPath(import.meta.url);
+export const __dirname = path.dirname(__filename);
 
 export const envWrite = (
   key: string,
