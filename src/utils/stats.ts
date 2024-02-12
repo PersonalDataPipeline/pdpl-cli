@@ -68,10 +68,16 @@ export default class Stats {
     this.log.endTimeMs = Date.now();
     this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
     const savePath = [this.log.name, "_runs"];
+    const logContent = JSON.stringify(this.log, null, 2);
     ensureOutputPath(savePath);
     writeFileSync(
       path.join(getConfig().outputDir, ...savePath, this.log.dateTime + ".json"),
       JSON.stringify(this.log, null, 2)
     );
+
+    if (getConfig().debug) {
+      console.log(logContent);
+      
+    }
   }
 }
