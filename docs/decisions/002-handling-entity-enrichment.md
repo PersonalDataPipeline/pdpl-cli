@@ -35,3 +35,7 @@ This system should be more atomic and error-resilient by making and saving calls
 The main problem to solve here is how to generate a list of complete entities and provide those to future endpoint calls. The "enrichment" relies on existing entities for an identifier so it has to be a two-stage process. 
 
 I think the answer here is two separate groups of endpoints: primary for the main entities and secondary for the ones that rely on the primary ones. Secondary can be typed to extend the primary ones and add an indicator of which is their primary endpoint. This would allow all the calls to be atomic and failed calls to be easily re-queued and ran. All primary calls run, then secondary to ensure that the data we need is present.
+
+## Outcome
+
+- Much cleaner code in the handlers and `get` script

@@ -6,7 +6,14 @@ Notes taken during development, newest to oldest.
 
 I'm excited to dig into the enrichment refactor but first I need to wire up the mock data to make testing easier and solve the current duplicate data problem. 
 
+Mock data ingestion was fairly straightforward and I like it as a model for anything I write in the future that needs to call APIs. That mock data functionality is so, so nice for testing and feels like a "Good Web Citizen" thing not hammering on APIs with a script. 
+
+Enrichment refactor was pretty straightforward as well. A few loose ends with the types but that should not be too hard to shore up at some point soon.
+
 Also thinking about this: [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
+
+Now, after hours of refactoring, I can finally figure out WTF is going on with the duplicate entries! Or maybe I'll just rewrite it in Ruby first ...
+
 
 ## [[2024-02-11]]
 
