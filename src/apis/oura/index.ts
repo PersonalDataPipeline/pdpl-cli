@@ -27,7 +27,8 @@ const defaultParams = {
 
 const parseDayFromEntity = (entity: OuraEntity) => entity.day;
 
-const transformResponseData = (response: AxiosResponse | MockAxiosResponse) => response.data.data;
+const transformResponseData = (response: AxiosResponse | MockAxiosResponse) =>
+  response.data.data;
 
 ////
 /// Exports

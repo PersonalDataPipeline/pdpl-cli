@@ -153,9 +153,9 @@ const runStats = new Stats(apiName);
       }
 
       const apiResponseData =
-      typeof endpointHandler.transformResponseData === "function"
-        ? endpointHandler.transformResponseData(apiResponse)
-        : apiResponse.data;
+        typeof endpointHandler.transformResponseData === "function"
+          ? endpointHandler.transformResponseData(apiResponse)
+          : apiResponse.data;
 
       runMetadata.total = 1;
       const outputPath = makeOutputPath(

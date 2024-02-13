@@ -4,11 +4,8 @@ import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
 
-const { 
-  WAHOO_AUTHORIZE_CLIENT_ID, 
-  WAHOO_AUTHORIZE_CLIENT_SECRET, 
-  WAHOO_REFRESH_TOKEN 
-} = process.env;
+const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
+  process.env;
 
 ////
 /// Types
@@ -67,12 +64,12 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
       per_page: 50,
     }),
     parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.day,
-    transformResponseData: (response: AxiosResponse | MockAxiosResponse) => response.data.workouts,
+    transformResponseData: (response: AxiosResponse | MockAxiosResponse) =>
+      response.data.workouts,
   },
 ];
 
-const endpointsSecondary: ApiSecondaryEndpoint[] = [
-];
+const endpointsSecondary: ApiSecondaryEndpoint[] = [];
 export {
   authorizeEndpoint,
   tokenEndpoint,
