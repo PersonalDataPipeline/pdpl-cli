@@ -14,7 +14,8 @@ const {
 //
 
 interface WahooWorkoutEntity {
-  starts: string
+  day: string;
+  [key: string]: unknown;
 }
 
 ////
@@ -64,9 +65,7 @@ const endpointsPrimary: ApiEndpoint[] = [
       page: 1,
       per_page: 50,
     }),
-    parseDayFromEntity: (entity: WahooWorkoutEntity) => {
-      return entity.starts.split("T")[0] || "";
-    },
+    parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.day,
     transformResponse: (response: AxiosResponse) => [
       response.data.workouts,
       response.headers,
