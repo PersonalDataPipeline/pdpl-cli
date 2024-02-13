@@ -89,9 +89,7 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
         );
         response.write(
           `<p>Error exchanging code for token: ${tokenError.message}</p>` +
-            `<pre>${JSON.stringify(
-              (tokenError.response as AxiosResponse).data
-            )}</pre>` +
+            `<pre>${JSON.stringify((tokenError.response as AxiosResponse).data)}</pre>` +
             `<p><a href="/">Try again</a></p>`
         );
         return response.end();
@@ -124,9 +122,7 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
           `Re-authorizing will replace the existing token.</p>`
       );
     }
-    response.write(
-      `<p><a href="${authorizeUrl.toString()}">Click to authorize</a></p>`
-    );
+    response.write(`<p><a href="${authorizeUrl.toString()}">Click to authorize</a></p>`);
     return response.end();
   };
 };

@@ -5,9 +5,9 @@ import { mkdirSync, readdirSync, rmSync, writeFileSync } from "fs";
 import axios from "axios";
 import path from "path";
 
-import { __dirname } from "../utils/fs.js"
+import { __dirname } from "../utils/fs.js";
 
-const apisSupported = process.argv[2] ? [ process.argv[2] ] : readdirSync("./src/apis");
+const apisSupported = process.argv[2] ? [process.argv[2]] : readdirSync("./src/apis");
 const mocksDirRelative = path.join(__dirname, "..", "..", "__mocks__", "api-data");
 
 (async () => {
@@ -17,39 +17,38 @@ const mocksDirRelative = path.join(__dirname, "..", "..", "__mocks__", "api-data
     mkdirSync(saveDir);
 
     const apiHandler = await import(`../apis/${apiName}/index.js`);
-  
-    for (const endpointHandler of apiHandler.endpoints) {
 
+    for (const endpointHandler of apiHandler.endpoints) {
       const axiosConfig = {
         baseURL: apiHandler.getApiBaseUrl(),
         headers: await apiHandler.getApiAuthHeaders(),
         url: endpointHandler.getEndpoint(),
         method: endpointHandler.method || "get",
         params:
-          typeof endpointHandler.getParams === "function" ? endpointHandler.getParams() : {},
+          typeof endpointHandler.getParams === "function"
+            ? endpointHandler.getParams()
+            : {},
       };
 
       let apiResponse = { data: {} };
       try {
         apiResponse = await axios(axiosConfig);
         writeFileSync(
-          path.join(saveDir, `${endpointHandler.getDirName()}.json`), 
+          path.join(saveDir, `${endpointHandler.getDirName()}.json`),
           JSON.stringify(apiResponse.data)
         );
       } catch (error: any) {
         console.log(`❌ Caught error for ${axiosConfig.url}: ${error.message}`);
       }
-      
+
       if (endpointHandler.enrichEntity) {
-        
-        const [ entityData ] = typeof endpointHandler.transformResponse === "function" ?
-          endpointHandler.transformResponse(apiResponse.data) : 
-          [ apiResponse.data ];
+        const [entityData] =
+          typeof endpointHandler.transformResponse === "function"
+            ? endpointHandler.transformResponse(apiResponse.data)
+            : [apiResponse.data];
 
         for (const entity of entityData) {
-          
           for (const enrichFunction of endpointHandler.enrichEntity) {
-
             const enrichAxiosConfig = {
               baseURL: apiHandler.getApiBaseUrl(),
               headers: await apiHandler.getApiAuthHeaders(),
@@ -65,11 +64,13 @@ const mocksDirRelative = path.join(__dirname, "..", "..", "__mocks__", "api-data
               const enrichApiResponse = await axios(enrichAxiosConfig);
               const fileName = enrichFunction.getEndpoint(entity).replaceAll("/", "--");
               writeFileSync(
-                path.join(saveDir, `${fileName}.json`), 
+                path.join(saveDir, `${fileName}.json`),
                 JSON.stringify(enrichApiResponse.data)
               );
             } catch (error: any) {
-              console.log(`❌ Caught error for ${enrichAxiosConfig.url}: ${error.message}`);
+              console.log(
+                `❌ Caught error for ${enrichAxiosConfig.url}: ${error.message}`
+              );
             }
           }
         }

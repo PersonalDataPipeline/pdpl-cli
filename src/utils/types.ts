@@ -25,7 +25,7 @@ export interface ApiEndpoint {
   parseDayFromEntity?: (entity: any) => string;
 }
 
-export interface ApiEnrichEndpoint extends Omit<ApiEndpoint, "getEndpoint" > {
+export interface ApiEnrichEndpoint extends Omit<ApiEndpoint, "getEndpoint"> {
   getEndpoint: (entity: any) => string;
   getPrimary: () => string;
   getIdentifier: (entity: any) => string;

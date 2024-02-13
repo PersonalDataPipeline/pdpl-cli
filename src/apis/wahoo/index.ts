@@ -3,11 +3,8 @@ import axios, { AxiosResponse } from "axios";
 import { envWrite } from "../../utils/fs.js";
 import { ApiEndpoint } from "../../utils/types.js";
 
-const {
-  WAHOO_AUTHORIZE_CLIENT_ID,
-  WAHOO_AUTHORIZE_CLIENT_SECRET,
-  WAHOO_REFRESH_TOKEN,
-} = process.env;
+const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
+  process.env;
 
 const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
 const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
@@ -18,9 +15,7 @@ const getApiBaseUrl = () => "https://api.wahooligan.com/v1/";
 let accessToken = "";
 const getApiAuthHeaders = async () => {
   if (!WAHOO_REFRESH_TOKEN) {
-    console.log(
-      "❌ No Wahoo refresh token stored. See README for more information."
-    );
+    console.log("❌ No Wahoo refresh token stored. See README for more information.");
     process.exit();
   }
 
@@ -50,5 +45,5 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  endpointsPrimary
+  endpointsPrimary,
 };

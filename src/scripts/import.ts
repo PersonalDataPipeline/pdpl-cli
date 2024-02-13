@@ -30,9 +30,7 @@ const importHandler = await import(`../imports/${importName}/index.js`);
 const allImportTypes = Object.keys(importHandler.importTypes);
 
 if (!importType && !allImportTypes.includes(importType)) {
-  console.log(
-    `❌ Unsupported import type "${importType}" for import "${importName}"`
-  );
+  console.log(`❌ Unsupported import type "${importType}" for import "${importName}"`);
   process.exit();
 }
 

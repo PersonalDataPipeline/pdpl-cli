@@ -22,10 +22,7 @@ export const importTypes = {
       }
 
       for (const label in entity) {
-        if (
-          entity[label] === "Not Available" ||
-          entity[label] === "Not Applicable"
-        ) {
+        if (entity[label] === "Not Available" || entity[label] === "Not Applicable") {
           delete entity[label];
         }
       }

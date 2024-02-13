@@ -47,9 +47,7 @@ const getApiBaseUrl = () => "https://www.strava.com/api/v3/";
 let accessToken = "";
 const getApiAuthHeaders = async () => {
   if (!STRAVA_REFRESH_TOKEN) {
-    console.log(
-      "❌ No Strava refresh token stored. See README for more information."
-    );
+    console.log("❌ No Strava refresh token stored. See README for more information.");
     process.exit();
   }
 

@@ -109,4 +109,10 @@ const endpointsPrimary: ApiEndpoint[] = [
 
 const endpointsSecondary: ApiEnrichEndpoint[] = [];
 
-export { getApiName, getApiBaseUrl, getApiAuthHeaders, endpointsPrimary, endpointsSecondary };
+export {
+  getApiName,
+  getApiBaseUrl,
+  getApiAuthHeaders,
+  endpointsPrimary,
+  endpointsSecondary,
+};

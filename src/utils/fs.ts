@@ -1,10 +1,4 @@
-import {
-  readFileSync,
-  writeFileSync,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-} from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,11 +8,7 @@ import getConfig from "./config.js";
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 
-export const envWrite = (
-  key: string,
-  newValue: string,
-  replaceValue: string
-): void => {
+export const envWrite = (key: string, newValue: string, replaceValue: string): void => {
   const envPath = path.join(__dirname, "../../.env");
   const currentContents = readFileSync(envPath, "utf8");
 
@@ -45,10 +35,7 @@ export const ensureOutputPath = (createPath: string[]): void => {
   });
 };
 
-export const writeOutputFile = (
-  writePath: string,
-  fileContents: unknown
-): boolean => {
+export const writeOutputFile = (writePath: string, fileContents: unknown): boolean => {
   const fullSavePath = path.join(getConfig().outputDir, writePath);
 
   const fileContentsString = getConfig().compressJson
@@ -84,9 +71,7 @@ export const getLatestFileContents = (writePath: string) => {
     // Get the first one
     .at(0);
 
-  return latestDayFile
-    ? readFileSync(path.join(fullPath, latestDayFile), "utf8")
-    : "";
+  return latestDayFile ? readFileSync(path.join(fullPath, latestDayFile), "utf8") : "";
 };
 
 export const makeOutputPath = (apiPath: string[], day: string | null, run: string) =>

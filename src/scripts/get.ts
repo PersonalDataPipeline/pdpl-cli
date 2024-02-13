@@ -29,7 +29,7 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = await import(`../apis/${apiName}/index.js`) as ApiHandler;
+const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 const runStats = new Stats(apiName);
 
 (async () => {
@@ -73,7 +73,7 @@ const runStats = new Stats(apiName);
 
     // Store all the entity data for the endpoint for secondary endpoints
     perEndpointData[endpointName] = apiResponseData;
-    
+
     if (typeof endpointHandler.parseDayFromEntity === "function") {
       // Need to parse returned to days if not a snapshot
       const dailyData: DailyData = {};
@@ -153,11 +153,15 @@ const runStats = new Stats(apiName);
       }
 
       runMetadata.total = 1;
-      const outputPath = makeOutputPath(savePath, endpointHandler.getIdentifier(entity), runDateTime);
+      const outputPath = makeOutputPath(
+        savePath,
+        endpointHandler.getIdentifier(entity),
+        runDateTime
+      );
       writeOutputFile(outputPath, apiResponse)
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
-      
+
       runStats.addRun(endpointHandler.getEndpoint(entity), runMetadata);
     }
   } // END endpointsSecondary

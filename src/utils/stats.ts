@@ -77,7 +77,6 @@ export default class Stats {
 
     if (getConfig().debug) {
       console.log(logContent);
-      
     }
   }
 }

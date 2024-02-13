@@ -1,6 +1,4 @@
-import {
-  readFileSync,
-} from "fs";
+import { readFileSync } from "fs";
 
 import path from "path";
 import axios, { AxiosResponse } from "axios";
@@ -13,29 +11,37 @@ import { __dirname } from "./fs.js";
 /// Types
 //
 
-export interface MockAxiosResponse extends Omit<AxiosResponse, 'config'> {}
+export interface MockAxiosResponse extends Omit<AxiosResponse, "config"> {}
 
 ////
 /// Helpers
 //
 
 const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse => {
-  const mockPath = path.join(__dirname, "..", "..", "__mocks__", "api-data", apiName, `${endpointDir}.json`);
+  const mockPath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "__mocks__",
+    "api-data",
+    apiName,
+    `${endpointDir}.json`
+  );
   const mockJson = readFileSync(mockPath, "utf8");
   return {
     data: JSON.parse(mockJson),
     headers: {},
     status: 200,
-    statusText: "OK"
+    statusText: "OK",
   };
-}
+};
 
 ////
 /// Exports
 //
 
 export const getApiData = async (
-  apiHandler: ApiHandler, 
+  apiHandler: ApiHandler,
   endpointHandler: any,
   entity?: any
 ): Promise<AxiosResponse | MockAxiosResponse> => {
@@ -43,7 +49,9 @@ export const getApiData = async (
   const endpoint = endpointHandler.getEndpoint(entity);
 
   if (getConfig().debug) {
-    const filename = isEnriching ? endpoint.replaceAll("/", "--") : endpointHandler.getDirName();
+    const filename = isEnriching
+      ? endpoint.replaceAll("/", "--")
+      : endpointHandler.getDirName();
     return getMockApiData(apiHandler.getApiName(), filename);
   }
 
@@ -55,6 +63,6 @@ export const getApiData = async (
     params:
       typeof endpointHandler.getParams === "function" ? endpointHandler.getParams() : {},
   };
-  
+
   return await axios(axiosConfig);
-}
+};
