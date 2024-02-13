@@ -2,6 +2,17 @@
 
 Notes taken during development, newest to oldest. 
 
+TODO:
+- [ ] Address `any` in type (specifically `transformResponse`)
+- [ ] Unit testing with `jest`
+
+## [[2024-02-13]]
+
+✅ Fixed the duplicate entity bug, silly array instantiation issue.
+
+Adding Wahoo endpoints was an absolute breeze, took maybe 5 minutes, minus an authorization issue. I'm happy that this module framework is working out so far!
+
+
 ## [[2024-02-12]]
 
 I'm excited to dig into the enrichment refactor but first I need to wire up the mock data to make testing easier and solve the current duplicate data problem. 

@@ -18,7 +18,7 @@ AUTHORIZE_APP_SERVER_PORT="If needed, default is 8888"
 Next, start the local server:
 
 ```bash
-$ node src/apis/strava/getRefreshToken.js
+$ node dist/apis/strava/getRefreshToken.js
 ```
 
 ... and go to [localhost:8888](http://localhost:8888) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed. 
