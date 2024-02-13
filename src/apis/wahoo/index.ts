@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
+import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import { MockAxiosResponse } from "../../utils/data.js";
 
 const { 
   WAHOO_AUTHORIZE_CLIENT_ID, 
@@ -53,7 +54,7 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpointsPrimary: ApiEndpoint[] = [
+const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "user",
     getDirName: () => "user",
@@ -66,11 +67,11 @@ const endpointsPrimary: ApiEndpoint[] = [
       per_page: 50,
     }),
     parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.day,
-    transformResponseData: (response: AxiosResponse) => response.data.workouts,
+    transformResponseData: (response: AxiosResponse | MockAxiosResponse) => response.data.workouts,
   },
 ];
 
-const endpointsSecondary: ApiEnrichEndpoint[] = [
+const endpointsSecondary: ApiSecondaryEndpoint[] = [
 ];
 export {
   authorizeEndpoint,

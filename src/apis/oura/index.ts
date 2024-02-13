@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 
 import { getFormattedDate } from "../../utils/date.js";
-import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
+import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
@@ -40,7 +40,7 @@ const getApiAuthHeaders = () => ({
   Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
 });
 
-const endpointsPrimary: ApiEndpoint[] = [
+const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
@@ -105,7 +105,7 @@ const endpointsPrimary: ApiEndpoint[] = [
   },
 ];
 
-const endpointsSecondary: ApiEnrichEndpoint[] = [];
+const endpointsSecondary: ApiSecondaryEndpoint[] = [];
 
 export {
   getApiName,

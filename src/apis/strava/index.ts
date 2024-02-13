@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
+import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 
 const {
   STRAVA_REFRESH_TOKEN = "",
@@ -69,7 +69,7 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpointsPrimary: ApiEndpoint[] = [
+const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "athlete",
     getDirName: () => "athlete",
@@ -88,7 +88,7 @@ const endpointsPrimary: ApiEndpoint[] = [
   },
 ];
 
-const endpointsSecondary: ApiEnrichEndpoint[] = [
+const endpointsSecondary: ApiSecondaryEndpoint[] = [
   {
     getDirName: () => "activities",
     getEndpoint: (entity: StravaActivityEntity) => `activities/${getIdentifier(entity)}`,
