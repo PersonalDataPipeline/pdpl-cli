@@ -22,10 +22,10 @@ AUTHORIZE_APP_SERVER_HTTPS_PORT="Default is 8889"
 Next, start the local server:
 
 ```bash
-$ node src/apis/wahoo/getRefreshToken.js
+$ node dist/apis/wahoo/getRefreshToken.js
 ```
 
-... and go to [localhost:8888](https://localhost:8888) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed. 
+... and go to [localhost:8889](https://localhost:8889) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed. 
 
 The refresh token returned will be saved automatically in your `.env` file like the following:
 

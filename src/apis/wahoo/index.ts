@@ -1,10 +1,25 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import { ApiEndpoint } from "../../utils/types.js";
+import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
 
-const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
-  process.env;
+const { 
+  WAHOO_AUTHORIZE_CLIENT_ID, 
+  WAHOO_AUTHORIZE_CLIENT_SECRET, 
+  WAHOO_REFRESH_TOKEN 
+} = process.env;
+
+////
+/// Types
+//
+
+interface WahooWorkoutEntity {
+  starts: string
+}
+
+////
+/// Exports
+//
 
 const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
 const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
@@ -37,8 +52,30 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpointsPrimary: ApiEndpoint[] = [];
+const endpointsPrimary: ApiEndpoint[] = [
+  {
+    getEndpoint: () => "user",
+    getDirName: () => "user",
+  },
+  {
+    getEndpoint: () => "workouts",
+    getDirName: () => "workouts",
+    getParams: () => ({
+      page: 1,
+      per_page: 50,
+    }),
+    parseDayFromEntity: (entity: WahooWorkoutEntity) => {
+      return entity.starts.split("T")[0] || "";
+    },
+    transformResponse: (response: AxiosResponse) => [
+      response.data.workouts,
+      response.headers,
+    ]
+  },
+];
 
+const endpointsSecondary: ApiEnrichEndpoint[] = [
+];
 export {
   authorizeEndpoint,
   tokenEndpoint,
@@ -46,4 +83,5 @@ export {
   getApiBaseUrl,
   getApiAuthHeaders,
   endpointsPrimary,
+  endpointsSecondary,
 };
