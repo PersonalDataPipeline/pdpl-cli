@@ -91,7 +91,7 @@ const runStats = new Stats(apiName);
         for (const entity of entities) {
           entity.day = endpointHandler.parseDayFromEntity(entity);
           if (!dailyData[entity.day]) {
-            dailyData[entity.day] = [entity];
+            dailyData[entity.day] = [];
           }
           dailyData[entity.day]!.push(entity);
         }
@@ -152,13 +152,18 @@ const runStats = new Stats(apiName);
         continue;
       }
 
+      const [apiResponseData] =
+      typeof endpointHandler.transformResponse === "function"
+        ? endpointHandler.transformResponse(apiResponse)
+        : [apiResponse.data, apiResponse.headers];
+
       runMetadata.total = 1;
       const outputPath = makeOutputPath(
         savePath,
         endpointHandler.getIdentifier(entity),
         runDateTime
       );
-      writeOutputFile(outputPath, apiResponse)
+      writeOutputFile(outputPath, apiResponseData)
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
 
