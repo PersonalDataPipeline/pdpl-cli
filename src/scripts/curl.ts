@@ -18,7 +18,7 @@ if (!apisSupported.includes(apiName)) {
 }
 
 (async () => {
-  const apiHandler = await import(`../imports/${apiName}/index.js`);
+  const apiHandler = await import(`../apis/${apiName}/index.js`);
   let curlCommand = "curl";
 
   const authHeaders = await apiHandler.getApiAuthHeaders();
