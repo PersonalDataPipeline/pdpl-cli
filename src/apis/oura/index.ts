@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 
 import { getFormattedDate } from "../../utils/date.js";
-import { ApiHandler } from "../../utils/types.js";
+import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
 
@@ -26,9 +26,9 @@ const defaultParams = {
 
 const parseDayFromEntity = (entity: OuraEntity) => entity.day;
 
-const transformResponse = (apiResponse: AxiosResponse) => [
-  apiResponse.data.data,
-  apiResponse.headers,
+const transformResponse = (response: AxiosResponse) => [
+  response.data.data,
+  response.headers,
 ];
 
 ////
@@ -42,7 +42,7 @@ const getApiAuthHeaders = () => ({
   Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
 });
 
-const endpoints = [
+const endpointsPrimary: ApiEndpoint[] = [
   {
     getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
@@ -107,13 +107,6 @@ const endpoints = [
   },
 ];
 
-export { getApiName, getApiBaseUrl, getApiAuthHeaders, endpoints };
+const endpointsSecondary: ApiEnrichEndpoint[] = [];
 
-const handler: ApiHandler = {
-  getApiName,
-  getApiBaseUrl,
-  getApiAuthHeaders,
-  endpoints,
-};
-
-export default handler;
+export { getApiName, getApiBaseUrl, getApiAuthHeaders, endpointsPrimary, endpointsSecondary };

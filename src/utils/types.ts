@@ -1,5 +1,3 @@
-import { AxiosResponse } from "axios";
-
 export interface DailyEntity {
   day: string;
 }
@@ -12,23 +10,23 @@ export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => {};
-  endpoints: ApiEndpoint[];
+  endpointsPrimary: ApiEndpoint[];
+  endpointsSecondary: ApiEnrichEndpoint[];
   authorizeEndpoint?: string;
   tokenEndpoint?: string;
 }
 
 export interface ApiEndpoint {
   getDirName: () => string;
-  getEndpoint: (entity?: any) => string;
+  getEndpoint: () => string;
   method?: string;
   getParams?: () => {};
+  transformResponse?: (response: any) => any[];
   parseDayFromEntity?: (entity: any) => string;
-  enrichEntity?: ApiEnrichEndpoint[];
 }
 
-export interface ApiEnrichEndpoint {
+export interface ApiEnrichEndpoint extends Omit<ApiEndpoint, "getEndpoint" > {
   getEndpoint: (entity: any) => string;
-  enrichEntity: (entity: any, response: AxiosResponse) => {};
-  getDirName?: () => {};
-  getParams?: () => {};
+  getPrimary: () => string;
+  getIdentifier: (entity: any) => string;
 }

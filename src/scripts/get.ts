@@ -7,7 +7,7 @@ import { readdirSync } from "fs";
 import Stats, { StatsRunData } from "../utils/stats.js";
 import { ensureOutputPath, writeOutputFile, makeOutputPath } from "../utils/fs.js";
 import { fileNameDateTime } from "../utils/date.js";
-import { DailyData } from "../utils/types.js";
+import { ApiHandler, DailyData } from "../utils/types.js";
 import { getApiData, MockAxiosResponse } from "../utils/data.js";
 
 ////
@@ -29,30 +29,33 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = await import(`../apis/${apiName}/index.js`);
-const allEndpoints = Object.keys(apiHandler.endpoints);
-
-if (runEndpoint && !allEndpoints.includes(runEndpoint)) {
-  console.log(`❌ Unsupported endpoint "${runEndpoint}" for API "${apiName}"`);
-  process.exit();
-}
-
+const apiHandler = await import(`../apis/${apiName}/index.js`) as ApiHandler;
 const runStats = new Stats(apiName);
 
 (async () => {
+  const perEndpointData: { [key: string]: [] } = {};
 
-  for (const endpointHandler of apiHandler.endpoints) {
-    if (runEndpoint && runEndpoint !== endpointHandler.getEndpoint()) {
+  ////
+  /// Endpoints: Primary
+  //
+  for (const endpointHandler of apiHandler.endpointsPrimary) {
+    const endpointName = endpointHandler.getEndpoint();
+    if (runEndpoint && runEndpoint !== endpointName) {
       continue;
     }
 
     const runDateTime = fileNameDateTime();
+    const runMetadata: StatsRunData = {
+      dateTime: runDateTime,
+      filesWritten: 0,
+      filesSkipped: 0,
+    };
 
     let apiResponse: AxiosResponse | MockAxiosResponse;
     try {
       apiResponse = await getApiData(apiHandler, endpointHandler);
     } catch (error: AxiosError | any) {
-      runStats.addError(endpointHandler.getEndpoint(), {
+      runStats.addError(endpointName, {
         type: "http",
         message: error.message,
         data: error.data || {},
@@ -63,27 +66,23 @@ const runStats = new Stats(apiName);
     const savePath = [apiName, endpointHandler.getDirName()];
     ensureOutputPath(savePath);
 
-    const runMetadata: StatsRunData = {
-      dateTime: runDateTime,
-      filesWritten: 0,
-      filesSkipped: 0,
-    };
-
     const [apiResponseData] =
       typeof endpointHandler.transformResponse === "function"
         ? endpointHandler.transformResponse(apiResponse)
         : [apiResponse.data, apiResponse.headers];
 
-    // Need to parse returned to days if not a snapshot
-    const filesGenerated: DailyData = {};
+    // Store all the entity data for the endpoint for secondary endpoints
+    perEndpointData[endpointName] = apiResponseData;
+    
     if (typeof endpointHandler.parseDayFromEntity === "function") {
+      // Need to parse returned to days if not a snapshot
       const dailyData: DailyData = {};
       const entities = apiResponseData;
 
       if (!Array.isArray(entities)) {
-        runStats.addError(endpointHandler.getEndpoint(), {
+        runStats.addError(endpointName, {
           type: "parsing_response",
-          message: `Cannot iterate through data from ${endpointHandler.getEndpoint()}.`,
+          message: `Cannot iterate through data from ${endpointName}.`,
         });
         continue;
       }
@@ -97,9 +96,9 @@ const runStats = new Stats(apiName);
           dailyData[entity.day]!.push(entity);
         }
       } catch (error: AxiosError | any) {
-        runStats.addError(endpointHandler.getEndpoint(), {
+        runStats.addError(endpointName, {
           type: "parsing_response",
-          message: `Cannot parse data from ${endpointHandler.getEndpoint()} into days: ${error.message}`,
+          message: `Cannot parse data from ${endpointName} into days: ${error.message}`,
         });
         continue;
       }
@@ -112,66 +111,56 @@ const runStats = new Stats(apiName);
         writeOutputFile(outputPath, dailyData[day])
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
-
-        filesGenerated[outputPath] = dailyData[day]!;
       }
     } else {
+      // Snapshot data, not time-bound
       runMetadata.total = 1;
       const outputPath = makeOutputPath(savePath, null, runDateTime);
       writeOutputFile(outputPath, apiResponseData)
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
-
-      filesGenerated[outputPath] = apiResponseData;
     }
 
-    runStats.addRun(endpointHandler.getEndpoint(), runMetadata);
+    runStats.addRun(endpointName, runMetadata);
+  } // END endpointsPrimary
 
-    if (endpointHandler.enrichEntity) {
-      for (const dayEntityFile in filesGenerated) {
-        // dayEntityFile is file name, value is an array of entity objects
-        const dayEntityData = filesGenerated[dayEntityFile];
-        const newEntityData = [];
+  ////
+  /// Endpoints: Secondary
+  //
+  for (const endpointHandler of apiHandler.endpointsSecondary) {
+    const entities = perEndpointData[endpointHandler.getPrimary()] || [];
+    const savePath = [apiName, endpointHandler.getDirName()];
+    ensureOutputPath(savePath);
 
-        const enrichRunMetadata: StatsRunData = {
-          dateTime: runDateTime,
-          filesWritten: 0,
-          filesSkipped: 0,
-        };
+    for (const entity of entities) {
+      const runDateTime = fileNameDateTime();
+      const runMetadata: StatsRunData = {
+        dateTime: runDateTime,
+        filesWritten: 0,
+        filesSkipped: 0,
+      };
 
-        const enrichUrls = [];
-        for (const entity of dayEntityData!) {
-          let enrichedEntity = {};
-          for (const enrichFunction of endpointHandler.enrichEntity) {
-            const enrichEndpoint = enrichFunction.getEndpoint(entity);
+      let apiResponse;
+      try {
+        apiResponse = await getApiData(apiHandler, endpointHandler, entity);
+      } catch (error: AxiosError | any) {
+        runStats.addError(endpointHandler.getEndpoint(entity), {
+          type: "http",
+          message: error.message,
+          data: error.data || {},
+        });
+        continue;
+      }
 
-            enrichUrls.push(enrichEndpoint);
-
-            let enrichApiResponse: AxiosResponse | MockAxiosResponse;
-            try {
-              enrichApiResponse = await getApiData(apiHandler, enrichFunction, entity);
-            } catch (error: AxiosError | any) {
-              runStats.addError(enrichEndpoint, {
-                type: "http",
-                message: error.message,
-                data: error.data || {},
-              });
-              continue;
-            }
-
-            enrichedEntity = enrichFunction.enrichEntity(enrichApiResponse, entity);
-          } // END enrich functions
-          newEntityData.push(enrichedEntity);
-        } // END days
-
-        writeOutputFile(dayEntityFile, newEntityData)
-          ? enrichRunMetadata.filesWritten++
-          : enrichRunMetadata.filesSkipped++;
-
-        runStats.addRun(`enrich ${endpointHandler.getEndpoint()}`, { ...enrichRunMetadata, enrichUrls });
-      } // END files
+      runMetadata.total = 1;
+      const outputPath = makeOutputPath(savePath, endpointHandler.getIdentifier(entity), runDateTime);
+      writeOutputFile(outputPath, apiResponse)
+        ? runMetadata.filesWritten++
+        : runMetadata.filesSkipped++;
+      
+      runStats.addRun(endpointHandler.getEndpoint(entity), runMetadata);
     }
-  }
+  } // END endpointsSecondary
 
   runStats.shutdown();
 })();

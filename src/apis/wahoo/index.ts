@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
+import { ApiEndpoint } from "../../utils/types.js";
 
 const {
   WAHOO_AUTHORIZE_CLIENT_ID,
@@ -41,7 +42,7 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpoints = [{}];
+const endpointsPrimary: ApiEndpoint[] = [];
 
 export {
   authorizeEndpoint,
@@ -49,5 +50,5 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  endpoints
+  endpointsPrimary
 };

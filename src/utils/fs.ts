@@ -4,7 +4,6 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
-  rmSync,
 } from "fs";
 
 import path from "path";
@@ -59,7 +58,6 @@ export const writeOutputFile = (
   const latestDayFileContents = getLatestFileContents(writePath);
   if (fileContentsString === latestDayFileContents) {
     console.log(`Skipping duplicate ${writePath}`);
-    rmSync(fullSavePath, { force: true });
     return false;
   }
 

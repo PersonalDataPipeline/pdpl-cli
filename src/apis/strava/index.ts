@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
+import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
 
 const {
   STRAVA_REFRESH_TOKEN = "",
@@ -26,6 +27,12 @@ interface StravaActivityEntity {
     [key in StravaStreamTypes]?: StravaStream;
   };
 }
+
+////
+/// Helpers
+//
+
+const getIdentifier = (entity: StravaActivityEntity) => entity.id;
 
 ////
 /// Exports
@@ -64,7 +71,7 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpoints = [
+const endpointsPrimary: ApiEndpoint[] = [
   {
     getEndpoint: () => "athlete",
     getDirName: () => "athlete",
@@ -80,27 +87,26 @@ const endpoints = [
     }),
     parseDayFromEntity: (entity: StravaActivityEntity) =>
       entity.start_date_local.split("T")[0] || "",
-    enrichEntity: [
-      {
-        getEndpoint: (entity: StravaActivityEntity) => `activities/${entity.id}`,
-        enrichEntity: (response: AxiosResponse) => response.data,
-      },
-      {
-        getParams: () => ({
-          keys: "latlng,time,altitude,distance",
-        }),
-        getEndpoint: (entity: StravaActivityEntity) =>
-          `activities/${entity.id}/streams`,
-        enrichEntity: (response: AxiosResponse, entity: StravaActivityEntity) => {
-          entity.streams = {};
-          const responseStreams = response.data as [StravaStream];
-          responseStreams.forEach((stream: StravaStream) => {
-            entity.streams[stream.type] = stream;
-          });
-          return entity;
-        },
-      },
-    ],
+  },
+];
+
+const endpointsSecondary: ApiEnrichEndpoint[] = [
+  {
+    getDirName: () => "activities",
+    getEndpoint: (entity: StravaActivityEntity) => `activities/${getIdentifier(entity)}`,
+    getPrimary: () => "athlete/activities",
+    getIdentifier,
+  },
+  {
+    getDirName: () => "activities--streams",
+    getParams: () => ({
+      keys: "latlng,time,altitude,distance",
+    }),
+    getEndpoint: (entity: StravaActivityEntity) => {
+      return `activities/${getIdentifier(entity)}/streams`;
+    },
+    getPrimary: () => "athlete/activities",
+    getIdentifier,
   },
 ];
 
@@ -110,5 +116,6 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  endpoints,
+  endpointsPrimary,
+  endpointsSecondary,
 };
