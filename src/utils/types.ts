@@ -21,7 +21,7 @@ export interface ApiEndpoint {
   getEndpoint: () => string;
   method?: string;
   getParams?: () => {};
-  transformResponse?: (response: any) => any[];
+  transformResponseData?: (response: any) => any[];
   parseDayFromEntity?: (entity: any) => string;
 }
 

@@ -42,10 +42,10 @@ const mocksDirRelative = path.join(__dirname, "..", "..", "__mocks__", "api-data
       }
 
       if (endpointHandler.enrichEntity) {
-        const [entityData] =
-          typeof endpointHandler.transformResponse === "function"
-            ? endpointHandler.transformResponse(apiResponse.data)
-            : [apiResponse.data];
+        const entityData =
+          typeof endpointHandler.transformResponseData === "function"
+            ? endpointHandler.transformResponseData(apiResponse.data)
+            : apiResponse.data;
 
         for (const entity of entityData) {
           for (const enrichFunction of endpointHandler.enrichEntity) {

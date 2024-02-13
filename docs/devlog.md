@@ -3,7 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
-- [ ] Address `any` in type (specifically `transformResponse`)
 - [ ] Unit testing with `jest`
 
 ## [[2024-02-13]]

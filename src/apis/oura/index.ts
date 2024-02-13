@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 
 import { getFormattedDate } from "../../utils/date.js";
 import { ApiEndpoint, ApiEnrichEndpoint } from "../../utils/types.js";
+import { MockAxiosResponse } from "../../utils/data.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
 
@@ -26,10 +27,7 @@ const defaultParams = {
 
 const parseDayFromEntity = (entity: OuraEntity) => entity.day;
 
-const transformResponse = (response: AxiosResponse) => [
-  response.data.data,
-  response.headers,
-];
+const transformResponseData = (response: AxiosResponse | MockAxiosResponse) => response.data.data;
 
 ////
 /// Exports
@@ -48,49 +46,49 @@ const endpointsPrimary: ApiEndpoint[] = [
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/sleep",
     getDirName: () => "user--sleep",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/daily_stress",
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/daily_readiness",
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/daily_activity",
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/daily_spo2",
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/sleep_time",
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
     parseDayFromEntity,
-    transformResponse,
+    transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/heartrate",
@@ -103,7 +101,7 @@ const endpointsPrimary: ApiEndpoint[] = [
     }),
     parseDayFromEntity: (entity: OuraEntity) =>
       getFormattedDate(0, new Date(entity.timestamp)),
-    transformResponse,
+    transformResponseData,
   },
 ];
 

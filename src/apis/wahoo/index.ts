@@ -66,10 +66,7 @@ const endpointsPrimary: ApiEndpoint[] = [
       per_page: 50,
     }),
     parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.day,
-    transformResponse: (response: AxiosResponse) => [
-      response.data.workouts,
-      response.headers,
-    ]
+    transformResponseData: (response: AxiosResponse) => response.data.workouts,
   },
 ];
 

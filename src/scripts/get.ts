@@ -66,10 +66,10 @@ const runStats = new Stats(apiName);
     const savePath = [apiName, endpointHandler.getDirName()];
     ensureOutputPath(savePath);
 
-    const [apiResponseData] =
-      typeof endpointHandler.transformResponse === "function"
-        ? endpointHandler.transformResponse(apiResponse)
-        : [apiResponse.data, apiResponse.headers];
+    const apiResponseData =
+      typeof endpointHandler.transformResponseData === "function"
+        ? endpointHandler.transformResponseData(apiResponse)
+        : apiResponse.data;
 
     // Store all the entity data for the endpoint for secondary endpoints
     perEndpointData[endpointName] = apiResponseData;
@@ -152,10 +152,10 @@ const runStats = new Stats(apiName);
         continue;
       }
 
-      const [apiResponseData] =
-      typeof endpointHandler.transformResponse === "function"
-        ? endpointHandler.transformResponse(apiResponse)
-        : [apiResponse.data, apiResponse.headers];
+      const apiResponseData =
+      typeof endpointHandler.transformResponseData === "function"
+        ? endpointHandler.transformResponseData(apiResponse)
+        : apiResponse.data;
 
       runMetadata.total = 1;
       const outputPath = makeOutputPath(
