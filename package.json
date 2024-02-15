@@ -12,6 +12,7 @@
     "strava": "node ./dist/scripts/get.js strava",
     "oura": "node ./dist/scripts/get.js oura",
     "wahoo": "node ./dist/scripts/get.js wahoo",
+    "api-ninjas": "node ./dist/scripts/get.js api-ninjas",
     "genmocks": "node ./dist/scripts/generate-mocks.js"
   },
   "author": "",
