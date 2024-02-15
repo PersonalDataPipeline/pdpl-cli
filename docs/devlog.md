@@ -4,6 +4,9 @@ Notes taken during development, newest to oldest.
 
 TODO:
 - [ ] Unit testing with `jest`
+- [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
+- [ ] https://developer.nytimes.com/apis
+- [ ] https://api-ninjas.com/api/historicalevents
 
 ## [[2024-02-13]]
 
