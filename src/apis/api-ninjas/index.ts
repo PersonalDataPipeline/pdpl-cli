@@ -17,8 +17,8 @@ interface ApiNinjasHistoricEventEntity {
 //
 
 const defaultParams = {
-  year: 1979,
-  offset: 110
+  year: 2022,
+  offset: 0
 };
 
 const parseDayFromEntity = (entity: ApiNinjasHistoricEventEntity) => {
