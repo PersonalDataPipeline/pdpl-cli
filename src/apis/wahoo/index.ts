@@ -13,7 +13,6 @@ const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_
 
 interface WahooWorkoutEntity {
   day: string;
-  [key: string]: unknown;
 }
 
 ////

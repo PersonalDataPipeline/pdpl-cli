@@ -13,7 +13,6 @@ const { OURA_AUTH_TOKEN = "" } = process.env;
 interface OuraEntity {
   day: string;
   timestamp: string;
-  [key: string]: any;
 }
 
 ////

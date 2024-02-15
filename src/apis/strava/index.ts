@@ -17,7 +17,6 @@ type StravaStreamTypes = "latlng" | "distance" | "altitude" | "time";
 
 interface StravaStream {
   type: StravaStreamTypes;
-  [key: string]: unknown;
 }
 
 interface StravaActivityEntity {
