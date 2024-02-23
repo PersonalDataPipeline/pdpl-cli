@@ -5,8 +5,12 @@ Notes taken during development, newest to oldest.
 TODO:
 - [ ] Unit testing with `jest`
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
+- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 - [ ] https://developer.nytimes.com/apis
-- [ ] https://api-ninjas.com/api/historicalevents
+
+## [[2024-02-22]]
+
+[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 
 ## [[2024-02-13]]
 
@@ -103,7 +107,7 @@ With that in mind, it feels like the most important things to do now are (in no 
 Alongside that, though, are the things that will make this move faster:
 
 - **Better debugging and testing:** I need to be able to move faster with better visibility into outcomes. Right now, I'm adjusting pagination numbers, un-formatting JSON, all this stuff that has to be walked back. I need to figure out a better debug mode so I can run it that way and be sure that I'm not going to screw something up. 
-- **TypeScript:** The longer you wait ... and it definitely has to be done. I have to remember that, while I hit a few snags with the [[Projects/Budget CLI|Budget CLI]], I overall move faster there now. Fairly easy couch work here as well. 
+- **TypeScript:** The longer you wait ... and it definitely has to be done. I have to remember that, while I hit a few snags with the [[GitHub/budget-cli/docs/devlog|Budget CLI]], I overall move faster there now. Fairly easy couch work here as well. 
 - **Unit tests:** The longer you wait ... at least I don't hate writing tests. Easy couch work.
 
 And the other big things on the radar:
