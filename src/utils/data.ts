@@ -17,7 +17,7 @@ export interface MockAxiosResponse extends Omit<AxiosResponse, "config"> {}
 /// Helpers
 //
 
-const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse => {
+const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse | null => {
   const mockPath = path.join(
     __dirname,
     "..",
@@ -27,13 +27,21 @@ const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse
     apiName,
     `${endpointDir}.json`
   );
-  const mockJson = readFileSync(mockPath, "utf8");
-  return {
-    data: JSON.parse(mockJson),
-    headers: {},
-    status: 200,
-    statusText: "OK",
-  };
+  
+  try {
+    const mockJson = readFileSync(mockPath, "utf8");
+    return {
+      data: JSON.parse(mockJson),
+      headers: {},
+      status: 200,
+      statusText: "OK",
+    };
+  } catch (error) {
+    // File not found, continue with HTTP request
+    return null;
+  }
+
+  
 };
 
 ////
@@ -52,7 +60,11 @@ export const getApiData = async (
     const filename = isEnriching
       ? endpoint.replaceAll("/", "--")
       : endpointHandler.getDirName();
-    return getMockApiData(apiHandler.getApiName(), filename);
+    const apiData = getMockApiData(apiHandler.getApiName(), filename);
+    
+    if (apiData !== null) {
+      return apiData;
+    }
   }
 
   const axiosConfig = {
@@ -64,5 +76,9 @@ export const getApiData = async (
       typeof endpointHandler.getParams === "function" ? endpointHandler.getParams() : {},
   };
 
+  if (getConfig().debug) {
+    console.log(axiosConfig);
+  }
+  
   return await axios(axiosConfig);
 };
