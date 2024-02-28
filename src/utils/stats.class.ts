@@ -23,7 +23,11 @@ interface StatsRunLog extends StatsRunData {
   endpoint: string;
 }
 
-interface StatsErrorData {}
+interface StatsErrorData {
+  type: "http" | "parsing_response" | "other";
+  message: string;
+  data?: object;
+}
 
 interface StatsErrorLog extends StatsErrorData {
   endpoint: string;
