@@ -2,7 +2,7 @@
 
 ## Status
 
-`DRAFT`
+`PROPOSED` - working on POC
 
 ## Context
 
@@ -19,13 +19,15 @@ The idea I'm exploring here is a queue of jobs that need to be run by the get sc
 
 So, modeling this as a simple JSON array, when the service is first deployed, the queue looks like this:
 
-```json
+```js
+// Initial state
 []
 ```
 
 The getter would see an empty queue and understand that we need to get the entire history of data across all endpoints. The API handlers would need to handle pagination and generate the next call (exact logic TBD). So the first call would be made, data stored, then a new message would be added to the queue:
 
-```json
+```js
+// Historic download
 [
 	{
 		"apiName": "strava",
@@ -43,7 +45,8 @@ The entry should have all the data it needs for the next getter run to operate m
 
 After each run, the entry would be deleted and a new one created to handle whatever endpoints remain. Once all history has been pulled down, the getter would add a new entity for a regular run:
 
-```json
+```js
+// Standard run
 [
 	{
 		"apiName": "strava",
@@ -56,7 +59,8 @@ This is the same entry that should be entered after a regular run. This would al
 
 If the run encounters an error on an endpoint that would benefit from a retry, it could generate an item in the queue (or rely on another actor looking at the logs):
 
-```json
+```js
+// Error retry
 [
 	{
 		"apiName": "strava",
@@ -66,14 +70,19 @@ If the run encounters an error on an endpoint that would benefit from a retry, i
 ]
 ```
 
-On the next pass, the getter would pick up the task and run it instead of the default. Once complete, it would add a standard entry for the next run. 
+On the next pass, the getter would pick up the task and run it instead of the default. Once complete, it would add a standard entry for the next run (see above). 
 
+I think this should work fine in the happy path but this might not work as just a JSON file stored locally and accessed directly by the getter script, especially if the different APIs all share a single queue. I started thinking about a separate service that manages the queue, locks the state during read/write, accepts requests to read/alter the queue ... but I think that's overkill for this initial build. 
 
+If the queue is saved per API, then a single instance does not need to take into account multiple processes accessing it. We can mostly assume that by the time one starts, the last run as ended. Though we should be wary of how often then processes are triggered. If we start triggering every few minutes then there is a chance that one process could empty the queue, next process sees an empty queue and starts a historic run, then the other process finishes and stores a standard run. 
 
 ## Consequences
 
-> What becomes easier or more difficult to do because of this change?
+- Historic runs requiring pagination becomes possible with this system. This allows many calls over time to avoid rate limits and being bad citizens. 
+- Error re-tries become possible.
+- State is now stored with the data files, which I think is, overall, a good thing. A new instance of the service could be hooked to the same file system and pick up where it left off. 
 
 ## Decision
 
-> What is the change that we're proposing and/or doing?
+- Building a per-API queue as a flat JSON file
+- Each run will add something in the queue for the next run

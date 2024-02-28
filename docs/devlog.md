@@ -9,6 +9,10 @@ TODO:
 - [ ] https://developer.nytimes.com/apis
 - [ ] https://duckdb.org
 
+## [[2024-02-28]]
+
+Feeling good about [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md). I've thought about this a lot (maybe too much) and I'm worried about over-building and under-building. But I think I'm at a point where I can implement it and see how it goes.
+
 ## [[2024-02-27]]
 
 [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
