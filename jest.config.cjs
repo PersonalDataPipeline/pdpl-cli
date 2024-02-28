@@ -5,7 +5,10 @@ const config = {
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
-  }
+  },
+  testMatch: [
+    "**/?(*.)+(spec).ts?(x)" 
+  ]
 };
 
 module.exports = config;

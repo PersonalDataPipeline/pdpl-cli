@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", ".eslintrc.cjs", "jest.config.ts"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     "strict": true,
     "outDir": "./dist",
