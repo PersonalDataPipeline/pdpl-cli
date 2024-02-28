@@ -18,11 +18,11 @@ interface ApiNinjasHistoricEventEntity {
 
 const defaultParams = {
   year: 2022,
-  offset: 0
+  offset: 0,
 };
 
 const parseDayFromEntity = (entity: ApiNinjasHistoricEventEntity) => {
-  return `${entity.year}-${entity.month}-${entity.day}`
+  return `${entity.year}-${entity.month}-${entity.day}`;
 };
 
 ////
@@ -42,7 +42,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getDirName: () => "historicalevents",
     getParams: () => defaultParams,
     parseDayFromEntity,
-  }
+  },
 ];
 
 const endpointsSecondary: ApiSecondaryEndpoint[] = [];

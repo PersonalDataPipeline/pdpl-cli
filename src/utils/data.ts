@@ -17,7 +17,10 @@ export interface MockAxiosResponse extends Omit<AxiosResponse, "config"> {}
 /// Helpers
 //
 
-const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse | null => {
+const getMockApiData = (
+  apiName: string,
+  endpointDir: string
+): MockAxiosResponse | null => {
   const mockPath = path.join(
     __dirname,
     "..",
@@ -27,7 +30,7 @@ const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse
     apiName,
     `${endpointDir}.json`
   );
-  
+
   try {
     const mockJson = readFileSync(mockPath, "utf8");
     return {
@@ -40,8 +43,6 @@ const getMockApiData = (apiName: string, endpointDir: string): MockAxiosResponse
     // File not found, continue with HTTP request
     return null;
   }
-
-  
 };
 
 ////
@@ -61,7 +62,7 @@ export const getApiData = async (
       ? endpoint.replaceAll("/", "--")
       : endpointHandler.getDirName();
     const apiData = getMockApiData(apiHandler.getApiName(), filename);
-    
+
     if (apiData !== null) {
       return apiData;
     }
@@ -79,6 +80,6 @@ export const getApiData = async (
   if (getConfig().debug) {
     console.log(axiosConfig);
   }
-  
+
   return await axios(axiosConfig);
 };
