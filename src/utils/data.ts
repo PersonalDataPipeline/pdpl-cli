@@ -5,7 +5,6 @@ import axios, { AxiosResponse } from "axios";
 
 import getConfig from "./config.js";
 import { ApiHandler } from "./types.js";
-import { __dirname } from "./fs.js";
 
 ////
 /// Types

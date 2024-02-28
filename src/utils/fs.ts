@@ -1,12 +1,19 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 
 import path from "path";
-import { fileURLToPath } from "url";
-
 import getConfig from "./config.js";
 
-export const __filename = fileURLToPath(import.meta.url);
-export const __dirname = path.dirname(__filename);
+export const pathExists = (filePath: string) => {
+  return existsSync(filePath)
+}
+
+export const readFile = (filePath: string) => {
+  return readFileSync(filePath, { encoding: "utf8" })
+}
+
+export const writeFile = (filePath: string, contents: string) => {
+  writeFileSync(filePath, contents);
+}
 
 export const envWrite = (key: string, newValue: string, replaceValue: string): void => {
   const envPath = path.join(__dirname, "../../.env");

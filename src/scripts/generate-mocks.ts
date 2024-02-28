@@ -5,8 +5,6 @@ import { mkdirSync, readdirSync, rmSync, writeFileSync } from "fs";
 import axios from "axios";
 import path from "path";
 
-import { __dirname } from "../utils/fs.js";
-
 const apisSupported = process.argv[2] ? [process.argv[2]] : readdirSync("./src/apis");
 const mocksDirRelative = path.join(__dirname, "..", "..", "__mocks__", "api-data");
 
