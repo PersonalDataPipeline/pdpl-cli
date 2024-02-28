@@ -13,7 +13,7 @@ export interface DailyData {
 export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
-  getApiAuthHeaders: () => {};
+  getApiAuthHeaders: () => Promise<object>;
   endpointsPrimary: ApiPrimaryEndpoint[];
   endpointsSecondary: ApiSecondaryEndpoint[];
   authorizeEndpoint?: string;
@@ -24,8 +24,8 @@ export interface ApiPrimaryEndpoint {
   getDirName: () => string;
   getEndpoint: () => string;
   method?: string;
-  getParams?: () => {};
-  transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => any[];
+  getParams?: () => object;
+  transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;
   parseDayFromEntity?: (entity: any) => string;
 }
 

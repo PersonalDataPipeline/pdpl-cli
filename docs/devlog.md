@@ -3,15 +3,18 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
+- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 - [ ] Unit testing with `jest`
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
-- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
+- [ ] Handle all TS-eslint warnings ...
 - [ ] https://developer.nytimes.com/apis
 - [ ] https://duckdb.org
 
 ## [[2024-02-28]]
 
 Feeling good about [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md). I've thought about this a lot (maybe too much) and I'm worried about over-building and under-building. But I think I'm at a point where I can implement it and see how it goes.
+
+Probably getting unit tests going about now is a good idea ... not too hard copying over from budget-cli. Learned a bit about TS config 👍
 
 ## [[2024-02-27]]
 

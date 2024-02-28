@@ -1,6 +1,6 @@
 import * as http from "http";
 import crypto from "crypto";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { config } from "dotenv";
 config();
 
@@ -82,7 +82,7 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
           redirect_uri: baseUrl,
           code: codeParam,
         });
-      } catch (tokenError: AxiosError | any) {
+      } catch (tokenError: any) {
         response.writeHead(
           (tokenError.response as AxiosResponse).status,
           responseHeaders

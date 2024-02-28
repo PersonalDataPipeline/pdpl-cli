@@ -68,7 +68,7 @@ const runStats = new Stats(importName);
     if (!dailyData[transformedEntity.day]) {
       dailyData[transformedEntity.day] = [];
     }
-    dailyData[transformedEntity.day]!.push(entity);
+    dailyData[transformedEntity.day].push(entity);
   }
 
   runMetadata.total = entities.length;

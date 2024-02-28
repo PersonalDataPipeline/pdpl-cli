@@ -1,7 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { readdirSync } from "fs";
 
 import Stats, { StatsRunData } from "../utils/stats.js";
@@ -54,7 +54,7 @@ const runStats = new Stats(apiName);
     let apiResponse: AxiosResponse | MockAxiosResponse;
     try {
       apiResponse = await getApiData(apiHandler, endpointHandler);
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
       runStats.addError(endpointName, {
         type: "http",
         message: error.message,
@@ -93,9 +93,9 @@ const runStats = new Stats(apiName);
           if (!dailyData[entity.day]) {
             dailyData[entity.day] = [];
           }
-          dailyData[entity.day]!.push(entity);
+          dailyData[entity.day].push(entity);
         }
-      } catch (error: AxiosError | any) {
+      } catch (error: any) {
         runStats.addError(endpointName, {
           type: "parsing_response",
           message: `Cannot parse data from ${endpointName} into days: ${error.message}`,
@@ -143,7 +143,7 @@ const runStats = new Stats(apiName);
       let apiResponse;
       try {
         apiResponse = await getApiData(apiHandler, endpointHandler, entity);
-      } catch (error: AxiosError | any) {
+      } catch (error: any) {
         runStats.addError(endpointHandler.getEndpoint(entity), {
           type: "http",
           message: error.message,
