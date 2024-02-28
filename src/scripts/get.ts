@@ -52,11 +52,11 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
   let apiResponse: AxiosResponse | MockAxiosResponse;
   try {
     apiResponse = await getApiData(apiHandler, endpointHandler);
-  } catch (error: any) {
+  } catch (error) {
     runStats.addError(endpointName, {
       type: "http",
-      message: error.message,
-      data: error.data || {},
+      message: error instanceof Error ? error.message : "Unknown error for getApiData",
+      data: (error as Record<string, unknown>)["data"] || {},
     });
     continue;
   }
@@ -93,10 +93,13 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
         }
         dailyData[entity.day].push(entity);
       }
-    } catch (error: any) {
+    } catch (error) {
       runStats.addError(endpointName, {
-        type: "parsing_response",
-        message: `Cannot parse data from ${endpointName} into days: ${error.message}`,
+        type: "http",
+        message: `Cannot parse data from ${endpointName} into days: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        data: (error as Record<string, unknown>)["data"] || {},
       });
       continue;
     }
