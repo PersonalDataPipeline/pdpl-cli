@@ -7,6 +7,13 @@ TODO:
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 - [ ] https://developer.nytimes.com/apis
+- [ ] https://duckdb.org
+
+## [[2024-02-27]]
+
+[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
+
+Alos thinking about how to trigger the runs via automation. This service is going to have a number of different API contracts but it only needs to run certain ones, based on what cloud data we want to pull down. Not a critical problem to solve early but probably deserves its own ADR.
 
 ## [[2024-02-22]]
 
