@@ -3,12 +3,11 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
-- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
-- [ ] Unit testing with `jest`
-- [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
+- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) PoC
 - [ ] Handle all TS-eslint warnings ...
-- [ ] https://developer.nytimes.com/apis
-- [ ] https://duckdb.org
+- [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
+- [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+- [ ] https://duckdb.org ??
 
 ## [[2024-02-28]]
 
@@ -16,11 +15,13 @@ Feeling good about [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md
 
 Probably getting unit tests going about now is a good idea ... not too hard copying over from budget-cli. Learned a bit about TS config 👍
 
+After all those chores, time to dive into the queue implementation!
+
 ## [[2024-02-27]]
 
 [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 
-Alos thinking about how to trigger the runs via automation. This service is going to have a number of different API contracts but it only needs to run certain ones, based on what cloud data we want to pull down. Not a critical problem to solve early but probably deserves its own ADR.
+Also thinking about how to trigger the runs via automation. This service is going to have a number of different API contracts but it only needs to run certain ones, based on what cloud data we want to pull down. Not a critical problem to solve early but probably deserves its own ADR.
 
 ## [[2024-02-22]]
 

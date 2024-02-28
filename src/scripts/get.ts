@@ -4,7 +4,7 @@ dotenvConfig();
 import { AxiosResponse } from "axios";
 import { readdirSync } from "fs";
 
-import Stats, { StatsRunData } from "../utils/stats.js";
+import Stats, { StatsRunData } from "../utils/stats.class.js";
 import { ensureOutputPath, writeOutputFile, makeOutputPath } from "../utils/fs.js";
 import { fileNameDateTime } from "../utils/date.js";
 import { ApiHandler, DailyData } from "../utils/types.js";

@@ -3,7 +3,7 @@ import { parse } from "csv-parse/sync";
 
 import { fileNameDateTime } from "../utils/date.js";
 import { makeOutputPath, writeOutputFile, ensureOutputPath } from "../utils/fs.js";
-import Stats, { StatsRunData } from "../utils/stats.js";
+import Stats, { StatsRunData } from "../utils/stats.class.js";
 import { DailyData } from "../utils/types.js";
 
 ////

@@ -2,7 +2,7 @@
 
 ## Status
 
-`PROPOSED` - working on POC
+`PROPOSED` - working on PoC
 
 ## Context
 
