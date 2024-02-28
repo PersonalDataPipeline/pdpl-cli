@@ -17,14 +17,12 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-(async () => {
-  const apiHandler = await import(`../apis/${apiName}/index.js`);
-  let curlCommand = "curl";
+const apiHandler = await import(`../apis/${apiName}/index.js`);
+let curlCommand = "curl";
 
-  const authHeaders = await apiHandler.getApiAuthHeaders();
-  for (const header in authHeaders) {
-    curlCommand += ` -H "${header}: ${authHeaders[header]}"`;
-  }
+const authHeaders = await apiHandler.getApiAuthHeaders();
+for (const header in authHeaders) {
+  curlCommand += ` -H "${header}: ${authHeaders[header]}"`;
+}
 
-  console.log(`${curlCommand} ${apiHandler.getApiBaseUrl()}`);
-})();
+console.log(`${curlCommand} ${apiHandler.getApiBaseUrl()}`);

@@ -33,7 +33,7 @@ The getter would see an empty queue and understand that we need to get the entir
 		"apiName": "strava",
 		"endpoints": [
 			{
-				"endpoints": "athlete/activities",
+				"endpoint": "athlete/activities",
 				"params": "page=2&per_page=50"
 			}
 		]

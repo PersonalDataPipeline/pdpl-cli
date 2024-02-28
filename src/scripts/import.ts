@@ -43,43 +43,41 @@ const fileContents = readFileSync(importFile, "utf8");
 const runDateTime = fileNameDateTime();
 const runStats = new Stats(importName);
 
-(async () => {
-  const entities = await parse(fileContents, { columns: true, bom: true });
-  const thisHandler = importHandler.importTypes[importType];
+const entities = await parse(fileContents, { columns: true, bom: true });
+const thisHandler = importHandler.importTypes[importType];
 
-  const savePath = [importName, thisHandler.getDirName()];
-  ensureOutputPath(savePath);
+const savePath = [importName, thisHandler.getDirName()];
+ensureOutputPath(savePath);
 
-  const dailyData: DailyData = {};
-  const runMetadata: StatsRunData = {
-    dateTime: runDateTime,
-    filesWritten: 0,
-    filesSkipped: 0,
-    importFile,
-  };
+const dailyData: DailyData = {};
+const runMetadata: StatsRunData = {
+  dateTime: runDateTime,
+  filesWritten: 0,
+  filesSkipped: 0,
+  importFile,
+};
 
-  for (const entity of entities) {
-    const transformedEntity = thisHandler.transformEntity(entity);
+for (const entity of entities) {
+  const transformedEntity = thisHandler.transformEntity(entity);
 
-    if (!transformedEntity) {
-      continue;
-    }
-
-    if (!dailyData[transformedEntity.day]) {
-      dailyData[transformedEntity.day] = [];
-    }
-    dailyData[transformedEntity.day].push(entity);
+  if (!transformedEntity) {
+    continue;
   }
 
-  runMetadata.total = entities.length;
-  runMetadata.days = Object.keys(dailyData).length;
-  for (const day in dailyData) {
-    const outputPath = makeOutputPath(savePath, day, runDateTime);
-    writeOutputFile(outputPath, dailyData[day])
-      ? runMetadata.filesWritten++
-      : runMetadata.filesSkipped++;
+  if (!dailyData[transformedEntity.day]) {
+    dailyData[transformedEntity.day] = [];
   }
+  dailyData[transformedEntity.day].push(entity);
+}
 
-  runStats.addRun(importType, runMetadata);
-  runStats.shutdown();
-})();
+runMetadata.total = entities.length;
+runMetadata.days = Object.keys(dailyData).length;
+for (const day in dailyData) {
+  const outputPath = makeOutputPath(savePath, day, runDateTime);
+  writeOutputFile(outputPath, dailyData[day])
+    ? runMetadata.filesWritten++
+    : runMetadata.filesSkipped++;
+}
+
+runStats.addRun(importType, runMetadata);
+runStats.shutdown();
