@@ -1,11 +1,9 @@
-import { readFileSync } from "fs";
-
 import path from "path";
 import axios, { AxiosResponse } from "axios";
 
 import getConfig from "./config.js";
 import { ApiHandler } from "./types.js";
-import { __dirname } from "./fs.js";
+import { __dirname, readFile } from "./fs.js";
 
 ////
 /// Types
@@ -32,7 +30,7 @@ const getMockApiData = (
   );
 
   try {
-    const mockJson = readFileSync(mockPath, "utf8");
+    const mockJson = readFile(mockPath);
     return {
       data: JSON.parse(mockJson),
       headers: {},

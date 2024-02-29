@@ -1,8 +1,7 @@
-import { existsSync, readFileSync, readdirSync } from "fs";
 import { parse } from "csv-parse/sync";
 
 import { fileNameDateTime } from "../utils/date.js";
-import { makeOutputPath, writeOutputFile, ensureOutputPath } from "../utils/fs.js";
+import { makeOutputPath, writeOutputFile, ensureOutputPath, readDirectory, pathExists, readFile } from "../utils/fs.js";
 import Stats, { StatsRunData } from "../utils/stats.class.js";
 import { DailyData } from "../utils/types.js";
 
@@ -10,7 +9,7 @@ import { DailyData } from "../utils/types.js";
 /// Helpers
 //
 
-const importsSupported = readdirSync("src/imports");
+const importsSupported = readDirectory("src/imports");
 
 const importName = process.argv[2];
 const importType = process.argv[3] || "";
@@ -34,12 +33,12 @@ if (!importType && !allImportTypes.includes(importType)) {
   process.exit();
 }
 
-if (!importFile || !existsSync(importFile)) {
+if (!importFile || !pathExists(importFile)) {
   console.log(`❌ Import file "${importFile}" not found`);
   process.exit();
 }
 
-const fileContents = readFileSync(importFile, "utf8");
+const fileContents = readFile(importFile);
 const runDateTime = fileNameDateTime();
 const runStats = new Stats(importName);
 

@@ -1,9 +1,9 @@
 import { config } from "dotenv";
 config();
 
-import { readdirSync } from "fs";
+import { readDirectory } from "../utils/fs.js";
 
-const apisSupported = readdirSync("./src/apis");
+const apisSupported = readDirectory("./src/apis");
 
 const apiName = process.argv[2];
 

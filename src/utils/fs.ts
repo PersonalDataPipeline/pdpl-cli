@@ -20,6 +20,10 @@ export const writeFile = (filePath: string, contents: string) => {
   writeFileSync(filePath, contents);
 };
 
+export const readDirectory = (filePath: string) => {
+  return readdirSync(filePath);
+};
+
 export const envWrite = (key: string, newValue: string, replaceValue: string): void => {
   const envPath = path.join(__dirname, "../../.env");
   const currentContents = readFileSync(envPath, "utf8");

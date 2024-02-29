@@ -1,8 +1,7 @@
 import path from "path";
-import { writeFileSync } from "fs";
 
 import { fileNameDateTime } from "./date.js";
-import { ensureOutputPath } from "./fs.js";
+import { ensureOutputPath, writeFile } from "./fs.js";
 import getConfig from "./config.js";
 
 ////
@@ -74,7 +73,7 @@ export default class Stats {
     const savePath = [this.log.name, "_runs"];
     const logContent = JSON.stringify(this.log, null, 2);
     ensureOutputPath(savePath);
-    writeFileSync(
+    writeFile(
       path.join(getConfig().outputDir, ...savePath, this.log.dateTime + ".json"),
       JSON.stringify(this.log, null, 2)
     );
