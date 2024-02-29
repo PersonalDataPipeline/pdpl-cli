@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from 'url';
 
-import path from "path";
 import getConfig from "./config.js";
+
+export const __filename = fileURLToPath(import.meta.url);
+
+export const __dirname = dirname(__filename);
 
 export const pathExists = (filePath: string) => {
   return existsSync(filePath);
