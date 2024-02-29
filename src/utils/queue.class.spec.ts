@@ -66,7 +66,7 @@ describe("Class: Queue", () => {
     });
 
     it("removes the entry from the queue", () => {
-      queue.addStandardEntry("TEST_TIME");
+      queue.addStandardEntry(1709169289129);
       expect(queue.getQueue().length).toEqual(1);
       queue.getEntry();
       expect(queue.getQueue().length).toEqual(0);
@@ -76,11 +76,11 @@ describe("Class: Queue", () => {
       const testEntry = {
         type: "standard",
         apiName: "API_NAME",
-        nextRun: "TEST_TIME",
+        nextRun: 1709169289129,
       };
 
       beforeEach(() => {
-        queue.addStandardEntry("TEST_TIME");
+        queue.addStandardEntry(1709169289129);
       });
 
       it("writes the queue file", () => {

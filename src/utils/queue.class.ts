@@ -21,7 +21,7 @@ export interface ErrorRunEntry extends RunEntry {
 }
 
 export interface StandardRunEntry extends RunEntry {
-  nextRun: string;
+  nextRun: number;
 }
 
 interface RunEntry {
@@ -61,7 +61,7 @@ export default class Queue {
     return this.queue.shift();
   }
 
-  addStandardEntry(nextRun: string) {
+  addStandardEntry(nextRun: number) {
     this.queue.push({
       type: "standard",
       apiName: this.apiName,
