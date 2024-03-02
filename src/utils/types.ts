@@ -25,6 +25,8 @@ export interface ApiPrimaryEndpoint {
   getEndpoint: () => string;
   method?: string;
   getParams?: () => object;
+  getHistoricParams?: () => object;
+  getNextParams?: (data: any, params?: object | null) => object;
   transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;
   parseDayFromEntity?: (entity: any) => string;
 }
@@ -33,4 +35,9 @@ export interface ApiSecondaryEndpoint extends Omit<ApiPrimaryEndpoint, "getEndpo
   getEndpoint: (entity: any) => string;
   getPrimary: () => string;
   getIdentifier: (entity: any) => string;
+}
+
+export interface EndpointRecord {
+  endpoint: string;
+  params: object;
 }

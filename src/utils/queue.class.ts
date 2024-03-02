@@ -1,35 +1,23 @@
 import * as path from "path";
 import getConfig from "./config.js";
-import { pathExists, readFile, writeFile } from "../utils/fs.js";
+import { ensureOutputPath, pathExists, readFile, writeFile } from "../utils/fs.js";
+import { EndpointRecord } from "./types.js";
 
 ////
 /// Types
 //
 
-export interface HistoricalRunEntryEndpoint {
-  endpoint: string;
-  params: string;
+export interface HistoricalRunEntry {
+  endpoints: EndpointRecord[];
+  type: string;
 }
 
-export interface HistoricalRunEntry extends RunEntry {
-  endpoints: HistoricalRunEntryEndpoint[];
-}
-
-export interface ErrorRunEntry extends RunEntry {
-  endpoint: string;
-  retryCount: number;
-}
-
-export interface StandardRunEntry extends RunEntry {
+export interface StandardRunEntry {
   nextRun: number;
+  type: string;
 }
 
-interface RunEntry {
-  apiName: string;
-  type: "standard" | "error" | "historical";
-}
-
-type RunQueue = (StandardRunEntry | ErrorRunEntry | HistoricalRunEntry)[];
+type RunQueue = (StandardRunEntry | HistoricalRunEntry)[];
 
 ////
 /// Export
@@ -45,6 +33,7 @@ export default class Queue {
     this.queueFile = path.join(getConfig().outputDir, apiName, "_queue.json");
 
     if (!pathExists(this.queueFile)) {
+      ensureOutputPath([this.apiName]);
       writeFile(this.queueFile, "[]");
       this.queue = [];
     } else {
@@ -58,38 +47,29 @@ export default class Queue {
   }
 
   getEntry() {
-    return this.queue.shift();
+    const entry = this.queue.shift();
+    this.writeQueue();
+    return entry;
   }
 
   addStandardEntry(nextRun: number) {
     this.queue.push({
       type: "standard",
-      apiName: this.apiName,
       nextRun,
     } as StandardRunEntry);
     this.writeQueue();
   }
 
-  addErrorEntry(endpoint: string, retryCount: number) {
-    this.queue.push({
-      type: "error",
-      apiName: this.apiName,
-      endpoint,
-      retryCount,
-    } as ErrorRunEntry);
-    this.writeQueue();
-  }
-
-  addHistoricalEntry(endpoints: HistoricalRunEntryEndpoint[]) {
+  addHistoricalEntry(endpoints: EndpointRecord[]) {
     this.queue.push({
       type: "historical",
-      apiName: this.apiName,
       endpoints,
     } as HistoricalRunEntry);
     this.writeQueue();
   }
 
   private writeQueue() {
+    ensureOutputPath([this.apiName]);
     writeFile(this.queueFile, JSON.stringify(this.queue, null, 2));
   }
 }

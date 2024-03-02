@@ -1,23 +1,28 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
-import { AxiosResponse } from "axios";
-import { readdirSync } from "fs";
+import { AxiosError, AxiosResponse } from "axios";
 
 import Stats, { StatsRunData } from "../utils/stats.class.js";
-import { ensureOutputPath, writeOutputFile, makeOutputPath } from "../utils/fs.js";
+import {
+  ensureOutputPath,
+  writeOutputFile,
+  makeOutputPath,
+  readDirectory,
+} from "../utils/fs.js";
 import { fileNameDateTime } from "../utils/date.js";
-import { ApiHandler, DailyData } from "../utils/types.js";
+import { ApiHandler, DailyData, EndpointRecord } from "../utils/types.js";
 import { getApiData, MockAxiosResponse } from "../utils/data.js";
+import Queue, { HistoricalRunEntry, StandardRunEntry } from "../utils/queue.class.js";
+import { ONE_DAY_IN_MS } from "../utils/constants.js";
 
 ////
 /// Helpers
 //
 
-const apisSupported = readdirSync("src/apis");
+const apisSupported = readDirectory("src/apis");
 
 const apiName = process.argv[2];
-const runEndpoint = process.argv[3];
 
 if (!apiName) {
   console.log(`❌ No API name included`);
@@ -29,17 +34,66 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 const runStats = new Stats(apiName);
-const perEndpointData: { [key: string]: [] } = {};
+
+////
+/// Queue management
+//
+
+const runQueue = new Queue(apiName);
+const queueEntry = runQueue.getEntry();
+
+let runEndpoints: EndpointRecord[] = [];
+let isHistoricalRun = false;
+if (!queueEntry) {
+  console.log("🤖 Doing first historical run");
+  isHistoricalRun = true;
+} else if (queueEntry && queueEntry.type === "standard") {
+  console.log("🤖 Doing standard run");
+  const { nextRun } = queueEntry as StandardRunEntry;
+  if ((new Date()).getTime() < new Date(nextRun).getTime()) {
+    runQueue.addStandardEntry(nextRun);
+    console.log(`⏩ Waiting until ${nextRun} ...`);
+    process.exit();
+  }
+} else if (queueEntry.type === "historical") {
+  console.log("🤖 Doing subsequent historical run");
+  isHistoricalRun = true;
+  runEndpoints = (queueEntry as HistoricalRunEntry).endpoints;
+  console.log(runEndpoints);
+  
+} else {
+  console.log("❌ Unknown queue entry state!");
+  process.exit();
+}
 
 ////
 /// Endpoints: Primary
 //
+
+const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
+const perEndpointData: { [key: string]: [] } = {};
+const nextHistoricalEndpoints: EndpointRecord[] = [];
+
 for (const endpointHandler of apiHandler.endpointsPrimary) {
   const endpointName = endpointHandler.getEndpoint();
-  if (runEndpoint && runEndpoint !== endpointName) {
+  const foundEndpoint = runEndpoints.filter((ep) => ep.endpoint === endpointName)[0];
+  if (runEndpoints.length && !foundEndpoint) {
     continue;
+  }
+
+  // If we're calling a specific endpoint, we may have specific params to use
+  let specificParams: object | null = null;
+  if (isHistoricalRun) {
+    specificParams = foundEndpoint && foundEndpoint.params
+      ? foundEndpoint.params
+      : typeof endpointHandler.getHistoricParams === "function"
+        ? endpointHandler.getHistoricParams()
+        : null;
+  }
+
+  if (typeof specificParams === "object") {
+    endpointHandler.getParams = () => specificParams as object;
   }
 
   const runDateTime = fileNameDateTime();
@@ -56,7 +110,7 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
     runStats.addError(endpointName, {
       type: "http",
       message: error instanceof Error ? error.message : "Unknown error for getApiData",
-      data: (error as Record<string, unknown>)["data"] || {},
+      data: (error as AxiosError)["response"]!["data"] || {},
     });
     continue;
   }
@@ -68,6 +122,16 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
     typeof endpointHandler.transformResponseData === "function"
       ? endpointHandler.transformResponseData(apiResponse)
       : apiResponse.data;
+
+  if (isHistoricalRun && typeof endpointHandler.getNextParams === "function") {
+    const nextParams = endpointHandler.getNextParams(apiResponse.data, specificParams);
+    if (typeof nextParams === "object") {
+      nextHistoricalEndpoints.push({
+        endpoint: endpointName,
+        params: nextParams,
+      });
+    }
+  }
 
   // Store all the entity data for the endpoint for secondary endpoints
   perEndpointData[endpointName] = apiResponseData;
@@ -124,6 +188,12 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
 
   runStats.addRun(endpointName, runMetadata);
 } // END endpointsPrimary
+
+if (nextHistoricalEndpoints.length) {
+  runQueue.addHistoricalEntry(nextHistoricalEndpoints);
+} else {
+  runQueue.addStandardEntry((new Date()).getTime() + ONE_DAY_IN_MS);
+}
 
 ////
 /// Endpoints: Secondary

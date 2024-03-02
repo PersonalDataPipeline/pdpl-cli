@@ -1,6 +1,7 @@
 import getConfig from "./config.js";
-import { pathExists, readFile, writeFile } from "./fs.js";
+import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
 jest.mock("./fs.js", () => ({
+  ensureOutputPath: jest.fn(),
   pathExists: jest.fn(),
   readFile: jest.fn(),
   writeFile: jest.fn(),
@@ -23,6 +24,10 @@ describe("Class: Queue", () => {
     beforeAll(() => {
       (pathExists as jest.Mock).mockImplementation(() => false);
       queue = new Queue("API_NAME");
+    });
+
+    it("checks the write path", () => {
+      expect(ensureOutputPath).toHaveBeenCalledWith(["API_NAME"]);
     });
 
     it("creates the queue file", () => {
@@ -59,6 +64,7 @@ describe("Class: Queue", () => {
       (pathExists as jest.Mock).mockImplementation(() => false);
       queue = new Queue("API_NAME");
       (writeFile as jest.Mock).mockClear();
+      (ensureOutputPath as jest.Mock).mockClear();
     });
 
     it("returns undefined when queue is empty", () => {
@@ -75,7 +81,6 @@ describe("Class: Queue", () => {
     describe("standard", () => {
       const testEntry = {
         type: "standard",
-        apiName: "API_NAME",
         nextRun: 1709169289129,
       };
 
@@ -83,32 +88,8 @@ describe("Class: Queue", () => {
         queue.addStandardEntry(1709169289129);
       });
 
-      it("writes the queue file", () => {
-        expect(writeFile).toHaveBeenCalledWith(
-          queueFilePath,
-          JSON.stringify([testEntry], null, 2)
-        );
-      });
-
-      it("adds an entry to the queue", () => {
-        expect(queue.getQueue()).toEqual([testEntry]);
-      });
-
-      it("returns the added entry", () => {
-        expect(queue.getEntry()).toEqual(testEntry);
-      });
-    });
-
-    describe("error", () => {
-      const testEntry = {
-        type: "error",
-        apiName: "API_NAME",
-        endpoint: "TEST_ENDPOINT",
-        retryCount: 2,
-      };
-
-      beforeEach(() => {
-        queue.addErrorEntry("TEST_ENDPOINT", 2);
+      it("checks the write path", () => {
+        expect(ensureOutputPath).toHaveBeenCalledWith(["API_NAME"]);
       });
 
       it("writes the queue file", () => {
@@ -130,22 +111,23 @@ describe("Class: Queue", () => {
     describe("historical", () => {
       const testEntry = {
         type: "historical",
-        apiName: "API_NAME",
         endpoints: [
           {
             endpoint: "TEST_ENDPOINT",
-            params: "param1=test&param2=test",
+            params: {
+              param1: "test1",
+              param2: "test2",
+            },
           },
         ],
       };
 
       beforeEach(() => {
-        queue.addHistoricalEntry([
-          {
-            endpoint: "TEST_ENDPOINT",
-            params: "param1=test&param2=test",
-          },
-        ]);
+        queue.addHistoricalEntry(testEntry.endpoints);
+      });
+
+      it("checks the write path", () => {
+        expect(ensureOutputPath).toHaveBeenCalledWith(["API_NAME"]);
       });
 
       it("writes the queue file", () => {
