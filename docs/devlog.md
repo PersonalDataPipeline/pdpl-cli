@@ -4,10 +4,48 @@ Notes taken during development, newest to oldest.
 
 TODO:
 - [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) PoC
-- [ ] Handle all TS-eslint warnings ...
+- [ ] Generate mocks from getter script
+- [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
+- [ ] Handle all TS-eslint warnings
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 - [ ] https://duckdb.org ??
+
+## [[2024-03-01]]
+
+For the historical run, there are two situations to deal with:
+
+1. First historical run, which is a "get all the things" call with expected pagination. This needs to:
+	- Make an API call that incorporates everything
+	- Store pagination data in the next queue entity resource
+2. Subsequent calls need to pull the message from the queue and act accordingly
+
+So, all the different types of runs will have the same endpoint path and different params:
+
+- Standard daily run indicating the last few days
+- Error params that were used previously
+- "Down of time" params for initial historic run
+- Pagination/next token params for remaining historic calls
+
+This makes this much simpler to reason about. We just need to determine what endpoints we're calling and what parameters to use within the endpoint-specific logic. Structuring this in the existing code is proving to be tough ... may need to refactor a few things to make this work. 
+
+Logic is:
+
+- If error:
+	- entry-provided params
+- Else if historical:
+	- If first run:
+		- historical params
+	- Else:
+		- entry-provided params
+- Else is standard:
+	- default params
+
+The logic here is starting to get really convoluted between all the different states we could be in, how the endpoints are stored, and how the queue entries are working. I'm hesitant to start refactoring everything just to fit the edge case of re-trying error calls, especially since the error retries could be handled in the same run with something like [axios-retry](https://github.com/softonic/axios-retry). Also, with proper overlap in standard runs and occasional start-to-finish runs, errors will naturally be handled. OK, feeling good about that. 
+
+Note as I'm working through this ... the getter script is starting to get hard to reason about and, in it's current form, it's not testable which is not ideal. I feel like this file is already begging for a rewrite in a more testable way ...
+
+This is slowly coming together but it's going to take a lot more thought around pagination to get this working correctly. It's technically working as expected but regular tokenized pagination doesn't work for the Oura heart rate API because we're saving it on a daily basis and the days are getting cut in half so I'm going to have to write specific pagination for that endpoint. This is probably not a common case but, still, I can imagine this coming up on other API endpoints. 
 
 ## [[2024-02-28]]
 
@@ -16,6 +54,8 @@ Feeling good about [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md
 Probably getting unit tests going about now is a good idea ... not too hard copying over from budget-cli. Learned a bit about TS config 👍
 
 After all those chores, time to dive into the queue implementation!
+
+There are so many paths to figure out here that I keep getting distracted by how much is left. Need to slice and focus on one thing at a time, starting with a standard run. This worked out fairly well by always adding a new standard entry when the latest entry is pulled from the queue.
 
 ## [[2024-02-27]]
 
