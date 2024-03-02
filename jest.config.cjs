@@ -8,6 +8,9 @@ const config = {
   },
   testMatch: [
     "**/?(*.)+(spec).ts?(x)" 
+  ],
+  watchPathIgnorePatterns: [
+    "src/scripts/test.ts"
   ]
 };
 
