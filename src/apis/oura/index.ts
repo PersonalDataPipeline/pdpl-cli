@@ -36,7 +36,7 @@ const transformResponseData = (response: AxiosResponse | MockAxiosResponse): unk
 
 const getNextParams = (data: { next_token?: string }): object => {
   return data.next_token ? { next_token: data.next_token } : {};
-}
+};
 
 ////
 /// Exports

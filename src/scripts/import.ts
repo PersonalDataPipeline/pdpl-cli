@@ -1,7 +1,14 @@
 import { parse } from "csv-parse/sync";
 
 import { runDateUtc } from "../utils/date.js";
-import { makeOutputPath, writeOutputFile, ensureOutputPath, readDirectory, pathExists, readFile } from "../utils/fs.js";
+import {
+  makeOutputPath,
+  writeOutputFile,
+  ensureOutputPath,
+  readDirectory,
+  pathExists,
+  readFile,
+} from "../utils/fs.js";
 import Stats, { StatsRunData } from "../utils/stats.class.js";
 import { DailyData } from "../utils/types.js";
 

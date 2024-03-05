@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
 import path, { dirname } from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 import getConfig from "./config.js";
 

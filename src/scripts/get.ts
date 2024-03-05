@@ -85,11 +85,12 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
   // If we're calling a specific endpoint, we may have specific params to use
   let specificParams: object | null = null;
   if (isHistoricalRun) {
-    specificParams = foundEndpoint && foundEndpoint.params
-      ? foundEndpoint.params
-      : typeof endpointHandler.getHistoricParams === "function"
-        ? endpointHandler.getHistoricParams()
-        : null;
+    specificParams =
+      foundEndpoint && foundEndpoint.params
+        ? foundEndpoint.params
+        : typeof endpointHandler.getHistoricParams === "function"
+          ? endpointHandler.getHistoricParams()
+          : null;
   }
 
   if (typeof specificParams === "object") {
