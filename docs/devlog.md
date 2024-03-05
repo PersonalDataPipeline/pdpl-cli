@@ -3,13 +3,33 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
-- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) PoC
+- [ ] [ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
+- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) - PoC
 - [ ] Generate mocks from getter script
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
 - [ ] Handle all TS-eslint warnings
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 - [ ] https://duckdb.org ??
+
+## [[2024-03-04]]
+
+The pagination continues to be a difficult problem. Let's start with the easiest and go from there!
+
+First, Oura's "easy" endpoints. These results that are naturally organized by day. I'm not sure how, exactly, this is handled for different time zones. I'm not seeing a setting anymore, nor am I getting anything back from user info API endpoint. So we'll need to just trust Oura on this one ... 
+
+These endpoints use the next token strategy, which can be problematic for how we're parsing data right now (see above). The question to answer right now is: should we write our own pagination here running off of dates or should we adjust our data model to allow for this next token strategy? 
+
+[ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
+
+Just a quick side note ... this is **very tough** to reason about, no wonder I was getting stuck on this! All the different ways to think about it, potential future cases we don't know about, data stability, wrangling dates and time zones ... there is no excellent answer here. And more reasons why this particular portion is both important to get right and a potential maintenance nightmare!!
+
+I'm also now realizing that there needs to be an timezone setting in this library in order to make sense of records that come through with different times. The "day" framing of this requires the start and end of the day to be defined. Then, I'll need to decide on a consistent way to record time throughout the system (run marking, queue timestamps, etc.). Starting to re-think [ADR 001](./decisions/001-js-date-library.md) 🤔
+
+I think what needs to happen before dealing with the historic params is doing a bit of an audit on how dates are used throughout. Thinking about a few things here:
+
+- System time should always be GMT but needs to be used in calculation in some places (performance, queue times) and human-readable in others (file names). Thinking about a global class/utility that gets instantiated with the run start time and is then used throughout
+- User-specific time zones should be used for anything that affects the data that we're getting. I don't want to adjust the times in data we get back, nor so I want to be more aware of what's in there than I need to be. But the day collection needs to be calculated on the user's timezone. Though, even that might be specious since users could move locations and not update their data pull settings. And if they did, that would change historical runs _*eye twitches*_.
 
 ## [[2024-03-01]]
 
