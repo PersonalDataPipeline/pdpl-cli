@@ -13,6 +13,7 @@
     "prettier-ci": "prettier --check ./src",
     "format": "npm run eslint && npm run prettier",
     "caddy": "caddy run --envfile .env",
+    "curl": "node ./dist/scripts/curl.js",
     "strava": "node ./dist/scripts/get.js strava",
     "oura": "node ./dist/scripts/get.js oura",
     "wahoo": "node ./dist/scripts/get.js wahoo",
