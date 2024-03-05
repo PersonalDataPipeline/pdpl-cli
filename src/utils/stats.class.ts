@@ -1,6 +1,6 @@
 import path from "path";
 
-import { fileNameDateTime } from "./date.js";
+import { runDateUtc } from "../utils/date.js";
 import { ensureOutputPath, writeFile } from "./fs.js";
 import getConfig from "./config.js";
 
@@ -52,7 +52,7 @@ export default class Stats {
   constructor(name: string) {
     this.log = {
       name,
-      dateTime: fileNameDateTime(),
+      dateTime: runDateUtc().dateTime,
       startTimeMs: Date.now(),
       runs: [],
       errors: [],

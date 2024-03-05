@@ -1,6 +1,6 @@
 import { parse } from "csv-parse/sync";
 
-import { fileNameDateTime } from "../utils/date.js";
+import { runDateUtc } from "../utils/date.js";
 import { makeOutputPath, writeOutputFile, ensureOutputPath, readDirectory, pathExists, readFile } from "../utils/fs.js";
 import Stats, { StatsRunData } from "../utils/stats.class.js";
 import { DailyData } from "../utils/types.js";
@@ -39,7 +39,7 @@ if (!importFile || !pathExists(importFile)) {
 }
 
 const fileContents = readFile(importFile);
-const runDateTime = fileNameDateTime();
+const runDateTime = runDateUtc().dateTime;
 const runStats = new Stats(importName);
 
 const entities = await parse(fileContents, { columns: true, bom: true });

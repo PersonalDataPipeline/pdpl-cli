@@ -10,7 +10,7 @@ import {
   makeOutputPath,
   readDirectory,
 } from "../utils/fs.js";
-import { fileNameDateTime } from "../utils/date.js";
+import { runDateUtc } from "../utils/date.js";
 import { ApiHandler, DailyData, EndpointRecord } from "../utils/types.js";
 import { getApiData, MockAxiosResponse } from "../utils/data.js";
 import Queue, { HistoricalRunEntry, StandardRunEntry } from "../utils/queue.class.js";
@@ -35,6 +35,7 @@ if (!apisSupported.includes(apiName)) {
 }
 
 const runStats = new Stats(apiName);
+const runDate = runDateUtc();
 
 ////
 /// Queue management
@@ -51,7 +52,7 @@ if (!queueEntry) {
 } else if (queueEntry && queueEntry.type === "standard") {
   console.log("🤖 Doing standard run");
   const { nextRun } = queueEntry as StandardRunEntry;
-  if ((new Date()).getTime() < new Date(nextRun).getTime()) {
+  if (runDate.time < new Date(nextRun).getTime()) {
     runQueue.addStandardEntry(nextRun);
     console.log(`⏩ Waiting until ${nextRun} ...`);
     process.exit();
@@ -61,7 +62,6 @@ if (!queueEntry) {
   isHistoricalRun = true;
   runEndpoints = (queueEntry as HistoricalRunEntry).endpoints;
   console.log(runEndpoints);
-  
 } else {
   console.log("❌ Unknown queue entry state!");
   process.exit();
@@ -96,9 +96,8 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
     endpointHandler.getParams = () => specificParams as object;
   }
 
-  const runDateTime = fileNameDateTime();
   const runMetadata: StatsRunData = {
-    dateTime: runDateTime,
+    dateTime: runDate.dateTime,
     filesWritten: 0,
     filesSkipped: 0,
   };
@@ -172,7 +171,7 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
     runMetadata.days = Object.keys(dailyData).length;
 
     for (const day in dailyData) {
-      const outputPath = makeOutputPath(savePath, day, runDateTime);
+      const outputPath = makeOutputPath(savePath, day, runDate.fileName);
       writeOutputFile(outputPath, dailyData[day])
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
@@ -180,7 +179,7 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
   } else {
     // Snapshot data, not time-bound
     runMetadata.total = 1;
-    const outputPath = makeOutputPath(savePath, null, runDateTime);
+    const outputPath = makeOutputPath(savePath, null, runDate.fileName);
     writeOutputFile(outputPath, apiResponseData)
       ? runMetadata.filesWritten++
       : runMetadata.filesSkipped++;
@@ -192,7 +191,7 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
 if (nextHistoricalEndpoints.length) {
   runQueue.addHistoricalEntry(nextHistoricalEndpoints);
 } else {
-  runQueue.addStandardEntry((new Date()).getTime() + ONE_DAY_IN_MS);
+  runQueue.addStandardEntry(new Date().getTime() + ONE_DAY_IN_MS);
 }
 
 ////
@@ -204,9 +203,8 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
   ensureOutputPath(savePath);
 
   for (const entity of entities) {
-    const runDateTime = fileNameDateTime();
     const runMetadata: StatsRunData = {
-      dateTime: runDateTime,
+      dateTime: runDate.dateTime,
       filesWritten: 0,
       filesSkipped: 0,
     };
@@ -232,7 +230,7 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
     const outputPath = makeOutputPath(
       savePath,
       endpointHandler.getIdentifier(entity),
-      runDateTime
+      runDate.fileName
     );
     writeOutputFile(outputPath, apiResponseData)
       ? runMetadata.filesWritten++
