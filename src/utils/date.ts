@@ -21,6 +21,12 @@ const runStartStatic = new Date();
 /// Exports
 //
 
+export const adjustDateByDays = (adjustDays: number, date = new Date()) => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + adjustDays);
+  return newDate;
+};
+
 export const runDateUtc = (): StartDateObject => {
   const isoString = runStartStatic.toISOString();
   return {
@@ -31,11 +37,9 @@ export const runDateUtc = (): StartDateObject => {
   };
 };
 
-export const getFormattedDate = (adjustDays = 0, date = new Date()) => {
+export const getFormattedDate = (adjustDays: number = 0, date: Date = new Date()) => {
   if (adjustDays) {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + adjustDays);
-    date = newDate;
+    date = adjustDateByDays(adjustDays, date);
   }
   const yyyy = date.getFullYear();
   const mm = date.getMonth() + 1;

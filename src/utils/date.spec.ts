@@ -1,4 +1,20 @@
-import { runDateUtc, getFormattedDate } from "./date.js";
+import { runDateUtc, getFormattedDate, adjustDateByDays } from "./date.js";
+
+describe("Function: adjustDateByDays", () => {
+  it("removes days correctly", () => {
+    // TODO: Setup test config with a known timezone
+    expect(adjustDateByDays(-5, new Date("2000-01-06T00:00:00")).toISOString()).toEqual(
+      "2000-01-01T08:00:00.000Z"
+    );
+  });
+
+  it("adds days correctly", () => {
+    // TODO: Setup test config with a known timezone
+    expect(adjustDateByDays(5, new Date("2000-01-06T00:00:00")).toISOString()).toEqual(
+      "2000-01-11T08:00:00.000Z"
+    );
+  });
+});
 
 describe("Function: runDateUtc", () => {
   it("returns the same values when called multiple times", async () => {
