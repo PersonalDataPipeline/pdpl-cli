@@ -76,6 +76,14 @@ I think this should work fine in the happy path but this might not work as just 
 
 If the queue is saved per API, then a single instance does not need to take into account multiple processes accessing it. We can mostly assume that by the time one starts, the last run as ended. Though we should be wary of how often then processes are triggered. If we start triggering every few minutes then there is a chance that one process could empty the queue, next process sees an empty queue and starts a historic run, then the other process finishes and stores a standard run. 
 
+**1st PoC notes:**
+
+I've been working with this queue for a while and, for the most part, it's doing its state job fairly well. The one main thing that I'm not wild about is the empty queue behavior. The first item on the queue is removed, leaving the queue empty. If the run errors out for some reason then the queue remains empty and we start another historic run. This is not a terrible thing to happen but it's also unintended and avoidable. The problem is that, without a way to interact with the queue directly, we would have no way to indicate that we need to start a historic run. 
+
+It's clear that we need state of some kind and we don't need anything more than JSON stored on "disk" (wherever that disk happens to be). I think the "one job per run" might be part of the problem, maybe the run could just pull in the queue and process everything that's there. Queue items are added as needed as single endpoints instead of being saved up during the run and potentially lost.
+
+I still agree that errors should not appear in the queue, that should be handled by scanning the logs and deciding at that time (in a separate script/service) if it should be retried.
+
 ## Consequences
 
 - Historic runs requiring pagination becomes possible with this system. This allows many calls over time to avoid rate limits and being bad citizens. 

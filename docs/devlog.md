@@ -3,14 +3,27 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
-- [ ] [ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
 - [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) - PoC
+- [ ] Figure out Oura heart rate historical runs
 - [ ] Generate mocks from getter script
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
+- [ ] Add Axios retry to get script
 - [ ] Handle all TS-eslint warnings
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 - [ ] https://duckdb.org ??
+
+## [[2024-03-08]]
+
+[ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
+
+The date situation is finally settling out and between unit tests and a more clear understanding of the impact of the issue, I'm starting to see the light. The complexity here came from JS `Date` behavior combined with operating in multiple timezones (local and UTC) and then abstracting all that to work with user-defined timezones. I learned **A TON** about how the core JS `Date` functionality works and still feel good about not adopting another library to handle this. The Date API is not great but handling dates and times across time zones is just hard and, while a poor API is annoying, it's not making this much more complex than it already is. 
+
+It looks like the historical runs are working well, except for Oura's heart rate one. It seems like the datetime that we're passing is getting translated somehow. This was another part of that deep complexity, the JS date behavior combined with the black box of the API makes for some interesting problems. In the end, building this against data sources of any type that we don't control will always be a Hard Thing without much to do about it. 
+
+[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) 
+
+Thinking now about logging and how we need informative message as well. The way that the logs are saved per run and can be scanned after the fact was a good move in the beginning. I'd like to write all logging to go through the logger instead of ever relying on the console. The output can print to the console based on settings or debug or something else. 
 
 ## [[2024-03-04]]
 
