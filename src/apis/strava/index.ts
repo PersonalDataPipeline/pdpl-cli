@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import { HALF_HOUR_IN_SEC, ONE_DAY_IN_SEC } from "../../utils/constants.js";
 
 const {
   STRAVA_REFRESH_TOKEN = "",
@@ -72,6 +73,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "athlete",
     getDirName: () => "athlete",
+    getDelay: () => ONE_DAY_IN_SEC,
   },
   {
     getEndpoint: () => "athlete/activities",
@@ -82,6 +84,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
       page: 1,
       per_page: 50,
     }),
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     parseDayFromEntity: (entity: StravaActivityEntity) =>
       entity.start_date_local.split("T")[0] || "",
   },

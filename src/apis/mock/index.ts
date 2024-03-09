@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
+import { ONE_DAY_IN_SEC, ONE_HOUR_IN_SEC } from "../../utils/constants.js";
 
 ////
 /// Types
@@ -36,6 +37,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "api-getter-mock.json",
     getDirName: () => "main",
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => ONE_HOUR_IN_SEC,
     parseDayFromEntity,
     transformResponseData,
   },

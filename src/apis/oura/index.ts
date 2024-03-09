@@ -3,6 +3,7 @@ import { AxiosResponse } from "axios";
 import { adjustDateByDays, getFormattedDate } from "../../utils/date.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
+import { HALF_HOUR_IN_SEC, ONE_DAY_IN_SEC } from "../../utils/constants.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
 
@@ -81,6 +82,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -90,6 +93,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/sleep",
     getDirName: () => "user--sleep",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -99,6 +104,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/daily_stress",
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -108,6 +115,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/daily_readiness",
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -117,6 +126,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/daily_activity",
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -126,6 +137,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/daily_spo2",
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -135,6 +148,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/sleep_time",
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => historicParams,
     getNextParams,
     parseDayFromEntity,
@@ -144,6 +159,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
     getParams: () => heartRateParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: () => heartRateParams,
     getNextParams: (currentParams: OuraHeartRateUrlParams): OuraHeartRateUrlParams => {
       const startDateTime = adjustDateByDays(

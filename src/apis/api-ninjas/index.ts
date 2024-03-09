@@ -1,3 +1,4 @@
+import { HALF_HOUR_IN_SEC, ONE_DAY_IN_SEC } from "../../utils/constants.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 
 const { API_NINJAS_KEY = "" } = process.env;
@@ -41,6 +42,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "historicalevents",
     getDirName: () => "historicalevents",
     getParams: () => defaultParams,
+    getDelay: () => ONE_DAY_IN_SEC,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     parseDayFromEntity,
   },
 ];

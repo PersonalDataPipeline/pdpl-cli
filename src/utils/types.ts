@@ -23,15 +23,18 @@ export interface ApiHandler {
 export interface ApiPrimaryEndpoint {
   getDirName: () => string;
   getEndpoint: () => string;
+  getDelay: () => number;
   getMethod?: () => string;
   getParams?: () => object;
   getHistoricParams?: () => object;
+  getHistoricDelay?: () => number;
   getNextParams?: (currentParams: object) => object;
   transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;
   parseDayFromEntity?: (entity: any) => string;
 }
 
-export interface ApiSecondaryEndpoint extends Omit<ApiPrimaryEndpoint, "getEndpoint"> {
+export interface ApiSecondaryEndpoint
+  extends Omit<ApiPrimaryEndpoint, "getEndpoint" | "getDelay" | "getHistoricParams"> {
   getEndpoint: (entity: any) => string;
   getPrimary: () => string;
   getIdentifier: (entity: any) => string;
