@@ -3,15 +3,18 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
-- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) - PoC
-- [ ] Figure out Oura heart rate historical runs
-- [ ] Generate mocks from getter script
-- [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
+- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) - PoC #2
+- [ ] [ADR 006: Logging](./decisions/006-logging)
+- [ ] Improve logger to handle info messages
 - [ ] Add Axios retry to get script
-- [ ] Handle all TS-eslint warnings
+- [ ] Write Strava pagination
+- [ ] Generate mocks from getter script
+- [ ] Separate debug mode for HTTP calls from saving
+- [ ] Figure out Oura heart rate historical runs
+- [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
+- [ ] TS-eslint warnings
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
-- [ ] https://duckdb.org ??
 
 ## [[2024-03-08]]
 
@@ -21,9 +24,30 @@ The date situation is finally settling out and between unit tests and a more cle
 
 It looks like the historical runs are working well, except for Oura's heart rate one. It seems like the datetime that we're passing is getting translated somehow. This was another part of that deep complexity, the JS date behavior combined with the black box of the API makes for some interesting problems. In the end, building this against data sources of any type that we don't control will always be a Hard Thing without much to do about it. 
 
-[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) 
+[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 
-Thinking now about logging and how we need informative message as well. The way that the logs are saved per run and can be scanned after the fact was a good move in the beginning. I'd like to write all logging to go through the logger instead of ever relying on the console. The output can print to the console based on settings or debug or something else. 
+Thinking now about logging and how we need informative message as well. The way that the logs are saved per run and can be scanned after the fact was a good move in the beginning. I'd like to write all logging to go through the logger instead of ever relying on the console. The output can print to the console based on settings or debug or something else.
+
+Another thing that I'm thinking about is how hard it is to test changes, make sure data is lining up, etc. I've been relying on unit tests for some of that, which has been helpful. But it's starting to feel like the whole get script could use a test suite soon, one that could be run against mock data maybe? That should probably come with a refactor to get this in better shape to be a packaged, npm-installed script. I'm realizing that the main thing I need to test better is pagination: first call, what's saved to the queue, second call, etc. Maybe there's a way to get better visibility on that ahead of time, like an API handler test harness that can be reused 🤔
+
+I'm getting a little anxious/overwhelmed with this at the moment because it feels like I've put a lot into this and the get script still feels very rough around the edges. A critical part of this is getting accurate, complete data from these services and that's proving to be quite hard for just a handful of APIs. 
+
+So, this is feeling like boiling an ocean here so let's slice things and set some priority. Main, abstracted problems right now:
+
+- Handling historical runs is not solved (ADR 004)
+- Pagination is difficult to write and test (ADR 005)
+- Logging is incomplete and relies on the console currently
+- Endpoint errors are not handled in any meaningful way besides logging
+- Currently no way to gather new mock data
+- Need more endpoints
+
+OK, not so scary, right?! There are ADRs for the first two so we're on our way there. I think the amount thought it's taken to end up with not making much progress is what's causing anxiety here. But all of this writing and experimentation is working towards an answer for both of those.
+
+Just added some color for the second PoC for ADR 004. I feel good about this approach and should no be too hard to code that. 
+
+Added [ADR 006: Logging](./decisions/006-logging) to keep taking notes about how to handle logging.
+
+The rest is on the list above in the right order. Feeling better 👍
 
 ## [[2024-03-04]]
 

@@ -84,6 +84,13 @@ It's clear that we need state of some kind and we don't need anything more than 
 
 I still agree that errors should not appear in the queue, that should be handled by scanning the logs and deciding at that time (in a separate script/service) if it should be retried.
 
+So, we need a new PoC that:
+
+- handles the queue all at once
+- treats an empty queue as "run standard and save a next entry"
+- allows for single endpoint entries that are added as-needed in the get script
+- queue entries are single endpoints and params (if not default) which can hold multiple for the same endpoint
+
 ## Consequences
 
 - Historic runs requiring pagination becomes possible with this system. This allows many calls over time to avoid rate limits and being bad citizens. 
