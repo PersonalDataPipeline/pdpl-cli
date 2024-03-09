@@ -123,8 +123,12 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
       ? endpointHandler.transformResponseData(apiResponse)
       : apiResponse.data;
 
-  if (isHistoricalRun && typeof endpointHandler.getNextParams === "function") {
-    const nextParams = endpointHandler.getNextParams(apiResponse.data, specificParams);
+  if (
+    specificParams &&
+    typeof endpointHandler.getNextParams === "function" &&
+    Object.keys(apiResponseData).length
+  ) {
+    const nextParams = endpointHandler.getNextParams(specificParams);
     if (typeof nextParams === "object") {
       nextHistoricalEndpoints.push({
         endpoint: endpointName,
