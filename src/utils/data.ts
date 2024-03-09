@@ -2,7 +2,7 @@ import path from "path";
 import axios, { AxiosResponse } from "axios";
 
 import getConfig from "./config.js";
-import { ApiHandler } from "./types.js";
+import { ApiHandler, ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "./types.js";
 import { __dirname, readFile } from "./fs.js";
 
 ////
@@ -49,16 +49,14 @@ const getMockApiData = (
 
 export const getApiData = async (
   apiHandler: ApiHandler,
-  endpointHandler: any,
+  handler: ApiPrimaryEndpoint | ApiSecondaryEndpoint,
   entity?: any
 ): Promise<AxiosResponse | MockAxiosResponse> => {
   const isEnriching = typeof entity !== "undefined";
-  const endpoint = endpointHandler.getEndpoint(entity);
+  const endpoint = handler.getEndpoint(entity);
 
   if (getConfig().debug) {
-    const filename = isEnriching
-      ? endpoint.replaceAll("/", "--")
-      : endpointHandler.getDirName();
+    const filename = isEnriching ? endpoint.replaceAll("/", "--") : handler.getDirName();
     const apiData = getMockApiData(apiHandler.getApiName(), filename);
 
     if (apiData !== null) {
@@ -67,12 +65,11 @@ export const getApiData = async (
   }
 
   const axiosConfig = {
+    url: endpoint,
     baseURL: apiHandler.getApiBaseUrl(),
     headers: await apiHandler.getApiAuthHeaders(),
-    url: endpoint,
-    method: endpointHandler.method || "get",
-    params:
-      typeof endpointHandler.getParams === "function" ? endpointHandler.getParams() : {},
+    method: typeof handler.getMethod === "function" ? handler.getMethod() : "get",
+    params: typeof handler.getParams === "function" ? handler.getParams() : {},
   };
 
   if (getConfig().debug) {

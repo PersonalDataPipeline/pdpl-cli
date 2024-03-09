@@ -23,7 +23,7 @@ export interface ApiHandler {
 export interface ApiPrimaryEndpoint {
   getDirName: () => string;
   getEndpoint: () => string;
-  method?: string;
+  getMethod?: () => string;
   getParams?: () => object;
   getHistoricParams?: () => object;
   getNextParams?: (currentParams: object) => object;
