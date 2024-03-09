@@ -2,7 +2,7 @@
 
 ## Status
 
-`DRAFT`
+`ACCEPTED`
 
 ## Context
 
@@ -58,4 +58,4 @@ Logic could look like this for next tokens:
 
 ## Decision
 
-`TBD`
+I'm going to write my own pagination based on date. I think trying to make a system based around every API's pagination system is going to be more work than always thinking about dates. 

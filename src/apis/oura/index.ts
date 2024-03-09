@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 
-import { getFormattedDate } from "../../utils/date.js";
+import { adjustDateByDays, getFormattedDate } from "../../utils/date.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
 
@@ -15,18 +15,46 @@ interface OuraEntity {
   timestamp: string;
 }
 
+interface OuraUrlParams {
+  start_date?: string;
+  end_date?: string;
+}
+
+interface OuraHeartRateUrlParams {
+  start_datetime?: string;
+  end_datetime?: string;
+}
+
 ////
 /// Helpers
 //
 
-const defaultParams = {
-  start_date: getFormattedDate(-180),
-  end_date: getFormattedDate(),
+const defaultParams: OuraUrlParams = {
+  start_date: getFormattedDate(-31),
+  end_date: getFormattedDate(-1),
 };
 
-const historicParams = {
-  start_date: "1900-01-01",
-  end_date: getFormattedDate(),
+const historicParams: OuraUrlParams = {
+  start_date: getFormattedDate(-91),
+  end_date: getFormattedDate(-1),
+};
+
+const getNextParams = (currentParams: OuraUrlParams): OuraUrlParams => ({
+  start_date: getFormattedDate(-90, new Date(`${currentParams.start_date}T00:00:00`)),
+  end_date: getFormattedDate(-90, new Date(`${currentParams.end_date}T00:00:00`)),
+});
+
+const startDateTime = adjustDateByDays(-3);
+startDateTime.setHours(0, 0, 0, 0);
+
+const endDateTime = adjustDateByDays(-1);
+endDateTime.setHours(23, 59, 59, 999);
+
+export const heartRateParams: OuraHeartRateUrlParams = {
+  // Date/time returned from the API is always UTC,
+  // even is a different timezone is indicated.
+  start_datetime: startDateTime.toISOString(),
+  end_datetime: endDateTime.toISOString(),
 };
 
 const parseDayFromEntity = (entity: OuraEntity) => entity.day;
@@ -34,20 +62,19 @@ const parseDayFromEntity = (entity: OuraEntity) => entity.day;
 const transformResponseData = (response: AxiosResponse | MockAxiosResponse): unknown =>
   response.data.data;
 
-const getNextParams = (data: { next_token?: string }): object => {
-  return data.next_token ? { next_token: data.next_token } : {};
-};
-
 ////
 /// Exports
 //
 
 const getApiName = () => "oura";
 const getApiBaseUrl = () => "https://api.ouraring.com/v2/";
-
-const getApiAuthHeaders = () => ({
-  Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
-});
+const getApiAuthHeaders = async (): Promise<object> => {
+  return await new Promise((resolver) => {
+    resolver({
+      Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
+    });
+  });
+};
 
 const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
@@ -116,20 +143,26 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
-    getParams: () => ({
-      // Date/time returned from the API is always UTC,
-      // even is a different timezone is indicated.
-      start_datetime: getFormattedDate(-3) + "T00:00:00-08:00",
-      end_datetime: getFormattedDate(-1) + "T23:59:59-08:00",
-    }),
-    getHistoricParams: () => ({
-      // Same as default
-      start_datetime: getFormattedDate(-3) + "T00:00:00-08:00",
-      end_datetime: getFormattedDate(-1) + "T23:59:59-08:00",
-    }),
-    // getNextParams: (data: { next_token?: string }, params?: object | null): object => {
-    //   return data.next_token ? { next_token: data.next_token } : {};
-    // },
+    getParams: () => heartRateParams,
+    getHistoricParams: () => heartRateParams,
+    getNextParams: (currentParams: OuraHeartRateUrlParams): OuraHeartRateUrlParams => {
+      const startDateTime = adjustDateByDays(
+        -3,
+        new Date(currentParams.start_datetime || "")
+      );
+      startDateTime.setHours(0, 0, 0, 0);
+
+      const endDateTime = adjustDateByDays(
+        -3,
+        new Date(currentParams.end_datetime || "")
+      );
+      endDateTime.setHours(23, 59, 59, 999);
+
+      return {
+        start_datetime: startDateTime.toISOString(),
+        end_datetime: endDateTime.toISOString(),
+      };
+    },
     parseDayFromEntity: (entity: OuraEntity) => entity.timestamp.split("T")[0],
     transformResponseData,
   },
