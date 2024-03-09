@@ -33,7 +33,7 @@ export const runDateUtc = (): StartDateObject => {
     time: runStartStatic.getTime(),
     date: isoString.split("T")[0],
     dateTime: isoString,
-    fileName: isoString.replace(":", "-").replace(".", "-"),
+    fileName: isoString.replaceAll(":", "-").replace(".", "-"),
   };
 };
 
