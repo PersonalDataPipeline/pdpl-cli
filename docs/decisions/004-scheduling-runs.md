@@ -84,6 +84,8 @@ It's clear that we need state of some kind and we don't need anything more than 
 
 I still agree that errors should not appear in the queue, that should be handled by scanning the logs and deciding at that time (in a separate script/service) if it should be retried.
 
+**2nd PoC notes:**
+
 So, we need a new PoC that:
 
 - handles the queue all at once
@@ -91,6 +93,23 @@ So, we need a new PoC that:
 - allows for single endpoint entries that are added as-needed in the get script
 - queue entries are single endpoints and params (if not default) which can hold multiple for the same endpoint
 
+The queue items should be individual endpoints that can be used to get data. The endpoint handler will be in scope when they are used so not everything is necessary. 
+
+```js
+// _queue.json
+[
+	{
+		"endpoint": "relative/path", // Maps to a handler
+		"runAfter": 123456789, // Timestamp to avoid hitting rate limit
+		"params": {}, // Could be empty/undefined to indicate default params
+		"historical": true // Triggers the next historic queue entry to be saved
+	}
+]
+```
+
+Every endpoint would need to have at least one entry to indicate the next standard run. Endpoints that don't have an entry should do a standard run immediately and schedule the next one in the future. Endpoints that exist in the queue but not in the endpoint handlers should be removed with a note logged.
+
+This is working much better now and much easier to follow in the code. I think a lot of the logic that's in the get script could be moved to the queue class to keep things a bit more encapsulated and easy to test but I think I need to work with this current system for a bit before I go too far down that road. 
 ## Consequences
 
 - Historic runs requiring pagination becomes possible with this system. This allows many calls over time to avoid rate limits and being bad citizens. 
@@ -101,3 +120,5 @@ So, we need a new PoC that:
 
 - Building a per-API queue as a flat JSON file
 - Each run will add something in the queue for the next run
+- Queue entries as individual endpoints that can be run separately and have their own state
+- Queue management should account for empty queues and all handled endpoints

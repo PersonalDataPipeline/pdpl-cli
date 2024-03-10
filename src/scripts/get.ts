@@ -11,17 +11,23 @@ import {
   readDirectory,
 } from "../utils/fs.js";
 import { runDateUtc } from "../utils/date.js";
-import { ApiHandler, DailyData, EndpointRecord } from "../utils/types.js";
+import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
 import { getApiData, MockAxiosResponse } from "../utils/data.js";
-import Queue, { HistoricalRunEntry, StandardRunEntry } from "../utils/queue.class.js";
-import { ONE_DAY_IN_MS } from "../utils/constants.js";
+import Queue, { QueueEntry } from "../utils/queue.class.js";
 
 ////
-/// Helpers
+/// Types
+//
+
+interface RunEntry extends Omit<QueueEntry, "runAfter" | "historic"> {
+  historic: boolean;
+}
+
+////
+/// Startup
 //
 
 const apisSupported = readDirectory("src/apis");
-
 const apiName = process.argv[2];
 
 if (!apiName) {
@@ -37,64 +43,90 @@ if (!apisSupported.includes(apiName)) {
 const runStats = new Stats(apiName);
 const runDate = runDateUtc();
 
+const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
+
+// TODO: Should this be the shape of the endpoint handler collection?
+const handlerDict: { [key: string]: ApiPrimaryEndpoint } = {};
+const handledEndpoints: string[] = [];
+for (const endpointHandler of apiHandler.endpointsPrimary) {
+  handledEndpoints.push(endpointHandler.getEndpoint());
+  handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
+}
+
 ////
 /// Queue management
 //
 
-const runQueue = new Queue(apiName);
-const queueEntry = runQueue.getEntry();
+// TODO: Consider whether this logic should go in the queue class
+const standardQueued: string[] = [];
+const queueInstance = new Queue(apiName);
+const runQueue: RunEntry[] = queueInstance
+  .getQueue()
+  .filter((entry) => {
+    // If an endpoint was removed from the handler, remove from the queue
+    if (!handledEndpoints.includes(entry.endpoint)) {
+      console.log(`❓ Removing unhandled endpoint ${entry.endpoint} from queue`);
+      return false;
+    }
 
-let runEndpoints: EndpointRecord[] = [];
-let isHistoricalRun = false;
-if (!queueEntry) {
-  console.log("🤖 Doing first historical run");
-  isHistoricalRun = true;
-} else if (queueEntry && queueEntry.type === "standard") {
-  console.log("🤖 Doing standard run");
-  const { nextRun } = queueEntry as StandardRunEntry;
-  if (runDate.time < new Date(nextRun).getTime()) {
-    runQueue.addStandardEntry(nextRun);
-    console.log(`⏩ Waiting until ${nextRun} ...`);
-    process.exit();
+    // If we're too early for an entry to run, add back as-is
+    if (entry.runAfter > runDate.seconds) {
+      const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
+      console.log(`🤖 Skipping ${entry.endpoint} for ${waitMinutes} seconds`);
+      queueInstance.addEntry(entry);
+      if (!Queue.entryHasParams(entry)) {
+        standardQueued.push(entry.endpoint);
+      }
+
+      return false;
+    }
+
+    return true;
+  })
+  .map((entry) => {
+    const newEntry: RunEntry = {
+      endpoint: entry.endpoint,
+      historic: !!entry.historic,
+    };
+
+    if (Queue.entryHasParams(entry)) {
+      newEntry.params = entry.params;
+    } else {
+      standardQueued.push(entry.endpoint);
+      entry.historic = false;
+    }
+
+    return newEntry;
+  });
+
+for (const handledEndpoint of handledEndpoints) {
+  if (!queueInstance.hasStandardEntryFor(handledEndpoint)) {
+    console.log(`🤖 Adding ${handledEndpoint} to the queue`);
+    queueInstance.addEntry({
+      endpoint: handledEndpoint,
+      runAfter: handlerDict[handledEndpoint].getDelay() + runDate.seconds,
+    });
   }
-} else if (queueEntry.type === "historical") {
-  console.log("🤖 Doing subsequent historical run");
-  isHistoricalRun = true;
-  runEndpoints = (queueEntry as HistoricalRunEntry).endpoints;
-  console.log(runEndpoints);
-} else {
-  console.log("❌ Unknown queue entry state!");
-  process.exit();
+
+  // Make sure we handle new endpoints now as well
+  if (!standardQueued.includes(handledEndpoint)) {
+    console.log(`🤖 Found new endpoint ${handledEndpoint} to run`);
+    runQueue.push({ endpoint: handledEndpoint, historic: false });
+  }
 }
 
 ////
 /// Endpoints: Primary
 //
 
-const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 const perEndpointData: { [key: string]: [] } = {};
-const nextHistoricalEndpoints: EndpointRecord[] = [];
 
-for (const endpointHandler of apiHandler.endpointsPrimary) {
-  const endpointName = endpointHandler.getEndpoint();
-  const foundEndpoint = runEndpoints.filter((ep) => ep.endpoint === endpointName)[0];
-  if (runEndpoints.length && !foundEndpoint) {
-    continue;
-  }
+for (const runEntry of runQueue) {
+  const endpointName = runEntry.endpoint;
+  const endpointHandler = Object.assign({}, handlerDict[endpointName]);
 
-  // If we're calling a specific endpoint, we may have specific params to use
-  let specificParams: object | null = null;
-  if (isHistoricalRun) {
-    specificParams =
-      foundEndpoint && foundEndpoint.params
-        ? foundEndpoint.params
-        : typeof endpointHandler.getHistoricParams === "function"
-          ? endpointHandler.getHistoricParams()
-          : null;
-  }
-
-  if (typeof specificParams === "object") {
-    endpointHandler.getParams = () => specificParams as object;
+  if (typeof runEntry.params === "object") {
+    endpointHandler.getParams = () => runEntry.params as object;
   }
 
   const runMetadata: StatsRunData = {
@@ -122,20 +154,6 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
     typeof endpointHandler.transformResponseData === "function"
       ? endpointHandler.transformResponseData(apiResponse)
       : apiResponse.data;
-
-  if (
-    specificParams &&
-    typeof endpointHandler.getNextParams === "function" &&
-    Object.keys(apiResponseData).length
-  ) {
-    const nextParams = endpointHandler.getNextParams(specificParams);
-    if (typeof nextParams === "object") {
-      nextHistoricalEndpoints.push({
-        endpoint: endpointName,
-        params: nextParams,
-      });
-    }
-  }
 
   // Store all the entity data for the endpoint for secondary endpoints
   perEndpointData[endpointName] = apiResponseData;
@@ -191,13 +209,26 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
   }
 
   runStats.addRun(endpointName, runMetadata);
-} // END endpointsPrimary
 
-if (nextHistoricalEndpoints.length) {
-  runQueue.addHistoricalEntry(nextHistoricalEndpoints);
-} else {
-  runQueue.addStandardEntry(new Date().getTime() + ONE_DAY_IN_MS);
-}
+  if (
+    runEntry.historic &&
+    runEntry.params &&
+    typeof endpointHandler.getNextParams === "function" &&
+    Object.keys(apiResponseData).length
+  ) {
+    console.log(`🤖 Adding HISTORIC queue entry for ${endpointName}`);
+    queueInstance.addEntry({
+      endpoint: endpointName,
+      params: endpointHandler.getNextParams(runEntry.params),
+      runAfter:
+        runDate.seconds +
+        (typeof endpointHandler.getHistoricDelay === "function"
+          ? endpointHandler.getHistoricDelay()
+          : endpointHandler.getDelay()),
+      historic: true,
+    });
+  }
+} // END endpointsPrimary
 
 ////
 /// Endpoints: Secondary

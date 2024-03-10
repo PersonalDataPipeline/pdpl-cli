@@ -1,23 +1,19 @@
 import * as path from "path";
 import getConfig from "./config.js";
 import { ensureOutputPath, pathExists, readFile, writeFile } from "../utils/fs.js";
-import { EndpointRecord } from "./types.js";
 
 ////
 /// Types
 //
 
-export interface HistoricalRunEntry {
-  endpoints: EndpointRecord[];
-  type: string;
+export interface QueueEntry {
+  endpoint: string;
+  runAfter: number;
+  params?: object;
+  historic?: boolean;
 }
 
-export interface StandardRunEntry {
-  nextRun: number;
-  type: string;
-}
-
-type RunQueue = (StandardRunEntry | HistoricalRunEntry)[];
+type RunQueue = QueueEntry[];
 
 ////
 /// Export
@@ -42,29 +38,38 @@ export default class Queue {
     }
   }
 
+  static entryHasParams(entry: { params?: object }) {
+    return !!(entry.params && Object.keys(entry.params).length);
+  }
+
   getQueue() {
-    return this.queue;
+    const currentQueue = this.queue;
+    this.clearQueue();
+    return currentQueue;
   }
 
-  getEntry() {
-    const entry = this.queue.shift();
-    this.writeQueue();
-    return entry;
-  }
-
-  addStandardEntry(nextRun: number) {
+  addEntry({ runAfter, endpoint, params = {}, historic = false }: QueueEntry) {
     this.queue.push({
-      type: "standard",
-      nextRun,
-    } as StandardRunEntry);
+      historic: historic || false,
+      runAfter,
+      endpoint,
+      params,
+    });
     this.writeQueue();
   }
 
-  addHistoricalEntry(endpoints: EndpointRecord[]) {
-    this.queue.push({
-      type: "historical",
-      endpoints,
-    } as HistoricalRunEntry);
+  hasStandardEntryFor(endpoint: string) {
+    return (
+      this.queue.filter((entry: QueueEntry) => {
+        const sameEndpoint = entry.endpoint === endpoint;
+        const hasParams = Queue.entryHasParams(entry);
+        return sameEndpoint && !hasParams;
+      }).length > 0
+    );
+  }
+
+  private clearQueue() {
+    this.queue = [];
     this.writeQueue();
   }
 

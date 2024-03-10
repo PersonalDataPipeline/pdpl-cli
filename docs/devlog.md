@@ -3,18 +3,26 @@
 Notes taken during development, newest to oldest. 
 
 TODO:
-- [ ] [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md) - PoC #2
+- [ ] Write other API pagination
+- [ ] Figure out Oura heart rate historical run issues
+- [ ] How to trigger historic runs ... maybe same as standard where final historic run schedules the next one?
 - [ ] [ADR 006: Logging](./decisions/006-logging)
-- [ ] Improve logger to handle info messages
 - [ ] Add Axios retry to get script
-- [ ] Write Strava pagination
 - [ ] Generate mocks from getter script
 - [ ] Separate debug mode for HTTP calls from saving
-- [ ] Figure out Oura heart rate historical runs
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
 - [ ] TS-eslint warnings
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-10]]
+
+[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
+
+I think we're good here for now 👍 adding a task to figure out how to trigger historic runs to the list above once I've written pagination for all the current APIs.
+## [[2024-03-09]]
+
+[ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
 
 ## [[2024-03-08]]
 

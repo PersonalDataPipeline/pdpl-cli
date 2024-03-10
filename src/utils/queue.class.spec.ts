@@ -59,6 +59,14 @@ describe("Class: Queue", () => {
 
   describe("entry management", () => {
     let queue: Queue;
+    const mockRunEntry = {
+      endpoint: "this/endpoint",
+      runAfter: 1234567890,
+      historic: true,
+      params: {
+        params1: "value1",
+      },
+    };
 
     beforeEach(() => {
       (pathExists as jest.Mock).mockImplementation(() => false);
@@ -67,83 +75,20 @@ describe("Class: Queue", () => {
       (ensureOutputPath as jest.Mock).mockClear();
     });
 
-    it("returns undefined when queue is empty", () => {
-      expect(queue.getEntry()).toEqual(undefined);
+    it("is initiated as an empty queue", () => {
+      expect(queue.getQueue()).toEqual([]);
     });
 
-    it("removes the entry from the queue", () => {
-      queue.addStandardEntry(1709169289129);
-      expect(queue.getQueue().length).toEqual(1);
-      queue.getEntry();
-      expect(queue.getQueue().length).toEqual(0);
+    it("entries are added and retrieved as expected", () => {
+      queue.addEntry(mockRunEntry);
+      expect(queue.getQueue()).toEqual([mockRunEntry]);
     });
 
-    describe("standard", () => {
-      const testEntry = {
-        type: "standard",
-        nextRun: 1709169289129,
-      };
-
-      beforeEach(() => {
-        queue.addStandardEntry(1709169289129);
-      });
-
-      it("checks the write path", () => {
-        expect(ensureOutputPath).toHaveBeenCalledWith(["API_NAME"]);
-      });
-
-      it("writes the queue file", () => {
-        expect(writeFile).toHaveBeenCalledWith(
-          queueFilePath,
-          JSON.stringify([testEntry], null, 2)
-        );
-      });
-
-      it("adds an entry to the queue", () => {
-        expect(queue.getQueue()).toEqual([testEntry]);
-      });
-
-      it("returns the added entry", () => {
-        expect(queue.getEntry()).toEqual(testEntry);
-      });
-    });
-
-    describe("historical", () => {
-      const testEntry = {
-        type: "historical",
-        endpoints: [
-          {
-            endpoint: "TEST_ENDPOINT",
-            params: {
-              param1: "test1",
-              param2: "test2",
-            },
-          },
-        ],
-      };
-
-      beforeEach(() => {
-        queue.addHistoricalEntry(testEntry.endpoints);
-      });
-
-      it("checks the write path", () => {
-        expect(ensureOutputPath).toHaveBeenCalledWith(["API_NAME"]);
-      });
-
-      it("writes the queue file", () => {
-        expect(writeFile).toHaveBeenCalledWith(
-          queueFilePath,
-          JSON.stringify([testEntry], null, 2)
-        );
-      });
-
-      it("adds an entry to the queue", () => {
-        expect(queue.getQueue()).toEqual([testEntry]);
-      });
-
-      it("returns the added entry", () => {
-        expect(queue.getEntry()).toEqual(testEntry);
-      });
+    it("clears the queue when getting it", () => {
+      queue.addEntry(mockRunEntry);
+      queue.getQueue();
+      expect(queue.getQueue()).toEqual([]);
+      expect(writeFile).toHaveBeenCalled();
     });
   });
 });
