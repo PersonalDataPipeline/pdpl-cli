@@ -25,7 +25,7 @@ const config: Config = {
 };
 
 if (DEBUG === "true") {
-  config.outputDir = "/Users/joshcanhelp/Code/tapestry/_data_debuggg";
+  config.outputDir = "/Users/joshcanhelp/Code/tapestry/_data_debug";
   config.compressJson = false;
   config.debug = true;
 }
