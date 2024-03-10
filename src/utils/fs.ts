@@ -60,11 +60,9 @@ export const writeOutputFile = (writePath: string, fileContents: unknown): boole
 
   const latestDayFileContents = getLatestFileContents(writePath);
   if (fileContentsString === latestDayFileContents) {
-    console.log(`Skipping duplicate ${writePath}`);
     return false;
   }
 
-  console.log(`Writing ${writePath}`);
   writeFileSync(fullSavePath, fileContentsString);
   return true;
 };
