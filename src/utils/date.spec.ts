@@ -20,7 +20,7 @@ describe("Function: runDateUtc", () => {
   it("returns the same values when called multiple times", async () => {
     const startDate = runDateUtc();
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    expect(runDateUtc().time).toEqual(startDate.time);
+    expect(runDateUtc().seconds).toEqual(startDate.seconds);
     expect(runDateUtc().date).toEqual(startDate.date);
     expect(runDateUtc().dateTime).toEqual(startDate.dateTime);
     expect(runDateUtc().fileName).toEqual(startDate.fileName);

@@ -5,7 +5,7 @@ import { padLeftZero } from "./string.js";
 //
 
 interface StartDateObject {
-  time: number;
+  seconds: number;
   date: string;
   dateTime: string;
   fileName: string;
@@ -30,7 +30,7 @@ export const adjustDateByDays = (adjustDays: number, date = new Date()) => {
 export const runDateUtc = (): StartDateObject => {
   const isoString = runStartStatic.toISOString();
   return {
-    time: runStartStatic.getTime(),
+    seconds: Math.ceil(runStartStatic.getTime() / 1000),
     date: isoString.split("T")[0],
     dateTime: isoString,
     fileName: isoString.replaceAll(":", "-").replace(".", "-"),
