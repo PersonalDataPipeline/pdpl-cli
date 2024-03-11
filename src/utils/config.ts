@@ -11,6 +11,7 @@ interface Config {
   compressJson: boolean;
   timezone: string;
   debug: boolean;
+  originDate: string;
 }
 
 ////
@@ -22,6 +23,7 @@ const config: Config = {
   outputDir: "/Users/joshcanhelp/Documents/tapestry",
   compressJson: true,
   debug: false,
+  originDate: "1980-05-07",
 };
 
 if (DEBUG === "true") {
