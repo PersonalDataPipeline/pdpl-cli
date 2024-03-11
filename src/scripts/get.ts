@@ -58,7 +58,6 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
 //
 
 // TODO: Consider whether this logic should go in the queue class
-const standardQueued: string[] = [];
 const queueInstance = new Queue(apiName);
 const runQueue: RunEntry[] = queueInstance
   .getQueue()
@@ -74,10 +73,6 @@ const runQueue: RunEntry[] = queueInstance
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
       console.log(`🤖 Skipping ${entry.endpoint} for ${waitMinutes} seconds`);
       queueInstance.addEntry(entry);
-      if (!Queue.entryHasParams(entry)) {
-        standardQueued.push(entry.endpoint);
-      }
-
       return false;
     }
 
@@ -92,7 +87,6 @@ const runQueue: RunEntry[] = queueInstance
     if (Queue.entryHasParams(entry)) {
       newEntry.params = entry.params;
     } else {
-      standardQueued.push(entry.endpoint);
       entry.historic = false;
     }
 
@@ -106,11 +100,6 @@ for (const handledEndpoint of handledEndpoints) {
       endpoint: handledEndpoint,
       runAfter: handlerDict[handledEndpoint].getDelay() + runDate.seconds,
     });
-  }
-
-  // Make sure we handle new endpoints now as well
-  if (!standardQueued.includes(handledEndpoint)) {
-    console.log(`🤖 Found new endpoint ${handledEndpoint} to run`);
     runQueue.push({ endpoint: handledEndpoint, historic: false });
   }
 }
