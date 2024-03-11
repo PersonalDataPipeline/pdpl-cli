@@ -3,7 +3,11 @@ import axios, { AxiosResponse } from "axios";
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
-import { ONE_DAY_IN_SEC, ONE_HOUR_IN_SEC } from "../../utils/constants.js";
+import {
+  ONE_DAY_IN_SEC,
+  ONE_HOUR_IN_SEC,
+  ONE_QUATER_IN_SEC,
+} from "../../utils/constants.js";
 
 const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
   process.env;
@@ -25,6 +29,7 @@ const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
 
 const getApiName = () => "wahoo";
 const getApiBaseUrl = () => "https://api.wahooligan.com/v1/";
+const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 let accessToken = "";
 const getApiAuthHeaders = async () => {
@@ -80,6 +85,7 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
+  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

@@ -2,24 +2,23 @@
 
 Notes taken during development, newest to oldest. 
 
-TODO:
+## TODO:
 - [ ] Write other API pagination
 - [ ] Figure out Oura heart rate historical run issues
-- [ ] How to trigger historic runs ... maybe same as standard where final historic run schedules the next one?
 - [ ] [ADR 006: Logging](./decisions/006-logging)
 - [ ] Add Axios retry to get script
 - [ ] Generate mocks from getter script
 - [ ] Separate debug mode for HTTP calls from saving
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
+- [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] TS-eslint warnings
+- [ ] `// TODO:` entries in code
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
 ## [[2024-03-11]]
 
 Digging in on API pagination and getting historic runs to work across all APIs. I'm heading into this nervous that the system I've spent a bunch of time on is not going to work but no sense in dwelling on that. If it doesn't work, we rip it out and start all over again!
-
-
 ## [[2024-03-10]]
 
 [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)

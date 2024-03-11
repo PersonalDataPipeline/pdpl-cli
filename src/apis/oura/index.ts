@@ -3,7 +3,11 @@ import { AxiosResponse } from "axios";
 import { adjustDateByDays, getFormattedDate } from "../../utils/date.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
-import { HALF_HOUR_IN_SEC, ONE_DAY_IN_SEC } from "../../utils/constants.js";
+import {
+  HALF_HOUR_IN_SEC,
+  ONE_DAY_IN_SEC,
+  ONE_QUATER_IN_SEC,
+} from "../../utils/constants.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
 
@@ -76,6 +80,7 @@ const getApiAuthHeaders = async (): Promise<object> => {
     });
   });
 };
+const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
@@ -191,6 +196,7 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
+  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

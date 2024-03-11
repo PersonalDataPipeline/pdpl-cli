@@ -90,7 +90,7 @@ const runQueue: RunEntry[] = queueInstance
 
 for (const handledEndpoint of handledEndpoints) {
   if (!queueInstance.hasStandardEntryFor(handledEndpoint)) {
-    console.log(`🤖 Adding ${handledEndpoint} to the queue`);
+    console.log(`🤖 Adding STANDARD queue entry for ${handledEndpoint}`);
     queueInstance.addEntry({
       endpoint: handledEndpoint,
       runAfter: handlerDict[handledEndpoint].getDelay() + runDate.seconds,
@@ -203,20 +203,34 @@ for (const runEntry of runQueue) {
   if (
     runEntry.historic &&
     runEntry.params &&
-    typeof endpointHandler.getNextParams === "function" &&
-    Object.keys(apiResponseData).length
+    typeof endpointHandler.getNextParams === "function"
   ) {
-    console.log(`🤖 Adding HISTORIC queue entry for ${endpointName}`);
-    queueInstance.addEntry({
+    const newQueueEntry: QueueEntry = {
       endpoint: endpointName,
-      params: endpointHandler.getNextParams(runEntry.params),
-      runAfter:
+      historic: true,
+      runAfter: runDate.seconds,
+    };
+
+    if (Object.keys(apiResponseData).length) {
+      // Potentially more historic entries to get if data was returned
+      newQueueEntry.params = endpointHandler.getNextParams(runEntry.params);
+      newQueueEntry.runAfter =
         runDate.seconds +
         (typeof endpointHandler.getHistoricDelay === "function"
           ? endpointHandler.getHistoricDelay()
-          : endpointHandler.getDelay()),
-      historic: true,
-    });
+          : endpointHandler.getDelay());
+    } else {
+      // Schedule next historic run for this endpoint
+      newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
+      newQueueEntry.params =
+        typeof endpointHandler.getHistoricParams === "function"
+          ? endpointHandler.getHistoricParams()
+          : typeof endpointHandler.getParams === "function"
+            ? endpointHandler.getParams()
+            : {};
+    }
+    console.log(`🤖 Adding HISTORIC queue entry for ${endpointName}`);
+    queueInstance.addEntry(newQueueEntry);
   }
 } // END endpointsPrimary
 

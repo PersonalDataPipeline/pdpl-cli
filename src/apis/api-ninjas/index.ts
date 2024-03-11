@@ -1,4 +1,8 @@
-import { HALF_HOUR_IN_SEC, ONE_DAY_IN_SEC } from "../../utils/constants.js";
+import {
+  HALF_HOUR_IN_SEC,
+  ONE_DAY_IN_SEC,
+  ONE_YEAR_IN_SEC,
+} from "../../utils/constants.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 
 const { API_NINJAS_KEY = "" } = process.env;
@@ -32,10 +36,10 @@ const parseDayFromEntity = (entity: ApiNinjasHistoricEventEntity) => {
 
 const getApiName = () => "api-ninjas";
 const getApiBaseUrl = () => "https://api.api-ninjas.com/v1/";
-
 const getApiAuthHeaders = () => ({
   "X-Api-Key": API_NINJAS_KEY,
 });
+const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 
 const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
@@ -54,6 +58,7 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
+  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

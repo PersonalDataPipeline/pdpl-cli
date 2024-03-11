@@ -2,7 +2,11 @@ import { AxiosResponse } from "axios";
 
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
-import { ONE_DAY_IN_SEC, ONE_HOUR_IN_SEC } from "../../utils/constants.js";
+import {
+  ONE_DAY_IN_SEC,
+  ONE_HOUR_IN_SEC,
+  ONE_QUATER_IN_SEC,
+} from "../../utils/constants.js";
 
 ////
 /// Types
@@ -28,10 +32,10 @@ const transformResponseData = (response: AxiosResponse | MockAxiosResponse): unk
 
 const getApiName = () => "mock";
 const getApiBaseUrl = () => "https://www.joshcanhelp.com/api/";
-
 const getApiAuthHeaders = () => ({
   Authorization: `Bearer AUTH_TOKEN_HERE`,
 });
+const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
@@ -50,6 +54,7 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
+  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

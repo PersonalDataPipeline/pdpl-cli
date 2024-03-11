@@ -14,6 +14,7 @@ export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<object>;
+  getHistoricDelay: () => number;
   endpointsPrimary: ApiPrimaryEndpoint[];
   endpointsSecondary: ApiSecondaryEndpoint[];
   authorizeEndpoint?: string;

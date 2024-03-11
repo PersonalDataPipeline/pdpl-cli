@@ -2,7 +2,11 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
-import { HALF_HOUR_IN_SEC, ONE_DAY_IN_SEC } from "../../utils/constants.js";
+import {
+  HALF_HOUR_IN_SEC,
+  ONE_DAY_IN_SEC,
+  ONE_QUATER_IN_SEC,
+} from "../../utils/constants.js";
 
 const {
   STRAVA_REFRESH_TOKEN = "",
@@ -43,6 +47,7 @@ const tokenEndpoint = "https://www.strava.com/oauth/token";
 
 const getApiName = () => "strava";
 const getApiBaseUrl = () => "https://www.strava.com/api/v3/";
+const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 let accessToken = "";
 const getApiAuthHeaders = async () => {
@@ -117,6 +122,7 @@ export {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
+  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };
