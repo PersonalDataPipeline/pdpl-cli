@@ -12,6 +12,28 @@ import Queue from "./queue.class.js";
 const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
 
+const mockHistoricEntry = {
+  endpoint: "this/endpoint",
+  runAfter: 1234567890,
+  historic: true,
+  params: {
+    params1: "value1",
+  },
+};
+
+const mockStandardEntry = {
+  endpoint: "this/endpoint",
+  runAfter: 1234567890,
+};
+
+const mockOtherEntry = {
+  endpoint: "this/endpoint",
+  runAfter: 1234567890,
+  params: {
+    params1: "value1",
+  },
+};
+
 describe("Class: Queue", () => {
   it("looks for a queue file when a new instance is created", () => {
     new Queue("API_NAME");
@@ -57,19 +79,11 @@ describe("Class: Queue", () => {
     });
   });
 
-  describe("entry management", () => {
+  describe("queue management", () => {
     let queue: Queue;
-    const mockRunEntry = {
-      endpoint: "this/endpoint",
-      runAfter: 1234567890,
-      historic: true,
-      params: {
-        params1: "value1",
-      },
-    };
 
     beforeEach(() => {
-      (pathExists as jest.Mock).mockImplementation(() => false);
+      (readFile as jest.Mock).mockImplementation(() => "[]");
       queue = new Queue("API_NAME");
       (writeFile as jest.Mock).mockClear();
       (ensureOutputPath as jest.Mock).mockClear();
@@ -80,15 +94,64 @@ describe("Class: Queue", () => {
     });
 
     it("entries are added and retrieved as expected", () => {
-      queue.addEntry(mockRunEntry);
-      expect(queue.getQueue()).toEqual([mockRunEntry]);
+      queue.addEntry(mockHistoricEntry);
+      expect(queue.getQueue()).toEqual([mockHistoricEntry]);
     });
 
     it("clears the queue when getting it", () => {
-      queue.addEntry(mockRunEntry);
+      queue.addEntry(mockHistoricEntry);
       queue.getQueue();
       expect(queue.getQueue()).toEqual([]);
       expect(writeFile).toHaveBeenCalled();
+    });
+  });
+
+  describe("entry management", () => {
+    let queue: Queue;
+
+    beforeEach(() => {
+      (readFile as jest.Mock).mockImplementation(() => "[]");
+      queue = new Queue("API_NAME");
+    });
+
+    it("finds no standard entries in an empty queue", () => {
+      expect(queue.hasStandardEntryFor("this/endpoint")).toEqual(false);
+    });
+
+    it("finds no historic entries in an empty queue", () => {
+      expect(queue.hasHistoricEntryFor("this/endpoint")).toEqual(false);
+    });
+
+    describe("finds entries", () => {
+      beforeEach(() => {
+        queue.addEntry(mockStandardEntry);
+        queue.addEntry(mockHistoricEntry);
+        queue.addEntry(mockOtherEntry);
+      });
+
+      it("finds a standard entry", () => {
+        expect(queue.hasStandardEntryFor("this/endpoint")).toEqual(true);
+      });
+
+      it("finds a historic entry", () => {
+        expect(queue.hasHistoricEntryFor("this/endpoint")).toEqual(true);
+      });
+    });
+
+    describe("no standard or historic entries", () => {
+      beforeEach(() => {
+        queue.addEntry(mockOtherEntry);
+        queue.addEntry(mockOtherEntry);
+        queue.addEntry(mockOtherEntry);
+      });
+
+      it("does not find a standard entry", () => {
+        expect(queue.hasStandardEntryFor("this/endpoint")).toEqual(false);
+      });
+
+      it("does not find a historic entry", () => {
+        expect(queue.hasHistoricEntryFor("this/endpoint")).toEqual(false);
+      });
     });
   });
 });

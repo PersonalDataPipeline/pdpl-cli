@@ -68,6 +68,16 @@ export default class Queue {
     );
   }
 
+  hasHistoricEntryFor(endpoint: string) {
+    return (
+      this.queue.filter((entry: QueueEntry) => {
+        const sameEndpoint = entry.endpoint === endpoint;
+        const hasParams = Queue.entryHasParams(entry);
+        return sameEndpoint && entry.historic && hasParams;
+      }).length > 0
+    );
+  }
+
   private clearQueue() {
     this.queue = [];
     this.writeQueue();
