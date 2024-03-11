@@ -3,11 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/data.js";
-import {
-  ONE_DAY_IN_SEC,
-  ONE_HOUR_IN_SEC,
-  ONE_QUATER_IN_SEC,
-} from "../../utils/constants.js";
+import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/constants.js";
 
 const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
   process.env;
@@ -16,8 +12,14 @@ const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_
 /// Types
 //
 
+interface WahooUrlParams {
+  page?: number;
+  per_page?: number;
+}
+
 interface WahooWorkoutEntity {
-  day: string;
+  created_at: string;
+  id: number;
 }
 
 ////
@@ -61,24 +63,28 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => "user",
     getDirName: () => "user",
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => ONE_HOUR_IN_SEC,
   },
   {
     getEndpoint: () => "workouts",
     getDirName: () => "workouts",
-    getParams: () => ({
+    getParams: (): WahooUrlParams => ({
       page: 1,
-      per_page: 50,
+      per_page: 10,
     }),
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => ONE_HOUR_IN_SEC,
-    parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.day,
+    getHistoricParams: (currentParams?: WahooUrlParams): WahooUrlParams => ({
+      page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
+      per_page: 30,
+    }),
+    getHistoricDelay: () => 0,
+    parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.created_at.split("T")[0],
     transformResponseData: (response: AxiosResponse | MockAxiosResponse): unknown =>
       response.data.workouts,
   },
 ];
 
 const endpointsSecondary: ApiSecondaryEndpoint[] = [];
+
 export {
   authorizeEndpoint,
   tokenEndpoint,

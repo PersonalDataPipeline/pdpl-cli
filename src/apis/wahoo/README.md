@@ -19,9 +19,12 @@ AUTHORIZE_APP_SERVER_PORT="If needed, default is 8888"
 AUTHORIZE_APP_SERVER_HTTPS_PORT="Default is 8889"
 ```
 
-Next, start the local server:
+Next, start the HTTPS proxy and local server:
 
 ```bash
+# First run:
+$ npm run caddy
+# ... then, in a separate terminal window or tab:
 $ node dist/apis/wahoo/getRefreshToken.js
 ```
 
