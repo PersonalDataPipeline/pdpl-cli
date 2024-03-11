@@ -207,14 +207,21 @@ for (const runEntry of runQueue) {
       runAfter: runDate.seconds,
     };
 
+    const didReturnData = !!Object.keys(apiResponseData).length;
     const continueHistoric =
       typeof endpointHandler.shouldHistoricContinue === "function"
-        ? endpointHandler.shouldHistoricContinue(apiResponse)
-        : Object.keys(apiResponseData).length;
+        ? endpointHandler.shouldHistoricContinue(
+            apiResponse,
+            endpointHandler.getParams!()
+          )
+        : didReturnData;
 
     if (continueHistoric) {
       // Potentially more historic entries to get
-      newQueueEntry.params = endpointHandler.getHistoricParams(runEntry.params);
+      newQueueEntry.params = endpointHandler.getHistoricParams(
+        runEntry.params,
+        didReturnData
+      );
       newQueueEntry.runAfter =
         runDate.seconds +
         (typeof endpointHandler.getHistoricDelay === "function"
