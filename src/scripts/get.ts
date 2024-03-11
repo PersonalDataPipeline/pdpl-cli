@@ -79,17 +79,12 @@ const runQueue: RunEntry[] = queueInstance
     return true;
   })
   .map((entry) => {
+    const entryHasParams = Queue.entryHasParams(entry);
     const newEntry: RunEntry = {
       endpoint: entry.endpoint,
-      historic: !!entry.historic,
+      params: entryHasParams ? entry.params : undefined,
+      historic: !entryHasParams ? false : !!entry.historic,
     };
-
-    if (Queue.entryHasParams(entry)) {
-      newEntry.params = entry.params;
-    } else {
-      entry.historic = false;
-    }
-
     return newEntry;
   });
 
