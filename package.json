@@ -11,7 +11,7 @@
     "eslint-ci": "eslint src",
     "prettier": "prettier --write ./src",
     "prettier-ci": "prettier --check ./src",
-    "prettier-watch": "onchange '**/*' -- prettier --write --ignore-unknown {{changed}}",
+    "prettier-watch": "onchange './src/**/*.ts' -- prettier --write --ignore-unknown {{changed}}",
     "format": "npm run eslint && npm run prettier",
     "caddy": "caddy run --envfile .env",
     "curl": "node ./dist/scripts/curl.js",
