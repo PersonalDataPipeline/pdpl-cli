@@ -1,15 +1,23 @@
-import {
-  HALF_HOUR_IN_SEC,
-  ONE_DAY_IN_SEC,
-  ONE_YEAR_IN_SEC,
-} from "../../utils/constants.js";
+import { AxiosResponse } from "axios";
+
+import { ONE_DAY_IN_SEC, ONE_YEAR_IN_SEC } from "../../utils/constants.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import { MockAxiosResponse } from "../../utils/data.js";
+import getConfig from "../../utils/config.js";
+import { getFormattedDate } from "../../utils/date.js";
 
 const { API_NINJAS_KEY = "" } = process.env;
 
 ////
 /// Types
 //
+
+interface ApiNinjasHistoricParams {
+  offset?: number;
+  year?: string;
+  month?: string;
+  day?: string;
+}
 
 interface ApiNinjasHistoricEventEntity {
   year: string;
@@ -21,8 +29,11 @@ interface ApiNinjasHistoricEventEntity {
 /// Helpers
 //
 
+const [todayYear, todayMonth, todayDay] = getFormattedDate().split("-");
 const defaultParams = {
-  year: 2022,
+  year: todayYear,
+  month: todayMonth,
+  day: todayDay,
   offset: 0,
 };
 
@@ -47,7 +58,41 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getDirName: () => "historicalevents",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay: () => 0,
+    getHistoricParams: (
+      params?: ApiNinjasHistoricParams,
+      didReturnData?: boolean
+    ): ApiNinjasHistoricParams => {
+      if (params && "year" in params && "offset" in params) {
+        return {
+          year: didReturnData ? params.year : `${parseInt(params.year!, 10) - 1}`,
+          offset: didReturnData ? params.offset! + 10 : 0,
+        };
+      }
+      return {
+        year: todayYear,
+        offset: 0,
+      };
+    },
+    shouldHistoricContinue: (
+      httpResponse: AxiosResponse | MockAxiosResponse,
+      params: object
+    ): boolean => {
+      if (Object.keys(httpResponse.data).length) {
+        return true;
+      }
+
+      const { originDate } = getConfig();
+      const originYear = new Date(`${originDate}T00:00:00`);
+      if (
+        "year" in params &&
+        parseInt(params.year as string, 10) > originYear.getFullYear()
+      ) {
+        return true;
+      }
+
+      return false;
+    },
     parseDayFromEntity,
   },
 ];
