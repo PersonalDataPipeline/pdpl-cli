@@ -1,4 +1,4 @@
-import { existsSync } from "fs";
+import { pathExists } from "./fs.js";
 
 const { DEBUG = false } = process.env;
 
@@ -36,7 +36,7 @@ if (DEBUG === "true") {
 
 process.env.TZ = config.timezone;
 
-if (!existsSync(config.outputDir)) {
+if (!pathExists(config.outputDir)) {
   console.log(`❌ Output dir ${config.outputDir} does not exist`);
   process.exit();
 }
