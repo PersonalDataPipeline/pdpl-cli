@@ -104,6 +104,12 @@ for (const handledEndpoint of handledEndpoints) {
   }
 }
 
+if (!runQueue.length) {
+  console.log(`🤖 Empty run queue ... stopping`);
+  runStats.shutdown();
+  process.exit();
+}
+
 ////
 /// Endpoints: Primary
 //
