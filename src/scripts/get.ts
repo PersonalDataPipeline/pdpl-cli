@@ -200,7 +200,11 @@ for (const runEntry of runQueue) {
 
   runStats.addRun(endpointName, runMetadata);
 
-  if (runEntry.historic && typeof endpointHandler.getHistoricParams === "function") {
+  if (
+    runEntry.historic &&
+    typeof endpointHandler.getHistoricParams === "function" &&
+    typeof apiHandler.getHistoricDelay === "function"
+  ) {
     const newQueueEntry: QueueEntry = {
       endpoint: endpointName,
       historic: true,
