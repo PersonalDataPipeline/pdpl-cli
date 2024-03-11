@@ -19,6 +19,11 @@ Notes taken during development, newest to oldest.
 ## [[2024-03-11]]
 
 Digging in on API pagination and getting historic runs to work across all APIs. I'm heading into this nervous that the system I've spent a bunch of time on is not going to work but no sense in dwelling on that. If it doesn't work, we rip it out and start all over again!
+
+Pagination still needed more work to allow for flexibility across APIs and endpoints but I think I've got a system in place that will work for a number of different end cases. Queue management has been working quite well also so that's a win!
+
+One thing I just want to say out loud ... since API maintenance is one of the Big Rocks for this project, we want to move as much boilerplate code as possible out of the API contracts and into the main repo. At some point I'm going to abstract the API contracts to their own repo/dependency so that can be used for getting, processing, storing, etc. so their format will change a bit but, on the way, this should be abstracted as much as possible. Adding new APIs should be as simple and easy as possible. As I add new APIs and endpoints, I'm keeping this in mind as an important priority.
+
 ## [[2024-03-10]]
 
 [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
