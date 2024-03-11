@@ -15,6 +15,11 @@ TODO:
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
+## [[2024-03-11]]
+
+Digging in on API pagination and getting historic runs to work across all APIs. I'm heading into this nervous that the system I've spent a bunch of time on is not going to work but no sense in dwelling on that. If it doesn't work, we rip it out and start all over again!
+
+
 ## [[2024-03-10]]
 
 [ADR 004: Scheduling runs](./decisions/004-scheduling-runs.md)
