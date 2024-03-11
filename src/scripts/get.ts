@@ -200,11 +200,7 @@ for (const runEntry of runQueue) {
 
   runStats.addRun(endpointName, runMetadata);
 
-  if (
-    runEntry.historic &&
-    runEntry.params &&
-    typeof endpointHandler.getHistoricParams === "function"
-  ) {
+  if (runEntry.historic && typeof endpointHandler.getHistoricParams === "function") {
     const newQueueEntry: QueueEntry = {
       endpoint: endpointName,
       historic: true,
@@ -222,12 +218,7 @@ for (const runEntry of runQueue) {
     } else {
       // Schedule next historic run for this endpoint
       newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
-      newQueueEntry.params =
-        typeof endpointHandler.getHistoricParams === "function"
-          ? endpointHandler.getHistoricParams()
-          : typeof endpointHandler.getParams === "function"
-            ? endpointHandler.getParams()
-            : {};
+      newQueueEntry.params = endpointHandler.getHistoricParams();
     }
     console.log(`🤖 Adding HISTORIC queue entry for ${endpointName}`);
     queueInstance.addEntry(newQueueEntry);
