@@ -30,7 +30,7 @@ export const adjustDateByDays = (adjustDays: number, date = new Date()) => {
 export const runDateUtc = (): StartDateObject => {
   const isoString = runStartStatic.toISOString();
   return {
-    seconds: Math.ceil(runStartStatic.getTime() / 1000),
+    seconds: getEpochNow(runStartStatic),
     date: isoString.split("T")[0],
     dateTime: isoString,
     fileName: isoString.replaceAll(":", "-").replace(".", "-"),
@@ -46,3 +46,5 @@ export const getFormattedDate = (adjustDays: number = 0, date: Date = new Date()
   const dd = date.getDate();
   return `${yyyy}-${padLeftZero(mm)}-${padLeftZero(dd)}`;
 };
+
+export const getEpochNow = (nowDate = new Date()) => Math.floor(nowDate.getTime() / 1000);

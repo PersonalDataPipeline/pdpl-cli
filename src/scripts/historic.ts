@@ -4,6 +4,7 @@ config();
 import { readDirectory } from "../utils/fs.js";
 import Queue from "../utils/queue.class.js";
 import { ApiHandler } from "../utils/types.js";
+import { getEpochNow } from "../utils/date.js";
 
 const apiName = process.argv[2];
 if (!apiName) {
@@ -28,7 +29,7 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
     console.log(`🤖 Adding initial historic entry for ${endpointName}`);
     queueInstance.addEntry({
       endpoint: endpointName,
-      runAfter: Math.floor(Date.now() / 1000),
+      runAfter: getEpochNow(),
       historic: true,
       params: endpointHandler.getHistoricParams(),
     });
