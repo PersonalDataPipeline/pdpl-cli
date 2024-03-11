@@ -27,6 +27,7 @@ export interface ApiPrimaryEndpoint {
   getDelay: () => number;
   getMethod?: () => string;
   getParams?: () => object;
+  shouldHistoricContinue?: (httpResponse?: AxiosResponse | MockAxiosResponse) => boolean;
   getHistoricParams?: (currentParams?: object) => object;
   getHistoricDelay?: () => number;
   transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;
@@ -34,7 +35,14 @@ export interface ApiPrimaryEndpoint {
 }
 
 export interface ApiSecondaryEndpoint
-  extends Omit<ApiPrimaryEndpoint, "getEndpoint" | "getDelay" | "getHistoricParams"> {
+  extends Omit<
+    ApiPrimaryEndpoint,
+    | "getEndpoint"
+    | "getDelay"
+    | "getHistoricParams"
+    | "getHistoricDelay"
+    | "shouldHistoricContinue"
+  > {
   getEndpoint: (entity: any) => string;
   getPrimary: () => string;
   getIdentifier: (entity: any) => string;

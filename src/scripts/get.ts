@@ -207,8 +207,13 @@ for (const runEntry of runQueue) {
       runAfter: runDate.seconds,
     };
 
-    if (Object.keys(apiResponseData).length) {
-      // Potentially more historic entries to get if data was returned
+    const continueHistoric =
+      typeof endpointHandler.shouldHistoricContinue === "function"
+        ? endpointHandler.shouldHistoricContinue(apiResponse)
+        : Object.keys(apiResponseData).length;
+
+    if (continueHistoric) {
+      // Potentially more historic entries to get
       newQueueEntry.params = endpointHandler.getHistoricParams(runEntry.params);
       newQueueEntry.runAfter =
         runDate.seconds +
