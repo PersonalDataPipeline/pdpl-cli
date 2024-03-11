@@ -203,7 +203,7 @@ for (const runEntry of runQueue) {
   if (
     runEntry.historic &&
     runEntry.params &&
-    typeof endpointHandler.getNextParams === "function"
+    typeof endpointHandler.getHistoricParams === "function"
   ) {
     const newQueueEntry: QueueEntry = {
       endpoint: endpointName,
@@ -213,7 +213,7 @@ for (const runEntry of runQueue) {
 
     if (Object.keys(apiResponseData).length) {
       // Potentially more historic entries to get if data was returned
-      newQueueEntry.params = endpointHandler.getNextParams(runEntry.params);
+      newQueueEntry.params = endpointHandler.getHistoricParams(runEntry.params);
       newQueueEntry.runAfter =
         runDate.seconds +
         (typeof endpointHandler.getHistoricDelay === "function"

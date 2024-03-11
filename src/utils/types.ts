@@ -27,9 +27,8 @@ export interface ApiPrimaryEndpoint {
   getDelay: () => number;
   getMethod?: () => string;
   getParams?: () => object;
-  getHistoricParams?: () => object;
+  getHistoricParams?: (currentParams?: object) => object;
   getHistoricDelay?: () => number;
-  getNextParams?: (currentParams: object) => object;
   transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;
   parseDayFromEntity?: (entity: any) => string;
 }

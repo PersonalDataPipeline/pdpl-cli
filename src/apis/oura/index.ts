@@ -39,27 +39,37 @@ const defaultParams: OuraUrlParams = {
   end_date: getFormattedDate(-1),
 };
 
-const historicParams: OuraUrlParams = {
-  start_date: getFormattedDate(-91),
-  end_date: getFormattedDate(-1),
+const getHistoricParams = (currentParams?: OuraUrlParams): OuraUrlParams => {
+  if (currentParams) {
+    return {
+      start_date: getFormattedDate(-90, new Date(`${currentParams.start_date}T00:00:00`)),
+      end_date: getFormattedDate(-90, new Date(`${currentParams.end_date}T00:00:00`)),
+    };
+  }
+  return {
+    start_date: getFormattedDate(-91),
+    end_date: getFormattedDate(-1),
+  };
 };
 
-const getNextParams = (currentParams: OuraUrlParams): OuraUrlParams => ({
-  start_date: getFormattedDate(-90, new Date(`${currentParams.start_date}T00:00:00`)),
-  end_date: getFormattedDate(-90, new Date(`${currentParams.end_date}T00:00:00`)),
-});
+const getHeartrateParams = (params?: OuraHeartRateUrlParams): OuraHeartRateUrlParams => {
+  let startDateTime, endDateTime;
+  if (params) {
+    startDateTime = adjustDateByDays(-3, new Date(params.start_datetime || ""));
+    endDateTime = adjustDateByDays(-3, new Date(params.end_datetime || ""));
+  } else {
+    startDateTime = adjustDateByDays(-3);
+    endDateTime = adjustDateByDays(-1);
+  }
+  startDateTime.setHours(0, 0, 0, 0);
+  endDateTime.setHours(23, 59, 59, 999);
 
-const startDateTime = adjustDateByDays(-3);
-startDateTime.setHours(0, 0, 0, 0);
-
-const endDateTime = adjustDateByDays(-1);
-endDateTime.setHours(23, 59, 59, 999);
-
-export const heartRateParams: OuraHeartRateUrlParams = {
-  // Date/time returned from the API is always UTC,
-  // even is a different timezone is indicated.
-  start_datetime: startDateTime.toISOString(),
-  end_datetime: endDateTime.toISOString(),
+  return {
+    // Date/time returned from the API is always UTC,
+    // even is a different timezone is indicated.
+    start_datetime: startDateTime.toISOString(),
+    end_datetime: endDateTime.toISOString(),
+  };
 };
 
 const parseDayFromEntity = (entity: OuraEntity) => entity.day;
@@ -89,8 +99,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
@@ -100,8 +109,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
@@ -111,8 +119,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
@@ -122,8 +129,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
@@ -133,8 +139,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
@@ -144,8 +149,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
@@ -155,36 +159,17 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => historicParams,
-    getNextParams,
+    getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
   },
   {
     getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
-    getParams: () => heartRateParams,
+    getParams: getHeartrateParams,
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    getHistoricParams: () => heartRateParams,
-    getNextParams: (currentParams: OuraHeartRateUrlParams): OuraHeartRateUrlParams => {
-      const startDateTime = adjustDateByDays(
-        -3,
-        new Date(currentParams.start_datetime || "")
-      );
-      startDateTime.setHours(0, 0, 0, 0);
-
-      const endDateTime = adjustDateByDays(
-        -3,
-        new Date(currentParams.end_datetime || "")
-      );
-      endDateTime.setHours(23, 59, 59, 999);
-
-      return {
-        start_datetime: startDateTime.toISOString(),
-        end_datetime: endDateTime.toISOString(),
-      };
-    },
+    getHistoricParams: getHeartrateParams,
     parseDayFromEntity: (entity: OuraEntity) => entity.timestamp.split("T")[0],
     transformResponseData,
   },

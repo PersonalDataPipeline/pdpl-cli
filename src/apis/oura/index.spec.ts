@@ -30,7 +30,7 @@ describe("Module: Oura API handler", () => {
 
     it("calculates the correct next params", () => {
       // TODO: Setup test config with a known timezone
-      expect(epHandler.getNextParams!(epHandler.getParams!())).toEqual({
+      expect(epHandler.getHistoricParams!(epHandler.getParams!())).toEqual({
         start_datetime: `${getFormattedDate(-6)}T08:00:00.000Z`,
         end_datetime: `${getFormattedDate(-3)}T07:59:59.999Z`,
       });
@@ -64,7 +64,7 @@ describe("Module: Oura API handler", () => {
 
     it("calculates the correct next params", () => {
       // TODO: Setup test config with a known timezone
-      expect(epHandler.getNextParams!(epHandler.getHistoricParams!())).toEqual({
+      expect(epHandler.getHistoricParams!(epHandler.getHistoricParams!())).toEqual({
         start_date: `${getFormattedDate(-181)}`,
         end_date: `${getFormattedDate(-91)}`,
       });
