@@ -71,7 +71,7 @@ const runQueue: RunEntry[] = queueInstance
     // If we're too early for an entry to run, add back as-is
     if (entry.runAfter > runDate.seconds) {
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
-      console.log(`🤖 Skipping ${entry.endpoint} for ${waitMinutes} seconds`);
+      console.log(`🤖 Skipping ${entry.endpoint} for ${waitMinutes} minutes`);
       queueInstance.addEntry(entry);
       return false;
     }
