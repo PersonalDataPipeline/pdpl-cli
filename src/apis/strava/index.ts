@@ -2,11 +2,8 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
-import {
-  HALF_HOUR_IN_SEC,
-  ONE_DAY_IN_SEC,
-  ONE_QUATER_IN_SEC,
-} from "../../utils/constants.js";
+import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/constants.js";
+import { getEpochNow } from "../../utils/date.js";
 
 const {
   STRAVA_REFRESH_TOKEN = "",
@@ -17,6 +14,13 @@ const {
 ////
 /// Types
 //
+
+interface StravaUrlParams {
+  before?: number;
+  after?: number;
+  page?: number;
+  per_page?: number;
+}
 
 type StravaStreamTypes = "latlng" | "distance" | "altitude" | "time";
 
@@ -83,14 +87,16 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
   {
     getEndpoint: () => "athlete/activities",
     getDirName: () => "athlete--activities",
-    getParams: () => ({
-      before: Math.floor(Date.now() / 1000),
-      after: 0,
-      page: 1,
-      per_page: 50,
+    getParams: (): StravaUrlParams => ({
+      before: getEpochNow(),
+      after: getEpochNow() - ONE_DAY_IN_SEC * 2,
     }),
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricParams: (currentParams?: StravaUrlParams): StravaUrlParams => ({
+      page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
+      per_page: 40,
+    }),
+    getHistoricDelay: () => 0,
     parseDayFromEntity: (entity: StravaActivityEntity) =>
       entity.start_date_local.split("T")[0] || "",
   },
