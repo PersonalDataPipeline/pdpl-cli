@@ -9,5 +9,6 @@ set -eo pipefail
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 npm run build
+npm test
 npm run eslint-ci
 npm run prettier-ci
