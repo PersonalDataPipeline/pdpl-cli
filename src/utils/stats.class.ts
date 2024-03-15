@@ -18,17 +18,17 @@ export interface RunData {
   enrichUrls?: string[];
 }
 
-interface StatsRunLog extends RunData {
+interface RunLogEntry extends RunData {
   endpoint: string;
 }
 
-interface StatsErrorData {
-  type: "http" | "parsing_response" | "other";
+interface ErrorData {
+  type: "startup" | "http" | "parsing_response" | "other";
   message: string;
   data?: object;
 }
 
-interface StatsErrorLog extends StatsErrorData {
+interface ErrorLogEntry extends ErrorData {
   endpoint: string;
 }
 
@@ -38,8 +38,8 @@ interface LogEntry {
   startTimeMs: number;
   endTimeMs?: number;
   runDurationMs?: number;
-  runs: StatsRunLog[];
-  errors: StatsErrorLog[];
+  runs: RunLogEntry[];
+  errors: ErrorLogEntry[];
 }
 
 ////
@@ -63,7 +63,7 @@ export default class RunLog {
     this.log.runs.push({ endpoint, ...runData });
   }
 
-  addError(endpoint: string, errorData: StatsErrorData) {
+  addError(endpoint: string, errorData: ErrorData) {
     this.log.errors.push({ endpoint, ...errorData });
   }
 
