@@ -62,18 +62,27 @@ const queueInstance = new Queue(apiName);
 const runQueue: RunEntry[] = queueInstance
   .getQueue()
   .filter((entry) => {
+    const endpointName = entry.endpoint;
     // If an endpoint was removed from the handler, remove from the queue
-    if (!handledEndpoints.includes(entry.endpoint)) {
-      console.log(`❓ Removing unhandled endpoint ${entry.endpoint} from queue`);
+    if (!handledEndpoints.includes(endpointName)) {
+      console.log(`❓ Removing unhandled endpoint ${endpointName} from queue`);
       return false;
     }
 
     // If we're too early for an entry to run, add back as-is
     if (entry.runAfter > runDate.seconds) {
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
-      console.log(`🤖 Skipping ${entry.endpoint} for ${waitMinutes} minutes`);
+      console.log(`🤖 Skipping ${endpointName} for ${waitMinutes} minutes`);
       queueInstance.addEntry(entry);
       return false;
+    }
+
+    // Add the next standard entry to the queue
+    if (!Queue.entryHasParams(entry) && !entry.historic) {
+      queueInstance.addEntry({
+        endpoint: entry.endpoint,
+        runAfter: handlerDict[endpointName].getDelay() + runDate.seconds,
+      });
     }
 
     return true;
@@ -82,12 +91,15 @@ const runQueue: RunEntry[] = queueInstance
     const entryHasParams = Queue.entryHasParams(entry);
     const newEntry: RunEntry = {
       endpoint: entry.endpoint,
-      params: entryHasParams ? entry.params : undefined,
       historic: !entryHasParams ? false : !!entry.historic,
     };
+    if (entryHasParams) {
+      newEntry.params = entry.params;
+    }
     return newEntry;
   });
 
+// TODO: Consider whether this logic should go in the queue class
 for (const handledEndpoint of handledEndpoints) {
   if (!queueInstance.hasStandardEntryFor(handledEndpoint)) {
     console.log(`🤖 Adding STANDARD queue entry for ${handledEndpoint}`);
@@ -132,7 +144,7 @@ for (const runEntry of runQueue) {
     runStats.addError(endpointName, {
       type: "http",
       message: error instanceof Error ? error.message : "Unknown error for getApiData",
-      data: (error as AxiosError)["response"]!["data"] || {},
+      data: error instanceof AxiosError && error.response ? error.response.data : {},
     });
     continue;
   }
