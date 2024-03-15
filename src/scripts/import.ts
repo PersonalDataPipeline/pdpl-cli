@@ -9,7 +9,7 @@ import {
   pathExists,
   readFile,
 } from "../utils/fs.js";
-import Stats, { StatsRunData } from "../utils/stats.class.js";
+import RunLog, { RunData } from "../utils/stats.class.js";
 import { DailyData } from "../utils/types.js";
 
 ////
@@ -47,7 +47,7 @@ if (!importFile || !pathExists(importFile)) {
 
 const fileContents = readFile(importFile);
 const runDateTime = runDateUtc().dateTime;
-const runStats = new Stats(importName);
+const runStats = new RunLog(importName);
 
 const entities = await parse(fileContents, { columns: true, bom: true });
 const thisHandler = importHandler.importTypes[importType];
@@ -56,7 +56,7 @@ const savePath = [importName, thisHandler.getDirName()];
 ensureOutputPath(savePath);
 
 const dailyData: DailyData = {};
-const runMetadata: StatsRunData = {
+const runMetadata: RunData = {
   dateTime: runDateTime,
   filesWritten: 0,
   filesSkipped: 0,

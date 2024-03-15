@@ -3,7 +3,7 @@ dotenvConfig();
 
 import { AxiosError, AxiosResponse } from "axios";
 
-import Stats, { StatsRunData } from "../utils/stats.class.js";
+import RunLog, { RunData } from "../utils/stats.class.js";
 import {
   ensureOutputPath,
   writeOutputFile,
@@ -40,7 +40,7 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const runStats = new Stats(apiName);
+const logger = new RunLog(apiName);
 const runDate = runDateUtc();
 
 const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
@@ -113,7 +113,7 @@ for (const handledEndpoint of handledEndpoints) {
 
 if (!runQueue.length) {
   console.log(`🤖 Empty run queue ... stopping`);
-  runStats.shutdown();
+  logger.shutdown();
   process.exit();
 }
 
@@ -131,7 +131,7 @@ for (const runEntry of runQueue) {
     endpointHandler.getParams = () => runEntry.params as object;
   }
 
-  const runMetadata: StatsRunData = {
+  const runMetadata: RunData = {
     dateTime: runDate.dateTime,
     filesWritten: 0,
     filesSkipped: 0,
@@ -141,7 +141,7 @@ for (const runEntry of runQueue) {
   try {
     apiResponse = await getApiData(apiHandler, endpointHandler);
   } catch (error) {
-    runStats.addError(endpointName, {
+    logger.addError(endpointName, {
       type: "http",
       message: error instanceof Error ? error.message : "Unknown error for getApiData",
       data: error instanceof AxiosError && error.response ? error.response.data : {},
@@ -166,7 +166,7 @@ for (const runEntry of runQueue) {
     const entities = apiResponseData;
 
     if (!Array.isArray(entities)) {
-      runStats.addError(endpointName, {
+      logger.addError(endpointName, {
         type: "parsing_response",
         message: `Cannot iterate through data from ${endpointName}.`,
       });
@@ -182,7 +182,7 @@ for (const runEntry of runQueue) {
         dailyData[entity.day].push(entity);
       }
     } catch (error) {
-      runStats.addError(endpointName, {
+      logger.addError(endpointName, {
         type: "http",
         message: `Cannot parse data from ${endpointName} into days: ${
           error instanceof Error ? error.message : "Unknown error"
@@ -210,7 +210,7 @@ for (const runEntry of runQueue) {
       : runMetadata.filesSkipped++;
   }
 
-  runStats.addRun(endpointName, runMetadata);
+  logger.addRun(endpointName, runMetadata);
 
   if (
     runEntry.historic &&
@@ -262,7 +262,7 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
   ensureOutputPath(savePath);
 
   for (const entity of entities) {
-    const runMetadata: StatsRunData = {
+    const runMetadata: RunData = {
       dateTime: runDate.dateTime,
       filesWritten: 0,
       filesSkipped: 0,
@@ -272,7 +272,7 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
     try {
       apiResponse = await getApiData(apiHandler, endpointHandler, entity);
     } catch (error: any) {
-      runStats.addError(endpointHandler.getEndpoint(entity), {
+      logger.addError(endpointHandler.getEndpoint(entity), {
         type: "http",
         message: error.message,
         data: error.data || {},
@@ -295,8 +295,8 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
       ? runMetadata.filesWritten++
       : runMetadata.filesSkipped++;
 
-    runStats.addRun(endpointHandler.getEndpoint(entity), runMetadata);
+    logger.addRun(endpointHandler.getEndpoint(entity), runMetadata);
   }
 } // END endpointsSecondary
 
-runStats.shutdown();
+logger.shutdown();

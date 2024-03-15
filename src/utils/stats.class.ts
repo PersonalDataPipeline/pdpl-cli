@@ -8,7 +8,7 @@ import getConfig from "./config.js";
 /// Types
 //
 
-export interface StatsRunData {
+export interface RunData {
   dateTime: string;
   filesWritten: number;
   filesSkipped: number;
@@ -18,7 +18,7 @@ export interface StatsRunData {
   enrichUrls?: string[];
 }
 
-interface StatsRunLog extends StatsRunData {
+interface StatsRunLog extends RunData {
   endpoint: string;
 }
 
@@ -32,7 +32,7 @@ interface StatsErrorLog extends StatsErrorData {
   endpoint: string;
 }
 
-interface StatsLog {
+interface LogEntry {
   name: string;
   dateTime: string;
   startTimeMs: number;
@@ -46,8 +46,8 @@ interface StatsLog {
 /// Export
 //
 
-export default class Stats {
-  log: StatsLog;
+export default class RunLog {
+  log: LogEntry;
 
   constructor(name: string) {
     this.log = {
@@ -59,7 +59,7 @@ export default class Stats {
     };
   }
 
-  addRun(endpoint: string, runData: StatsRunData) {
+  addRun(endpoint: string, runData: RunData) {
     this.log.runs.push({ endpoint, ...runData });
   }
 
