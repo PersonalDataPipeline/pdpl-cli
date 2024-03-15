@@ -78,7 +78,7 @@ export default class Stats {
       JSON.stringify(this.log, null, 2)
     );
 
-    if (getConfig().debug) {
+    if (getConfig().debugLogOutput) {
       console.log(logContent);
     }
   }

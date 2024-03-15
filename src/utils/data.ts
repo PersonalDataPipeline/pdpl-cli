@@ -38,7 +38,6 @@ const getMockApiData = (
       statusText: "OK",
     };
   } catch (error) {
-    // File not found, continue with HTTP request
     return null;
   }
 };
@@ -55,13 +54,15 @@ export const getApiData = async (
   const isEnriching = typeof entity !== "undefined";
   const endpoint = handler.getEndpoint(entity);
 
-  if (getConfig().debug) {
+  if (getConfig().debugUseMocks) {
     const filename = isEnriching ? endpoint.replaceAll("/", "--") : handler.getDirName();
     const apiData = getMockApiData(apiHandler.getApiName(), filename);
 
-    if (apiData !== null) {
-      return apiData;
+    if (apiData === null) {
+      throw new Error(`No mock data found for ${endpoint}`);
     }
+
+    return apiData;
   }
 
   const axiosConfig = {
@@ -72,7 +73,7 @@ export const getApiData = async (
     params: typeof handler.getParams === "function" ? handler.getParams() : {},
   };
 
-  if (getConfig().debug) {
+  if (getConfig().debugLogOutput) {
     console.log(axiosConfig);
   }
 

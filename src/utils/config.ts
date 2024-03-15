@@ -1,6 +1,11 @@
 import { existsSync } from "fs";
 
-const { DEBUG = false } = process.env;
+const {
+  DEBUG_OUTPUT = "false",
+  DEBUG_USE_MOCKS = "false",
+  DEBUG_LOG_OUTPUT = "false",
+  DEBUG_ALL = "false",
+} = process.env;
 
 ////
 /// Types
@@ -10,8 +15,9 @@ interface Config {
   outputDir: string;
   compressJson: boolean;
   timezone: string;
-  debug: boolean;
   originDate: string;
+  debugUseMocks: boolean;
+  debugLogOutput: boolean;
 }
 
 ////
@@ -22,14 +28,26 @@ const config: Config = {
   timezone: "America/Los_Angeles",
   outputDir: "/Users/joshcanhelp/Documents/tapestry",
   compressJson: true,
-  debug: false,
+  debugUseMocks: false,
+  debugLogOutput: false,
   originDate: "1980-05-07",
 };
 
-if (DEBUG === "true") {
+if (DEBUG_OUTPUT === "true" || DEBUG_ALL === "true") {
   config.outputDir = "/Users/joshcanhelp/Code/tapestry/_data_debug";
   config.compressJson = false;
-  config.debug = true;
+}
+
+if (DEBUG_USE_MOCKS === "true" || DEBUG_ALL === "true") {
+  config.debugUseMocks = true;
+}
+
+if (DEBUG_LOG_OUTPUT === "true" || DEBUG_ALL === "true") {
+  config.debugLogOutput = true;
+}
+
+if (config.debugLogOutput) {
+  console.log(config);
 }
 
 ////
