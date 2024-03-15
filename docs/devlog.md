@@ -20,6 +20,13 @@ Notes taken during development, newest to oldest.
 ## [[2024-03-15]]
 
 I'm working on a bug with the queue and seeing some ways which this isn't as clear as it should be. It's hard because it needs to be a list of different things to be done but also has some rules around what needs to be in there. I think the queue management needs to be part of the queue code but I don't want to refactor that right now, I've sunk too much time into this and it's working. But I think the queue needs to have a better sense of what's coming and going while handling the file writing better. At any point the service could lose connection with the stored queue. We want to be able to come back and pick up where we left off, including adding error retries to the queue.
+
+I think I need to focus on getting this hooked up to a process that will run it for a few days and see where we're at. That's going to main I'm focusing on logging and getting the existing endpoints working, then adding more endpoints. 
+
+[ADR 006: Logging](./decisions/006-logging)
+
+I will say ... so far, the stats/logging has been really helpful. We just want to augment it a bit and make sure we can figure out what went wrong after the fact.
+
 ## [[2024-03-11]]
 
 Digging in on API pagination and getting historic runs to work across all APIs. I'm heading into this nervous that the system I've spent a bunch of time on is not going to work but no sense in dwelling on that. If it doesn't work, we rip it out and start all over again!

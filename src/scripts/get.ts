@@ -1,9 +1,9 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 
-import RunLog, { RunData } from "../utils/stats.class.js";
+import RunLog from "../utils/stats.class.js";
 import {
   ensureOutputPath,
   writeOutputFile,
@@ -29,18 +29,18 @@ interface RunEntry extends Omit<QueueEntry, "runAfter" | "historic"> {
 
 const apisSupported = readDirectory("src/apis");
 const apiName = process.argv[2];
+const logger = new RunLog(apiName);
 
 if (!apiName) {
-  console.log(`❌ No API name included`);
+  logger.error({ stage: "startup", error: "No API name in command" }).shutdown();
   process.exit();
 }
 
 if (!apisSupported.includes(apiName)) {
-  console.log(`❌ Unsupported API "${apiName}"`);
+  logger.error({ stage: "startup", error: `Unknown API name "${apiName}"` }).shutdown();
   process.exit();
 }
 
-const logger = new RunLog(apiName);
 const runDate = runDateUtc();
 
 const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
@@ -65,14 +65,22 @@ const runQueue: RunEntry[] = queueInstance
     const endpointName = entry.endpoint;
     // If an endpoint was removed from the handler, remove from the queue
     if (!handledEndpoints.includes(endpointName)) {
-      console.log(`❓ Removing unhandled endpoint ${endpointName} from queue`);
+      logger.info({
+        stage: "queue_management",
+        message: "Removing unknown endpoint found in queue",
+        endpoint: endpointName,
+      });
       return false;
     }
 
     // If we're too early for an entry to run, add back as-is
     if (entry.runAfter > runDate.seconds) {
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
-      console.log(`🤖 Skipping ${endpointName} for ${waitMinutes} minutes`);
+      logger.info({
+        stage: "queue_management",
+        message: `Skipping endpoint for ${waitMinutes} minutes`,
+        endpoint: endpointName,
+      });
       queueInstance.addEntry(entry);
       return false;
     }
@@ -102,7 +110,11 @@ const runQueue: RunEntry[] = queueInstance
 // TODO: Consider whether this logic should go in the queue class
 for (const handledEndpoint of handledEndpoints) {
   if (!queueInstance.hasStandardEntryFor(handledEndpoint)) {
-    console.log(`🤖 Adding STANDARD queue entry for ${handledEndpoint}`);
+    logger.info({
+      stage: "queue_management",
+      message: `Adding standard entry to queue for unhandled endpoint`,
+      endpoint: handledEndpoint,
+    });
     queueInstance.addEntry({
       endpoint: handledEndpoint,
       runAfter: handlerDict[handledEndpoint].getDelay() + runDate.seconds,
@@ -112,7 +124,10 @@ for (const handledEndpoint of handledEndpoints) {
 }
 
 if (!runQueue.length) {
-  console.log(`🤖 Empty run queue ... stopping`);
+  logger.info({
+    stage: "queue_management",
+    message: "Empty run queue ... stopping",
+  });
   logger.shutdown();
   process.exit();
 }
@@ -124,27 +139,29 @@ if (!runQueue.length) {
 const perEndpointData: { [key: string]: [] } = {};
 
 for (const runEntry of runQueue) {
-  const endpointName = runEntry.endpoint;
-  const endpointHandler = Object.assign({}, handlerDict[endpointName]);
+  const endpoint = runEntry.endpoint;
+  const endpointHandler = Object.assign({}, handlerDict[endpoint]);
 
   if (typeof runEntry.params === "object") {
     endpointHandler.getParams = () => runEntry.params as object;
   }
 
-  const runMetadata: RunData = {
-    dateTime: runDate.dateTime,
+  const runMetadata = {
+    endpoint,
     filesWritten: 0,
     filesSkipped: 0,
+    total: 0,
+    days: 0,
   };
 
   let apiResponse: AxiosResponse | MockAxiosResponse;
   try {
     apiResponse = await getApiData(apiHandler, endpointHandler);
   } catch (error) {
-    logger.addError(endpointName, {
-      type: "http",
-      message: error instanceof Error ? error.message : "Unknown error for getApiData",
-      data: error instanceof AxiosError && error.response ? error.response.data : {},
+    logger.error({
+      stage: "http",
+      endpoint: endpoint,
+      error,
     });
     continue;
   }
@@ -158,7 +175,7 @@ for (const runEntry of runQueue) {
       : apiResponse.data;
 
   // Store all the entity data for the endpoint for secondary endpoints
-  perEndpointData[endpointName] = apiResponseData;
+  perEndpointData[endpoint] = apiResponseData;
 
   if (typeof endpointHandler.parseDayFromEntity === "function") {
     // Need to parse returned to days if not a snapshot
@@ -166,9 +183,10 @@ for (const runEntry of runQueue) {
     const entities = apiResponseData;
 
     if (!Array.isArray(entities)) {
-      logger.addError(endpointName, {
-        type: "parsing_response",
-        message: `Cannot iterate through data from ${endpointName}.`,
+      logger.error({
+        stage: "parsing_response",
+        endpoint: endpoint,
+        error: "Cannot iterate through data",
       });
       continue;
     }
@@ -182,12 +200,10 @@ for (const runEntry of runQueue) {
         dailyData[entity.day].push(entity);
       }
     } catch (error) {
-      logger.addError(endpointName, {
-        type: "http",
-        message: `Cannot parse data from ${endpointName} into days: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
-        data: (error as Record<string, unknown>)["data"] || {},
+      logger.error({
+        stage: "parsing_response",
+        endpoint: endpoint,
+        error,
       });
       continue;
     }
@@ -210,7 +226,9 @@ for (const runEntry of runQueue) {
       : runMetadata.filesSkipped++;
   }
 
-  logger.addRun(endpointName, runMetadata);
+  logger.success({
+    ...runMetadata,
+  });
 
   if (
     runEntry.historic &&
@@ -218,7 +236,7 @@ for (const runEntry of runQueue) {
     typeof apiHandler.getHistoricDelay === "function"
   ) {
     const newQueueEntry: QueueEntry = {
-      endpoint: endpointName,
+      endpoint: endpoint,
       historic: true,
       runAfter: runDate.seconds,
     };
@@ -248,7 +266,7 @@ for (const runEntry of runQueue) {
       newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
       newQueueEntry.params = endpointHandler.getHistoricParams();
     }
-    console.log(`🤖 Adding HISTORIC queue entry for ${endpointName}`);
+    console.log(`Adding HISTORIC queue entry for ${endpoint}`);
     queueInstance.addEntry(newQueueEntry);
   }
 } // END endpointsPrimary
@@ -262,20 +280,21 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
   ensureOutputPath(savePath);
 
   for (const entity of entities) {
-    const runMetadata: RunData = {
-      dateTime: runDate.dateTime,
+    const runMetadata = {
+      endpoint: endpointHandler.getEndpoint(entity),
       filesWritten: 0,
       filesSkipped: 0,
+      total: 0,
     };
 
     let apiResponse;
     try {
       apiResponse = await getApiData(apiHandler, endpointHandler, entity);
-    } catch (error: any) {
-      logger.addError(endpointHandler.getEndpoint(entity), {
-        type: "http",
-        message: error.message,
-        data: error.data || {},
+    } catch (error) {
+      logger.error({
+        stage: "http",
+        endpoint: runMetadata.endpoint,
+        error,
       });
       continue;
     }
@@ -295,7 +314,7 @@ for (const endpointHandler of apiHandler.endpointsSecondary) {
       ? runMetadata.filesWritten++
       : runMetadata.filesSkipped++;
 
-    logger.addRun(endpointHandler.getEndpoint(entity), runMetadata);
+    logger.success(runMetadata);
   }
 } // END endpointsSecondary
 

@@ -9,7 +9,7 @@ import {
   pathExists,
   readFile,
 } from "../utils/fs.js";
-import RunLog, { RunData } from "../utils/stats.class.js";
+import RunLog from "../utils/stats.class.js";
 import { DailyData } from "../utils/types.js";
 
 ////
@@ -56,10 +56,12 @@ const savePath = [importName, thisHandler.getDirName()];
 ensureOutputPath(savePath);
 
 const dailyData: DailyData = {};
-const runMetadata: RunData = {
+const runMetadata = {
   dateTime: runDateTime,
   filesWritten: 0,
   filesSkipped: 0,
+  total: 0,
+  days: 0,
   importFile,
 };
 
@@ -85,5 +87,8 @@ for (const day in dailyData) {
     : runMetadata.filesSkipped++;
 }
 
-runStats.addRun(importType, runMetadata);
+runStats.success({
+  endpoint: `import-${importName}`,
+  ...runMetadata,
+});
 runStats.shutdown();
