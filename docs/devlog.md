@@ -3,20 +3,24 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] [ADR 006: Logging](./decisions/006-logging)
 - [ ] Separate debug mode for HTTP calls from saving
+- [ ] [ADR 006: Logging](./decisions/006-logging)
 - [ ] Fix: Oura heart rate historical run issues
 - [ ] Fix: Wahoo authorization issues (refresh token expires quickly)
-- [ ] Add Axios retry to get script
+- [ ] Add `axios-retry` to the get script and add caught errors to the queue
+- [ ] Move queue management code from getter script to queue class
 - [ ] Hook this up to Automator and see what happens
 - [ ] Generate mocks from getter script
-- [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication))
+- [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Fix: TS-eslint warnings
 - [ ] `// TODO:` entries in code
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
+## [[2024-03-15]]
+
+I'm working on a bug with the queue and seeing some ways which this isn't as clear as it should be. It's hard because it needs to be a list of different things to be done but also has some rules around what needs to be in there. I think the queue management needs to be part of the queue code but I don't want to refactor that right now, I've sunk too much time into this and it's working. But I think the queue needs to have a better sense of what's coming and going while handling the file writing better. At any point the service could lose connection with the stored queue. We want to be able to come back and pick up where we left off, including adding error retries to the queue.
 ## [[2024-03-11]]
 
 Digging in on API pagination and getting historic runs to work across all APIs. I'm heading into this nervous that the system I've spent a bunch of time on is not going to work but no sense in dwelling on that. If it doesn't work, we rip it out and start all over again!
