@@ -3,7 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Separate debug mode for HTTP calls from saving
 - [ ] [ADR 006: Logging](./decisions/006-logging)
 - [ ] Fix: Oura heart rate historical run issues
 - [ ] Fix: Wahoo authorization issues (refresh token expires quickly)
