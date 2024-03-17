@@ -266,7 +266,11 @@ for (const runEntry of runQueue) {
       newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
       newQueueEntry.params = endpointHandler.getHistoricParams();
     }
-    console.log(`Adding HISTORIC queue entry for ${endpoint}`);
+    logger.info({
+      endpoint,
+      stage: "queue_management",
+      message: `Adding historic queue entry`,
+    });
     queueInstance.addEntry(newQueueEntry);
   }
 } // END endpointsPrimary

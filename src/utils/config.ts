@@ -46,10 +46,6 @@ if (DEBUG_LOG_OUTPUT === "true" || DEBUG_ALL === "true") {
   config.debugLogOutput = true;
 }
 
-if (config.debugLogOutput) {
-  console.log(config);
-}
-
 ////
 /// Export
 //

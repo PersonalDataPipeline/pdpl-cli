@@ -73,9 +73,5 @@ export const getApiData = async (
     params: typeof handler.getParams === "function" ? handler.getParams() : {},
   };
 
-  if (getConfig().debugLogOutput) {
-    console.log(axiosConfig);
-  }
-
   return await axios(axiosConfig);
 };
