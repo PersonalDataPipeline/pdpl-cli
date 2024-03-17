@@ -27,10 +27,7 @@ export interface ApiPrimaryEndpoint {
   getDelay: () => number;
   getMethod?: () => string;
   getParams?: () => object;
-  shouldHistoricContinue?: (
-    httpResponse: AxiosResponse | MockAxiosResponse,
-    params: object
-  ) => boolean;
+  shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
   getHistoricParams?: (currentParams?: object, didReturnData?: boolean) => object;
   getHistoricDelay?: () => number;
   transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;

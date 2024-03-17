@@ -1,8 +1,5 @@
-import { AxiosResponse } from "axios";
-
 import { ONE_DAY_IN_SEC, ONE_YEAR_IN_SEC } from "../../utils/constants.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
-import { MockAxiosResponse } from "../../utils/data.js";
 import getConfig from "../../utils/config.js";
 import { getFormattedDate } from "../../utils/date.js";
 
@@ -74,11 +71,8 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
         offset: 0,
       };
     },
-    shouldHistoricContinue: (
-      httpResponse: AxiosResponse | MockAxiosResponse,
-      params: object
-    ): boolean => {
-      if (Object.keys(httpResponse.data).length) {
+    shouldHistoricContinue: (responseData: object | [], params: object): boolean => {
+      if (Object.keys(responseData).length) {
         return true;
       }
 

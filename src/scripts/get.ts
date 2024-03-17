@@ -245,7 +245,7 @@ for (const runEntry of runQueue) {
     const continueHistoric =
       typeof endpointHandler.shouldHistoricContinue === "function"
         ? endpointHandler.shouldHistoricContinue(
-            apiResponse,
+            apiResponseData,
             endpointHandler.getParams!()
           )
         : didReturnData;
