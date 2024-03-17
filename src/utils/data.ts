@@ -49,7 +49,7 @@ const getMockApiData = (
 export const getApiData = async (
   apiHandler: ApiHandler,
   handler: ApiPrimaryEndpoint | ApiSecondaryEndpoint,
-  entity?: any
+  entity?: object
 ): Promise<AxiosResponse | MockAxiosResponse> => {
   const isEnriching = typeof entity !== "undefined";
   const endpoint = handler.getEndpoint(entity);
