@@ -2,7 +2,7 @@
 
 ## Status
 
-`ACCEPTED`
+`RE-OPENED`
 
 ## Context
 
@@ -16,8 +16,6 @@ We're currently handling data in a per-day way. API calls are parsed into days a
 APIs, of course, do not go out of their way to make this easy on us. On Oura's heart rate API, you're only allowed to request a 30 day range. Then, within this range, results are paginated using a next token. 
 
 A few options to handle this ...
-
----
 
 **Option 1:** Respect the next token pagination and figure out how to stitch results together.
 
@@ -41,21 +39,30 @@ Logic could look like this for next tokens:
 	// Start next run AT oldest date
 ```
 
----
-
 **Option 2:** Write our own pagination based on date.
 
 - ✅ **Pro:** Potentially reusable, allowing us to manage pagination on our own instead of always learning a new system
 - ❌ **Con:** No guarantee that we can get a full day in a single API call
 
----
 ## Consequences
 
-- Pagination has a potentially huge impact on data completeness
+- Pagination has a huge impact on data completeness
 - Pagination settings for API endpoints could change in the future
-- Lots of work to implement and lots of work to re-do it another way
-	- Could just have many different strategies around, though ...
+- Lots of work to implement and lots of work to re-do it another way if a clever system needs to be re-written after there are many APIs in place.
 
 ## Decision
 
 I'm going to write my own pagination based on date. I think trying to make a system based around every API's pagination system is going to be more work than always thinking about dates. 
+
+## Follow-up
+
+One of my assumptions for option 2 (can't get a full day's worth of data in a single call) came true pretty quickly so we're going to need to support next tokens as well. This support means that we'll need to have logic that allows for N number of HTTP calls based on decisions made by the endpoint handler. Notes on this:
+
+- This data all needs to be merged together before the day processing and secondary endpoints are called. 
+- This should not have any effect on the next historic params, as far as I can tell initially. 
+- We also need to determine how to handle any errors we encounter by way of the next historic run's parameters.
+- The final data parsing should not change at all, just getting and merging data using next tokens. 
+
+
+
+

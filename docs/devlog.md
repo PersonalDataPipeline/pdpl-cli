@@ -3,12 +3,11 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] [ADR 006: Logging](./decisions/006-logging)
-- [ ] Fix: Oura heart rate historical run issues
+- [ ] Fix: Oura heart rate historical run issues + tests
 - [ ] Fix: Wahoo authorization issues (refresh token expires quickly)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
-- [ ] Move queue management code from getter script to queue class
 - [ ] Hook this up to Automator and see what happens
+- [ ] Move queue management code from getter script to queue class
 - [ ] Generate mocks from getter script
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
@@ -16,6 +15,40 @@ Notes taken during development, newest to oldest.
 - [ ] `// TODO:` entries in code
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-17]]
+
+Investigating the Oura heart rate endpoint issue ... the script was writing new files for the same date and, inspecting the files, it looked like the same day did not have the same data in it. This endpoint puts out a lot of data, such that a single call can only pull down a few days. My initial hypothesis here is that the historic runs are pulling down partial days at the start and finish of the run. Let's see what we get with a direct curl call ending at a specific time:
+
+```bash
+$ curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.ouraring.com/v2/usercollection/heartrate\?end_datetime\=2024-03-17T06:59:59.999Z | jq . > ~/Downloads/oura.json
+```
+
+I can tinker with the JSON in `jq` now that it's saved:
+
+```bash
+$ jq '.data[] | .timestamp' ~/Downloads/oura.json
+"2024-03-16T07:02:46+00:00"
+# ...
+"2024-03-17T06:56:12+00:00"
+```
+
+This shows me that we're not even getting 2 full days worth of data. Let's see if that changes with a start date:
+
+```bash
+$ curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.ouraring.com/v2/usercollection/heartrate\?start_datetime\=2024-03-14T23:00:00.000Z\&end_datetime\=2024-03-17T06:59:59.999Z | jq '.data[] | .timestamp'
+```
+
+So, it looks like it can get about 3 full days worth of data ... but, what I just learned is that if you record a workout, it saves your heart rate at much shorter intervals, making it so that you can't get a full days worth of heart rate data. Trying to get a full day with a workout recorded comes back with a next token, which means we didn't get all of the results:
+
+```
+?start_datetime\=2024-03-14T23:00:00.000Z\
+	&end_datetime\=2024-03-15T06:59:59.999Z
+```
+
+This is ... concerning to say the least as this calls into question what I decided in the [API pagination ADR](./decisions/005-handling-pagination.md). If we can't always pull a full day from an API (which, really, is probably not that much of an edge case) then we have to support this `next` token system. This is going to pagination and historic runs a lot more complex. This also means that we'll need to add some kind of loop for HTTP requests and handle rate limits and other errors gracefully because a single API call could generate a rate limit hit but that might be the last call in a series of, say, 4 different calls. Back to the drawing board ...
+
+[ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
 
 ## [[2024-03-15]]
 

@@ -28,10 +28,12 @@ What I know about logs in general:
 - Proper logging enables debugging and troubleshooting
 - Hooking this up to a cron/automation process means that we won't be watching it while it gathers data and we need to know what happened while we were gone
 - Structuring the logs well means we can enumerate over the run history and see trends, make decisions, etc.
+## Decision
+
+This felt like a big, hairy task but, really, this was just just a matter of coming up with a more standard way to add log entries and allowing info-level logs. I'm going to keep the context from above in mind as I work through some of the issues, keeping an eye out for where this can improve. Right now, I think we have a good shape and format as a foundation.
+
+Related side-note ... I considered adding the actual files names for the written files to the logs but was worried about log size. It occurs to me that by using the run date and endpoint, you can figure out which files were written by examining the file system. This seems fine for now.
 
 ## Implementation
 
 As I dig into this, it seems important to structure this truly like a log (list of messages in time order) rather than separating out success, error, and information. I tried this out and it feels good but I'm thinking that the info ones are not terribly helpful unless there is a problem. I think what, exactly, goes into them can change over time but this format feels like an evolution.
-## Decision
-
-This felt like a big, hairy task but, really, this was just just a matter of coming up with a more standard way to add log entries and allowing info-level logs. I'm going to keep the context from above in mind as I work through some of the issues, keeping an eye out for where this can improve. Right now, I think we have a good shape and format as a foundation.
