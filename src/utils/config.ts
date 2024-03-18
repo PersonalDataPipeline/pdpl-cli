@@ -4,6 +4,7 @@ const {
   DEBUG_OUTPUT = "false",
   DEBUG_USE_MOCKS = "false",
   DEBUG_LOG_OUTPUT = "false",
+  DEBUG_SAVE_MOCKS = "false",
   DEBUG_ALL = "false",
 } = process.env;
 
@@ -18,6 +19,7 @@ interface Config {
   originDate: string;
   debugUseMocks: boolean;
   debugLogOutput: boolean;
+  debugSaveMocks: boolean;
 }
 
 ////
@@ -30,6 +32,7 @@ const config: Config = {
   compressJson: true,
   debugUseMocks: false,
   debugLogOutput: false,
+  debugSaveMocks: false,
   originDate: "1980-05-07",
 };
 
@@ -44,6 +47,10 @@ if (DEBUG_USE_MOCKS === "true" || DEBUG_ALL === "true") {
 
 if (DEBUG_LOG_OUTPUT === "true" || DEBUG_ALL === "true") {
   config.debugLogOutput = true;
+}
+
+if (DEBUG_SAVE_MOCKS === "true" || DEBUG_ALL === "true") {
+  config.debugSaveMocks = true;
 }
 
 ////
