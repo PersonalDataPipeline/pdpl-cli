@@ -3,7 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Fix: Oura heart rate historical run issues + tests
 - [ ] Fix: Wahoo authorization issues (refresh token expires quickly)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
@@ -27,6 +26,23 @@ Quick reflection here on what's making this harder, from a debugging standpoint.
 
 Also have been thinking a lot about the shape of the API handler and how to make that easier to contribute. My mind keeps coming back to a class that can extend a base class but I'm not sure I want to go that route. Seems like OOP in JS is frowned upon for a number of reasons and I want to make it as easy as possible for folks to contribute new API contracts. Obviously a good starting point template and documentation will help. 
 
+🎉🎉🎉 Pagination is complete! Everything is working really well with Oura's picky heartrate endpoint, fingers crossed this is good for a while!
+
+Now looking at the Wahoo authorization issue ... it seems like the access token is expiring quickly and not being refreshed by the refresh token. Just running the cURL command to get the authorization headers throws the error:
+
+```bash
+$ npm run curl wahoo
+# ...
+error: 'invalid_grant',
+error_description: 'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.'
+# ...
+```
+
+Wahoo docs say this about tokens:
+
+> Send an HTTP POST to Wahoo with the code and your app's OAuth2 credentials and receive the `access_token` and `refresh_token` ... When the `access_token` expires after 2 hours you can use the `refresh_token` to get a new `access_token` and a new `refresh_token`.
+
+The `expires_in` value returned from the authorization call checks out, 7200. I'm seeing, though, that the new refresh token returned from the API is not being refreshed in the `.env` file. Turned out I had the parameters swapped in the `envWrite` function 🤦‍♂️.
 ## [[2024-03-17]]
 
 Investigating the Oura heart rate endpoint issue ... the script was writing new files for the same date and, inspecting the files, it looked like the same day did not have the same data in it. This endpoint puts out a lot of data, such that a single call can only pull down a few days. My initial hypothesis here is that the historic runs are pulling down partial days at the start and finish of the run. Let's see what we get with a direct curl call ending at a specific time:

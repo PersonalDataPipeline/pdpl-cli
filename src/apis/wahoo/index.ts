@@ -50,7 +50,7 @@ const getApiAuthHeaders = async () => {
     });
     accessToken = tokenResponse.data.access_token;
     const newRefreshToken = tokenResponse.data.refresh_token;
-    envWrite("WAHOO_REFRESH_TOKEN", WAHOO_REFRESH_TOKEN, newRefreshToken);
+    envWrite("WAHOO_REFRESH_TOKEN", newRefreshToken, WAHOO_REFRESH_TOKEN);
   }
 
   return {
