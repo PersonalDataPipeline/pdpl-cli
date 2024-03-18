@@ -1,6 +1,6 @@
 # Title
 
-Template borrowed from [here](https://github.com/joelparkerhenderson/architecture-decision-record/blob/main/locales/en/templates/decision-record-template-by-michael-nygard/index.md).
+Template inspiration from [here](https://github.com/joelparkerhenderson/architecture-decision-record/blob/main/locales/en/templates/decision-record-template-by-michael-nygard/index.md).
 
 ## Status
 
@@ -17,3 +17,11 @@ Template borrowed from [here](https://github.com/joelparkerhenderson/architectur
 ## Decision
 
 > What is the change that we're proposing and/or doing?
+
+## Implementation
+
+> How did the implementation of this decision go? What lessons were learned?
+
+## Follow-up
+
+> Optional: what are the reasons why this decision worked or why it needed to be changed?

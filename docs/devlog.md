@@ -5,16 +5,27 @@ Notes taken during development, newest to oldest.
 ## TODO:
 - [ ] Fix: Oura heart rate historical run issues + tests
 - [ ] Fix: Wahoo authorization issues (refresh token expires quickly)
+- [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
 - [ ] Move queue management code from getter script to queue class
 - [ ] Generate mocks from getter script
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
-- [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Fix: TS-eslint warnings
 - [ ] `// TODO:` entries in code
+- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-18]]
+
+[ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
+
+Quick reflection here on what's making this harder, from a debugging standpoint. There are now a bunch of things that the getter script does and, before doing another test run, you have to setup the queue correctly, run the right command with debugging options, then examine the result. I think, because the input and expected output is so clear, this would be a great case for unit tests for the getter script, which I'm going to prioritize after the issues I'm working on (Oura and Wahoo). 
+
+[ADR 007: API module contribution](./decisions/007-api-modules.md)
+
+Also have been thinking a lot about the shape of the API handler and how to make that easier to contribute. My mind keeps coming back to a class that can extend a base class but I'm not sure I want to go that route. Seems like OOP in JS is frowned upon for a number of reasons and I want to make it as easy as possible for folks to contribute new API contracts. Obviously a good starting point template and documentation will help. 
 
 ## [[2024-03-17]]
 
