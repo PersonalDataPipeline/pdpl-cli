@@ -78,11 +78,15 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     }),
     getHistoricDelay: () => 0,
     parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.created_at.split("T")[0],
-    transformResponseData: (response: AxiosResponse | MockAxiosResponse): unknown =>
-      response.data.workouts,
+    transformResponseData: (
+      response: AxiosResponse | MockAxiosResponse,
+      existingData?: object | []
+    ) => {
+      existingData = existingData ? existingData : [];
+      return [...(response.data as { workouts: [] }).workouts, ...(existingData as [])];
+    },
   },
 ];
-
 const endpointsSecondary: ApiSecondaryEndpoint[] = [];
 
 export {

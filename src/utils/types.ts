@@ -30,8 +30,12 @@ export interface ApiPrimaryEndpoint {
   shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
   getHistoricParams?: (currentParams?: object, didReturnData?: boolean) => object;
   getHistoricDelay?: () => number;
-  transformResponseData?: (response: AxiosResponse | MockAxiosResponse) => unknown;
+  transformResponseData?: (
+    response: AxiosResponse | MockAxiosResponse,
+    existingData?: [] | object
+  ) => [] | object;
   parseDayFromEntity?: (entity: any) => string;
+  getNextCallParams?: (response?: AxiosResponse | MockAxiosResponse) => object;
 }
 
 export interface ApiSecondaryEndpoint

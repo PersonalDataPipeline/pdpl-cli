@@ -35,6 +35,15 @@ describe("Module: Oura API handler", () => {
         end_datetime: `${getFormattedDate(-3)}T06:59:59.999Z`,
       });
     });
+
+    it("calculates the day", () => {
+      expect(
+        epHandler.parseDayFromEntity!({ timestamp: "2024-03-18T00:36:14+00:00" })
+      ).toEqual("2024-03-17");
+      expect(
+        epHandler.parseDayFromEntity!({ timestamp: "2024-03-18T09:36:14+00:00" })
+      ).toEqual("2024-03-18");
+    });
   });
 
   describe("Workouts endpoint", () => {

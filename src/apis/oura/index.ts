@@ -74,8 +74,20 @@ const getHeartrateParams = (params?: OuraHeartRateUrlParams): OuraHeartRateUrlPa
 
 const parseDayFromEntity = (entity: OuraEntity) => entity.day;
 
-const transformResponseData = (response: AxiosResponse | MockAxiosResponse): unknown =>
-  response.data.data;
+const transformResponseData = (
+  response: AxiosResponse | MockAxiosResponse,
+  existingData?: object | []
+): [] => {
+  existingData = existingData ? existingData : [];
+  return [...(existingData as []), ...(response.data as { data: [] }).data];
+};
+
+const getNextCallParams = (response?: AxiosResponse | MockAxiosResponse): object => {
+  if (response && response.data && response.data.next_token) {
+    return { next_token: response.data.next_token };
+  }
+  return {};
+};
 
 ////
 /// Exports
@@ -170,8 +182,11 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: getHeartrateParams,
-    parseDayFromEntity: (entity: OuraEntity) => entity.timestamp.split("T")[0],
+    parseDayFromEntity: (entity: OuraEntity) => {
+      return getFormattedDate(0, new Date(entity.timestamp));
+    },
     transformResponseData,
+    getNextCallParams,
   },
 ];
 

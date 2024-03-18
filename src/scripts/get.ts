@@ -1,8 +1,6 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
-import { AxiosResponse } from "axios";
-
 import RunLog from "../utils/stats.class.js";
 import {
   ensureOutputPath,
@@ -12,7 +10,7 @@ import {
 } from "../utils/fs.js";
 import { runDateUtc } from "../utils/date.js";
 import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
-import { getApiData, MockAxiosResponse } from "../utils/data.js";
+import { getApiData } from "../utils/data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
 
 ////
@@ -136,7 +134,7 @@ if (!runQueue.length) {
 /// Endpoints: Primary
 //
 
-const perEndpointData: { [key: string]: [] } = {};
+const perEndpointData: { [key: string]: any[] } = {};
 
 for (const runEntry of runQueue) {
   const endpoint = runEntry.endpoint;
@@ -154,28 +152,43 @@ for (const runEntry of runQueue) {
     days: 0,
   };
 
-  let apiResponse: AxiosResponse | MockAxiosResponse;
-  try {
-    apiResponse = await getApiData(apiHandler, endpointHandler);
-  } catch (error) {
-    logger.error({
-      stage: "http",
-      endpoint: endpoint,
-      error,
-    });
-    continue;
-  }
+  // BEFORE HTTP LOOP
 
-  const savePath = [apiName, endpointHandler.getDirName()];
-  ensureOutputPath(savePath);
+  let apiResponseData;
+  let apiResponse;
+  let nextCallParams = {};
+  do {
+    try {
+      apiResponse = await getApiData(apiHandler, endpointHandler);
+    } catch (error) {
+      logger.error({
+        stage: "http",
+        endpoint,
+        error,
+      });
+      nextCallParams = {};
+      continue;
+    }
+    apiResponseData =
+      typeof endpointHandler.transformResponseData === "function"
+        ? endpointHandler.transformResponseData(apiResponse, apiResponseData)
+        : apiResponse.data;
 
-  const apiResponseData =
-    typeof endpointHandler.transformResponseData === "function"
-      ? endpointHandler.transformResponseData(apiResponse)
-      : apiResponse.data;
+    nextCallParams =
+      typeof endpointHandler.getNextCallParams === "function"
+        ? endpointHandler.getNextCallParams(apiResponse)
+        : {};
+
+    endpointHandler.getParams = () => nextCallParams as object;
+  } while (Object.keys(nextCallParams).length);
+
+  // AFTER HTTP LOOP
 
   // Store all the entity data for the endpoint for secondary endpoints
   perEndpointData[endpoint] = apiResponseData;
+
+  const savePath = [apiName, endpointHandler.getDirName()];
+  ensureOutputPath(savePath);
 
   if (typeof endpointHandler.parseDayFromEntity === "function") {
     // Need to parse returned to days if not a snapshot
@@ -193,11 +206,11 @@ for (const runEntry of runQueue) {
 
     try {
       for (const entity of entities) {
-        entity.day = endpointHandler.parseDayFromEntity(entity);
-        if (!dailyData[entity.day]) {
-          dailyData[entity.day] = [];
+        const day = endpointHandler.parseDayFromEntity(entity);
+        if (!dailyData[day]) {
+          dailyData[day] = [];
         }
-        dailyData[entity.day].push(entity);
+        dailyData[day].push(entity);
       }
     } catch (error) {
       logger.error({
