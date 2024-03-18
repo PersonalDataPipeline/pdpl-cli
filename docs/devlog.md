@@ -3,7 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Fix: Wahoo authorization issues (refresh token expires quickly)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
