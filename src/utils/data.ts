@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 
 import getConfig from "./config.js";
 import { ApiHandler, ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "./types.js";
-import { __dirname, readFile } from "./fs.js";
+import { __dirname, readFile, writeFile } from "./fs.js";
 
 ////
 /// Types
@@ -15,11 +15,8 @@ export interface MockAxiosResponse extends Omit<AxiosResponse, "config"> {}
 /// Helpers
 //
 
-const getMockApiData = (
-  apiName: string,
-  endpointDir: string
-): MockAxiosResponse | null => {
-  const mockPath = path.join(
+const makeMockPath = (apiName: string, endpointDir: string) =>
+  path.join(
     __dirname,
     "..",
     "..",
@@ -29,10 +26,16 @@ const getMockApiData = (
     `${endpointDir}.json`
   );
 
+const getMockApiData = (
+  apiName: string,
+  endpointDir: string
+): MockAxiosResponse | null => {
+  const mockPath = makeMockPath(apiName, endpointDir);
+
   try {
     const mockJson = readFile(mockPath);
     return {
-      data: JSON.parse(mockJson),
+      data: JSON.parse(mockJson) as unknown,
       headers: {},
       status: 200,
       statusText: "OK",
@@ -54,9 +57,11 @@ export const getApiData = async (
   const isEnriching = typeof entity !== "undefined";
   const endpoint = handler.getEndpoint(entity);
 
+  const mockFilename = isEnriching
+    ? endpoint.replaceAll("/", "--")
+    : handler.getDirName();
   if (getConfig().debugUseMocks) {
-    const filename = isEnriching ? endpoint.replaceAll("/", "--") : handler.getDirName();
-    const apiData = getMockApiData(apiHandler.getApiName(), filename);
+    const apiData = getMockApiData(apiHandler.getApiName(), mockFilename);
 
     if (apiData === null) {
       throw new Error(`No mock data found for ${endpoint}`);
@@ -73,5 +78,14 @@ export const getApiData = async (
     params: typeof handler.getParams === "function" ? handler.getParams() : {},
   };
 
-  return await axios(axiosConfig);
+  const response = await axios(axiosConfig);
+
+  if (getConfig().debugSaveMocks) {
+    writeFile(
+      makeMockPath(apiHandler.getApiName(), mockFilename),
+      JSON.stringify(response.data)
+    );
+  }
+
+  return response;
 };
