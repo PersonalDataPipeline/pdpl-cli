@@ -15,6 +15,22 @@ Notes taken during development, newest to oldest.
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
+## [[2024-03-20]]
+
+Looking at unit tests for the getter script now. This will require everything to run in it's own function., which will end up being a good refactor since we can catch any uncaught errors, log them, and make sure the logger shuts down correctly:
+
+```js
+export const run = async () => {
+	// ... gogogo!
+};
+
+try {
+	await run();
+} catch (error) {
+	logger.error({ stage: "other", error});
+}
+```
+
 ## [[2024-03-18]]
 
 [ADR 005: Handling API pagination](./decisions/005-handling-pagination.md)
