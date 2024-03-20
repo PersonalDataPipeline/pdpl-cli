@@ -10,7 +10,7 @@ import {
 } from "../utils/fs.js";
 import { runDateUtc } from "../utils/date.js";
 import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
-import { getApiData } from "../utils/data.js";
+import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
 
 ////

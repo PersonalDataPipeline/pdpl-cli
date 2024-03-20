@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 
-import { MockAxiosResponse } from "./data.js";
+import { MockAxiosResponse } from "./api-data.js";
 
 export interface DailyEntity {
   day: string;

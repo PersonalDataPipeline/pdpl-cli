@@ -3,7 +3,7 @@ import { config } from "dotenv";
 config();
 
 import { authorizeEndpoint, tokenEndpoint } from "./index.js";
-import { serverPort, serverCallback } from "../../utils/authorizeApp.js";
+import { serverPort, serverCallback } from "../../utils/authorize-app.js";
 
 const {
   WAHOO_AUTHORIZE_CLIENT_ID = "",

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
-import { MockAxiosResponse } from "../../utils/data.js";
+import { MockAxiosResponse } from "../../utils/api-data.js";
 import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/constants.js";
 
 const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
