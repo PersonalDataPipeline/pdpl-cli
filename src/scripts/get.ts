@@ -25,9 +25,9 @@ interface RunEntry extends Omit<QueueEntry, "runAfter" | "historic"> {
 /// Startup
 //
 
+const logger = new RunLog();
 const apisSupported = readDirectory("src/apis");
 const apiName = process.argv[2];
-const logger = new RunLog(apiName);
 
 if (!apiName) {
   logger.error({ stage: "startup", error: "No API name in command" }).shutdown();
@@ -39,8 +39,8 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
+logger.setApiName(apiName);
 const runDate = runDateUtc();
-
 const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 
 // TODO: Should this be the shape of the endpoint handler collection?

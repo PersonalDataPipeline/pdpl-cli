@@ -16,6 +16,7 @@ import { DailyData } from "../utils/types.js";
 /// Helpers
 //
 
+const logger = new RunLog();
 const importsSupported = readDirectory("src/imports");
 
 const importName = process.argv[2];
@@ -23,12 +24,21 @@ const importType = process.argv[3] || "";
 const importFile = process.argv[4];
 
 if (!importName) {
-  console.log(`❌ No import name included`);
+  logger.error({ stage: "startup", error: "No import name in command" }).shutdown();
   process.exit();
 }
 
 if (!importsSupported.includes(importName)) {
-  console.log(`❌ Unsupported import "${importName}"`);
+  logger
+    .error({ stage: "startup", error: `Unknown import name "${importName}"` })
+    .shutdown();
+  process.exit();
+}
+
+if (!importFile || !pathExists(importFile)) {
+  logger
+    .error({ stage: "startup", error: `Import file "${importFile}" not found` })
+    .shutdown();
   process.exit();
 }
 
@@ -36,18 +46,18 @@ const importHandler = await import(`../imports/${importName}/index.js`);
 const allImportTypes = Object.keys(importHandler.importTypes);
 
 if (!importType && !allImportTypes.includes(importType)) {
-  console.log(`❌ Unsupported import type "${importType}" for import "${importName}"`);
+  logger
+    .error({
+      stage: "startup",
+      error: `Unsupported import type "${importType}" for import "${importName}"`,
+    })
+    .shutdown();
   process.exit();
 }
 
-if (!importFile || !pathExists(importFile)) {
-  console.log(`❌ Import file "${importFile}" not found`);
-  process.exit();
-}
-
+logger.setApiName(importName);
 const fileContents = readFile(importFile);
 const runDateTime = runDateUtc().dateTime;
-const runStats = new RunLog(importName);
 
 const entities = await parse(fileContents, { columns: true, bom: true });
 const thisHandler = importHandler.importTypes[importType];
@@ -87,8 +97,8 @@ for (const day in dailyData) {
     : runMetadata.filesSkipped++;
 }
 
-runStats.success({
+logger.success({
   endpoint: `import-${importName}`,
   ...runMetadata,
 });
-runStats.shutdown();
+logger.shutdown();

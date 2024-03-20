@@ -44,16 +44,19 @@ interface RunLogFile {
 //
 
 export default class RunLog {
-  name: string;
+  name: string = "<none>";
   log: RunLogFile;
 
-  constructor(name: string) {
-    this.name = name;
+  constructor() {
     this.log = {
       dateTime: runDateUtc().dateTime,
       startTimeMs: Date.now(),
       entries: [],
     };
+  }
+
+  setApiName(name: string) {
+    this.name = name;
   }
 
   info({
