@@ -48,6 +48,8 @@ $ node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js
 
 Going to try [Vitest](https://vitest.dev/guide/) and see how far I get before calling it a day.
 
+18 minutes latest, Vitest is passing all tests including the new ones for the getter script!! 🎉 🎉 🎉 Very similar API as Jest but far, far less configuration. Super pleased with it so far and, honestly, glad to try something new in this space. 
+
 ## [[2024-03-20]]
 
 Looking at unit tests for the getter script now. This will require everything to run in it's own function., which will end up being a good refactor since we can catch any uncaught errors, log them, and make sure the logger shuts down correctly:

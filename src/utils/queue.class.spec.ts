@@ -1,14 +1,16 @@
+import type { Mock } from "vitest";
+
 import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC } from "./constants.js";
 import { runDateUtc } from "./date.js";
 import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
 import RunLog from "./logger.class.js";
 
-jest.mock("./fs.js", () => ({
-  ensureOutputPath: jest.fn(),
-  pathExists: jest.fn(),
-  readFile: jest.fn(),
-  writeFile: jest.fn(),
+vi.mock("./fs.js", () => ({
+  ensureOutputPath: vi.fn(),
+  pathExists: vi.fn(),
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
 }));
 
 import Queue, { QueueEntry } from "./queue.class.js";
@@ -19,12 +21,12 @@ const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
 const logger = new RunLog();
 
 const mockApiHandler: ApiHandler = {
-  getApiName: jest.fn(() => "API_NAME"),
-  getApiBaseUrl: jest.fn(() => "API_BASE_URL"),
-  getApiAuthHeaders: jest.fn(async () => ({})),
+  getApiName: vi.fn(() => "API_NAME"),
+  getApiBaseUrl: vi.fn(() => "API_BASE_URL"),
+  getApiAuthHeaders: vi.fn(async () => ({})),
   endpointsPrimary: [
     {
-      getEndpoint: jest.fn(() => "API_ENDPOINT"),
+      getEndpoint: vi.fn(() => "API_ENDPOINT"),
       getDirName: () => "API_DIRECTORY",
       getDelay: () => ONE_DAY_IN_SEC,
     },
@@ -74,7 +76,7 @@ describe("Class: Queue", () => {
     let queue: Queue;
 
     beforeAll(() => {
-      (pathExists as jest.Mock).mockImplementation(() => false);
+      (pathExists as Mock).mockImplementation(() => false);
       queue = new Queue(mockApiHandler);
     });
 
@@ -95,8 +97,8 @@ describe("Class: Queue", () => {
     let queue: Queue;
 
     beforeAll(() => {
-      (pathExists as jest.Mock).mockImplementation(() => true);
-      (readFile as jest.Mock).mockImplementation(() => '[{"test": true}]');
+      (pathExists as Mock).mockImplementation(() => true);
+      (readFile as Mock).mockImplementation(() => '[{"test": true}]');
       queue = new Queue(mockApiHandler);
     });
 
@@ -113,7 +115,7 @@ describe("Class: Queue", () => {
     let queue: Queue;
 
     beforeEach(() => {
-      (readFile as jest.Mock).mockImplementation(() => "[]");
+      (readFile as Mock).mockImplementation(() => "[]");
       queue = new Queue(mockApiHandler);
     });
 
@@ -135,7 +137,7 @@ describe("Class: Queue", () => {
     let queue: Queue;
 
     beforeEach(() => {
-      (readFile as jest.Mock).mockImplementation(() => "[]");
+      (readFile as Mock).mockImplementation(() => "[]");
       queue = new Queue(mockApiHandler);
     });
 
@@ -177,7 +179,7 @@ describe("Class: Queue", () => {
     let queue: Queue;
 
     beforeEach(() => {
-      (readFile as jest.Mock).mockImplementation(() => "[]");
+      (readFile as Mock).mockImplementation(() => "[]");
       queue = new Queue(mockApiHandler);
     });
 
