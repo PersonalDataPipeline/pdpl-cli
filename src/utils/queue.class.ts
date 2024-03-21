@@ -12,15 +12,11 @@ import { ApiHandler, ApiPrimaryEndpoint } from "./types.js";
 export interface QueueEntry {
   endpoint: string;
   runAfter: number;
-  params?: object;
-  historic?: boolean;
-}
-
-type RunQueue = QueueEntry[];
-
-interface RunEntry extends Omit<QueueEntry, "runAfter" | "historic"> {
+  params: object;
   historic: boolean;
 }
+
+interface RunEntry extends Omit<QueueEntry, "runAfter"> {}
 
 ////
 /// Export
@@ -30,7 +26,7 @@ export default class Queue {
   apiHandler: ApiHandler;
   queueFile: string;
   apiName: string;
-  queue: RunQueue;
+  queue: QueueEntry[];
 
   constructor(apiHandler: ApiHandler) {
     this.apiHandler = apiHandler;
@@ -43,7 +39,7 @@ export default class Queue {
       this.queue = [];
     } else {
       const queueContents = readFile(this.queueFile);
-      this.queue = JSON.parse(queueContents) as RunQueue;
+      this.queue = JSON.parse(queueContents) as QueueEntry[];
     }
   }
 
@@ -111,7 +107,7 @@ export default class Queue {
           endpoint,
           runAfter: handlerDict[endpoint].getDelay() + runDate.seconds,
         });
-        runQueue.push({ endpoint, historic: false });
+        runQueue.push({ endpoint, historic: false, params: {} });
       }
     }
 
@@ -119,7 +115,17 @@ export default class Queue {
     return runQueue;
   }
 
-  addEntry({ runAfter, endpoint, params = {}, historic = false }: QueueEntry) {
+  addEntry({
+    runAfter,
+    endpoint,
+    params = {},
+    historic = false,
+  }: {
+    runAfter: number;
+    endpoint: string;
+    params?: object;
+    historic?: boolean;
+  }) {
     this.queue.push({
       historic: historic || false,
       runAfter,

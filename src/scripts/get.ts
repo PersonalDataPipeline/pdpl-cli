@@ -68,7 +68,7 @@ export const run = async () => {
     const endpointHandler = Object.assign({}, handlerDict[endpoint]);
 
     if (typeof runEntry.params === "object") {
-      endpointHandler.getParams = () => runEntry.params as object;
+      endpointHandler.getParams = () => runEntry.params;
     }
 
     const runMetadata = {
@@ -175,6 +175,7 @@ export const run = async () => {
         endpoint: endpoint,
         historic: true,
         runAfter: runDate.seconds,
+        params: {},
       };
 
       const didReturnData = !!Object.keys(apiResponseData).length;

@@ -41,11 +41,14 @@ const mockHistoricEntry = {
 const mockStandardEntry = {
   endpoint: "this/endpoint",
   runAfter: 1234567890,
+  historic: false,
+  params: {},
 };
 
 const mockOtherEntry = {
   endpoint: "this/endpoint",
   runAfter: 1234567890,
+  historic: false,
   params: {
     params1: "value1",
   },
