@@ -22,6 +22,32 @@ I left this yesterday with the queue not updating standard entries and dove into
 
 I've been working on a lot of refactoring and massaging lately and I haven't made much progress on adding new data sources, arguably the heart of what I'm trying to do here. I'm looking at my list above and it feels like I'm a long way off from being able to do that. But, if I want this to actually work and actually be useful, then the foundation needs to be strong. There are just so many places where this could fail or parse data inconsistently, making this system completely useless. I have to remind myself that this is an **actual hard problem**. Lots of moving parts, lots of date/time shuffling, lots of different API contracts. If I rush now to add lots of different APIs and have to go back an troubleshoot, I will have lost a lot of the context and likely be annoyed for longer. Solving this foundational issues early means better adoption, more trust, and better DX. I don't think I'm yak shaving but I'm open to that evaluation.
 
+Just went on an obnoxious and unhelpful journey into the Jest/ESLint/TypeScript configuration world. I probably should have been taking notes but these build issues are so opaque, it's hard to find any learning that could happen. It started with adding this test:
+
+```js
+// ./src/scripts/get.spec.ts
+import { run } from "./get.js";
+describe("Getter script", () => {
+	it("runs", async () => {
+		await run();
+	});
+});
+```
+
+This lead to this error when running the tests:
+
+> src/scripts/get.ts:267:3 - error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', or 'nodenext', and the 'target' option is set to 'es2017' or higher.
+
+No combination of these properties would work either as acceptable configuration or running the tests. A bunch of Googling and random changes lead me to a bunch of config changes and then this command:
+
+```bash
+$ node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js
+```
+
+... which told me that the Jest globals were not being loaded. Around and around I went until I just gave up and wrote this. I'm guessing the heart of the problem comes down to [only limited/experimental ESM support in Jest](https://jestjs.io/docs/ecmascript-modules). There is some magical incantation of configuration options that I'm not getting right and because the problem likely falls somewhere in between different libraries, there doesn't feel like a lot of value to deep dive. 
+
+Going to try [Vitest](https://vitest.dev/guide/) and see how far I get before calling it a day.
+
 ## [[2024-03-20]]
 
 Looking at unit tests for the getter script now. This will require everything to run in it's own function., which will end up being a good refactor since we can catch any uncaught errors, log them, and make sure the logger shuts down correctly:
