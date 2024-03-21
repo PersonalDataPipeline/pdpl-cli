@@ -209,7 +209,10 @@ export const run = async () => {
         message: `Adding historic queue entry`,
       });
       queueInstance.addEntry(newQueueEntry);
+      continue;
     }
+
+    queueInstance.updateStandardEntryFor(endpoint);
   } // END endpointsPrimary
 
   ////
