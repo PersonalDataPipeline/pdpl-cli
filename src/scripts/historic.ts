@@ -18,8 +18,8 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const queueInstance = new Queue(apiName);
 const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
+const queueInstance = new Queue(apiHandler);
 for (const endpointHandler of apiHandler.endpointsPrimary) {
   const endpointName = endpointHandler.getEndpoint();
   const hasHistoric = queueInstance.hasHistoricEntryFor(endpointName);

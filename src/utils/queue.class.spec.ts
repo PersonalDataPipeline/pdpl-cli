@@ -1,5 +1,7 @@
 import getConfig from "./config.js";
+import { ONE_DAY_IN_SEC } from "./constants.js";
 import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
+
 jest.mock("./fs.js", () => ({
   ensureOutputPath: jest.fn(),
   pathExists: jest.fn(),
@@ -8,9 +10,24 @@ jest.mock("./fs.js", () => ({
 }));
 
 import Queue from "./queue.class.js";
+import { ApiHandler } from "./types.js";
 
 const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
+
+const mockApiHandler: ApiHandler = {
+  getApiName: jest.fn(() => "API_NAME"),
+  getApiBaseUrl: jest.fn(() => "API_BASE_URL"),
+  getApiAuthHeaders: jest.fn(async () => ({})),
+  endpointsPrimary: [
+    {
+      getEndpoint: jest.fn(() => "API_ENDPOINT"),
+      getDirName: () => "API_DIRECTORY",
+      getDelay: () => ONE_DAY_IN_SEC,
+    },
+  ],
+  endpointsSecondary: [],
+};
 
 const mockHistoricEntry = {
   endpoint: "this/endpoint",
@@ -36,7 +53,7 @@ const mockOtherEntry = {
 
 describe("Class: Queue", () => {
   it("looks for a queue file when a new instance is created", () => {
-    new Queue("API_NAME");
+    new Queue(mockApiHandler);
     expect(pathExists).toHaveBeenCalledWith(queueFilePath);
   });
 
@@ -45,7 +62,7 @@ describe("Class: Queue", () => {
 
     beforeAll(() => {
       (pathExists as jest.Mock).mockImplementation(() => false);
-      queue = new Queue("API_NAME");
+      queue = new Queue(mockApiHandler);
     });
 
     it("checks the write path", () => {
@@ -67,7 +84,7 @@ describe("Class: Queue", () => {
     beforeAll(() => {
       (pathExists as jest.Mock).mockImplementation(() => true);
       (readFile as jest.Mock).mockImplementation(() => '[{"test": true}]');
-      queue = new Queue("API_NAME");
+      queue = new Queue(mockApiHandler);
     });
 
     it("reads the existing queue file", () => {
@@ -84,9 +101,7 @@ describe("Class: Queue", () => {
 
     beforeEach(() => {
       (readFile as jest.Mock).mockImplementation(() => "[]");
-      queue = new Queue("API_NAME");
-      (writeFile as jest.Mock).mockClear();
-      (ensureOutputPath as jest.Mock).mockClear();
+      queue = new Queue(mockApiHandler);
     });
 
     it("is initiated as an empty queue", () => {
@@ -95,14 +110,11 @@ describe("Class: Queue", () => {
 
     it("entries are added and retrieved as expected", () => {
       queue.addEntry(mockHistoricEntry);
-      expect(queue.getQueue()).toEqual([mockHistoricEntry]);
-    });
-
-    it("clears the queue when getting it", () => {
-      queue.addEntry(mockHistoricEntry);
-      queue.getQueue();
-      expect(queue.getQueue()).toEqual([]);
-      expect(writeFile).toHaveBeenCalled();
+      queue.addEntry(mockStandardEntry);
+      expect(queue.getQueue()).toEqual([
+        mockHistoricEntry,
+        { ...mockStandardEntry, historic: false, params: {} },
+      ]);
     });
   });
 
@@ -111,7 +123,7 @@ describe("Class: Queue", () => {
 
     beforeEach(() => {
       (readFile as jest.Mock).mockImplementation(() => "[]");
-      queue = new Queue("API_NAME");
+      queue = new Queue(mockApiHandler);
     });
 
     it("finds no standard entries in an empty queue", () => {

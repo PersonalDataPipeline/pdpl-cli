@@ -14,14 +14,6 @@ import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
 
 ////
-/// Types
-//
-
-interface RunEntry extends Omit<QueueEntry, "runAfter" | "historic"> {
-  historic: boolean;
-}
-
-////
 /// Startup
 //
 
@@ -47,9 +39,7 @@ export const run = async () => {
 
   // TODO: Should this be the shape of the endpoint handler collection?
   const handlerDict: { [key: string]: ApiPrimaryEndpoint } = {};
-  const handledEndpoints: string[] = [];
   for (const endpointHandler of apiHandler.endpointsPrimary) {
-    handledEndpoints.push(endpointHandler.getEndpoint());
     handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
   }
 
@@ -57,72 +47,8 @@ export const run = async () => {
   /// Queue management
   //
 
-  // TODO: Consider whether this logic should go in the queue class
-  const queueInstance = new Queue(apiName);
-  const runQueue: RunEntry[] = queueInstance
-    .getQueue()
-    .filter((entry) => {
-      const endpointName = entry.endpoint;
-      // If an endpoint was removed from the handler, remove from the queue
-      if (!handledEndpoints.includes(endpointName)) {
-        logger.info({
-          stage: "queue_management",
-          message: "Removing unknown endpoint found in queue",
-          endpoint: endpointName,
-        });
-        return false;
-      }
-
-      // If we're too early for an entry to run, add back as-is
-      if (entry.runAfter > runDate.seconds) {
-        const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
-        logger.info({
-          stage: "queue_management",
-          message: `Skipping endpoint for ${waitMinutes} minutes`,
-          endpoint: endpointName,
-        });
-        queueInstance.addEntry(entry);
-        return false;
-      }
-
-      // Add the next standard entry to the queue
-      if (!Queue.entryHasParams(entry) && !entry.historic) {
-        queueInstance.addEntry({
-          endpoint: entry.endpoint,
-          runAfter: handlerDict[endpointName].getDelay() + runDate.seconds,
-        });
-      }
-
-      return true;
-    })
-    .map((entry) => {
-      const entryHasParams = Queue.entryHasParams(entry);
-      const newEntry: RunEntry = {
-        endpoint: entry.endpoint,
-        historic: !entryHasParams ? false : !!entry.historic,
-      };
-      if (entryHasParams) {
-        newEntry.params = entry.params;
-      }
-      return newEntry;
-    });
-
-  // TODO: Consider whether this logic should go in the queue class
-  for (const handledEndpoint of handledEndpoints) {
-    if (!queueInstance.hasStandardEntryFor(handledEndpoint)) {
-      logger.info({
-        stage: "queue_management",
-        message: `Adding standard entry to queue for unhandled endpoint`,
-        endpoint: handledEndpoint,
-      });
-      queueInstance.addEntry({
-        endpoint: handledEndpoint,
-        runAfter: handlerDict[handledEndpoint].getDelay() + runDate.seconds,
-      });
-      runQueue.push({ endpoint: handledEndpoint, historic: false });
-    }
-  }
-
+  const queueInstance = new Queue(apiHandler);
+  const runQueue = queueInstance.processQueue(logger);
   if (!runQueue.length) {
     logger.info({
       stage: "queue_management",

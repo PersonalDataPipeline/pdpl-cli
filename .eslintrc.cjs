@@ -26,7 +26,8 @@ module.exports = {
     {
       files: ["*.spec.*"],
       rules: {
-        "@typescript-eslint/no-non-null-assertion": "off"
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/require-await": "off"
       }
     }
   ]
