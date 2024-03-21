@@ -15,6 +15,12 @@ Notes taken during development, newest to oldest.
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
+## [[2024-03-21]]
+
+I left this yesterday with the queue not updating standard entries and dove into that this morning. With this work, I refactored the queue management to process entries in place rather than clear the queue out and add entries back. The latter was meant to make it more "scalable" in that multiple services could potentially run against the same queue at the same time and there would not be a problem. But I'm realizing that that is a minor or none issue if the scripts are setup to run properly. Runs pulling down 8 endpoints for an API are taking  ~5 seconds and there is no reason for the script to run anywhere near that often. 
+
+[ADR 008: Preventing concurrent runs](./decisions/008-preventing-concurrent-runs.md)
+
 ## [[2024-03-20]]
 
 Looking at unit tests for the getter script now. This will require everything to run in it's own function., which will end up being a good refactor since we can catch any uncaught errors, log them, and make sure the logger shuts down correctly:
