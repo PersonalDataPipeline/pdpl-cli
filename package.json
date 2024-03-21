@@ -2,7 +2,6 @@
   "name": "api-getter",
   "version": "0.1.0",
   "description": "",
-  "main": "go.js",
   "scripts": {
     "test": "jest",
     "dev": "tsc -w",

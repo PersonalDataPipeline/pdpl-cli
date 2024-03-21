@@ -12,6 +12,10 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   root: true,
+  "ignorePatterns": [
+    ".eslintrc.cjs",
+    "jest.config.cjs"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-floating-promises": "warn",
