@@ -1,6 +1,6 @@
 # Title
 
-Template inspiration from [here](https://github.com/joelparkerhenderson/architecture-decision-record/blob/main/locales/en/templates/decision-record-template-by-michael-nygard/index.md).
+Template inspiration from [here](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions).
 
 ## Status
 

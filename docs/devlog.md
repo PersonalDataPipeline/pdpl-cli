@@ -6,7 +6,8 @@ Notes taken during development, newest to oldest.
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
-- [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
+- [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
+- [ ] Data source: Day One import
 - [ ] Fix: TS-eslint warnings
 - [ ] Fix: `// TODO:` entries in code
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
@@ -19,7 +20,7 @@ I left this yesterday with the queue not updating standard entries and dove into
 
 [ADR 008: Preventing concurrent runs](./decisions/008-preventing-concurrent-runs.md)
 
-I've been working on a lot of refactoring and massaging lately and it feels like I haven't made a ton of progress on adding new data sources. I'm looking at my list above and it feels like I'm a long way off from being able to do that. But, if I want this to actually work and actually be useful, then the foundation needs to be strong. There are just so many places where this could fail or parse data inconsistently, making this system completely useless. I have to remind myself that this is an **actual hard problem**. Lots of moving parts, lots of date/time shuffling, lots of different API contracts. If I rush now to add lots of different APIs and have to go back an troubleshoot, I will have lost a lot of the context and likely be annoyed for longer. Solving this foundational issues early means better adoption, more trust, and better DX.
+I've been working on a lot of refactoring and massaging lately and I haven't made much progress on adding new data sources, arguably the heart of what I'm trying to do here. I'm looking at my list above and it feels like I'm a long way off from being able to do that. But, if I want this to actually work and actually be useful, then the foundation needs to be strong. There are just so many places where this could fail or parse data inconsistently, making this system completely useless. I have to remind myself that this is an **actual hard problem**. Lots of moving parts, lots of date/time shuffling, lots of different API contracts. If I rush now to add lots of different APIs and have to go back an troubleshoot, I will have lost a lot of the context and likely be annoyed for longer. Solving this foundational issues early means better adoption, more trust, and better DX. I don't think I'm yak shaving but I'm open to that evaluation.
 
 ## [[2024-03-20]]
 
