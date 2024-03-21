@@ -6,11 +6,9 @@ Notes taken during development, newest to oldest.
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
-- [ ] Move queue management code from getter script to queue class
-- [ ] Generate mocks from getter script
 - [ ] Add Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Fix: TS-eslint warnings
-- [ ] `// TODO:` entries in code
+- [ ] Fix: `// TODO:` entries in code
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
@@ -20,6 +18,8 @@ Notes taken during development, newest to oldest.
 I left this yesterday with the queue not updating standard entries and dove into that this morning. With this work, I refactored the queue management to process entries in place rather than clear the queue out and add entries back. The latter was meant to make it more "scalable" in that multiple services could potentially run against the same queue at the same time and there would not be a problem. But I'm realizing that that is a minor or none issue if the scripts are setup to run properly. Runs pulling down 8 endpoints for an API are taking  ~5 seconds and there is no reason for the script to run anywhere near that often. 
 
 [ADR 008: Preventing concurrent runs](./decisions/008-preventing-concurrent-runs.md)
+
+I've been working on a lot of refactoring and massaging lately and it feels like I haven't made a ton of progress on adding new data sources. I'm looking at my list above and it feels like I'm a long way off from being able to do that. But, if I want this to actually work and actually be useful, then the foundation needs to be strong. There are just so many places where this could fail or parse data inconsistently, making this system completely useless. I have to remind myself that this is an **actual hard problem**. Lots of moving parts, lots of date/time shuffling, lots of different API contracts. If I rush now to add lots of different APIs and have to go back an troubleshoot, I will have lost a lot of the context and likely be annoyed for longer. Solving this foundational issues early means better adoption, more trust, and better DX.
 
 ## [[2024-03-20]]
 
@@ -115,6 +115,8 @@ Digging in on API pagination and getting historic runs to work across all APIs. 
 Pagination still needed more work to allow for flexibility across APIs and endpoints but I think I've got a system in place that will work for a number of different end cases. Queue management has been working quite well also so that's a win!
 
 One thing I just want to say out loud ... since API maintenance is one of the Big Rocks for this project, we want to move as much boilerplate code as possible out of the API contracts and into the main repo. At some point I'm going to abstract the API contracts to their own repo/dependency so that can be used for getting, processing, storing, etc. so their format will change a bit but, on the way, this should be abstracted as much as possible. Adding new APIs should be as simple and easy as possible. As I add new APIs and endpoints, I'm keeping this in mind as an important priority.
+
+[ADR 007: API module contribution](./decisions/007-api-modules.md)
 
 Slogging through a few issues with 2 APIs and realizing that logging and debugging is still not up to where it needs to be to figure out what's going on when something is not working properly. I bumped logging and debugging tasks up on the list to make troubleshooting easier. 
 
