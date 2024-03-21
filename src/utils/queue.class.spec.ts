@@ -1,6 +1,8 @@
 import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC } from "./constants.js";
+import { runDateUtc } from "./date.js";
 import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
+import RunLog from "./logger.class.js";
 
 jest.mock("./fs.js", () => ({
   ensureOutputPath: jest.fn(),
@@ -9,11 +11,12 @@ jest.mock("./fs.js", () => ({
   writeFile: jest.fn(),
 }));
 
-import Queue from "./queue.class.js";
+import Queue, { QueueEntry } from "./queue.class.js";
 import { ApiHandler } from "./types.js";
 
 const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
+const logger = new RunLog();
 
 const mockApiHandler: ApiHandler = {
   getApiName: jest.fn(() => "API_NAME"),
@@ -27,6 +30,13 @@ const mockApiHandler: ApiHandler = {
     },
   ],
   endpointsSecondary: [],
+};
+
+const missingEndpoint: QueueEntry = {
+  endpoint: "API_ENDPOINT",
+  runAfter: ONE_DAY_IN_SEC + runDateUtc().seconds,
+  historic: false,
+  params: {},
 };
 
 const mockHistoricEntry = {
@@ -118,6 +128,48 @@ describe("Class: Queue", () => {
         mockHistoricEntry,
         { ...mockStandardEntry, historic: false, params: {} },
       ]);
+    });
+  });
+
+  describe("queue processing", () => {
+    let queue: Queue;
+
+    beforeEach(() => {
+      (readFile as jest.Mock).mockImplementation(() => "[]");
+      queue = new Queue(mockApiHandler);
+    });
+
+    it("adds handled endpoints to the queue", () => {
+      queue.processQueue(logger);
+      expect(queue.getQueue()).toEqual([missingEndpoint]);
+    });
+
+    it("returns added endpoints", () => {
+      const runQueue = queue.processQueue(logger);
+      expect(runQueue).toEqual([
+        {
+          endpoint: missingEndpoint.endpoint,
+          historic: missingEndpoint.historic,
+          params: missingEndpoint.params,
+        },
+      ]);
+    });
+
+    it("does not return endpoints scheduled for the future", () => {
+      // First call returns the missing endpoint
+      queue.processQueue(logger);
+      // Second call skips the existing endpoint
+      const runQueue = queue.processQueue(logger);
+      expect(runQueue).toEqual([]);
+    });
+
+    it("removes unknown endpoints", () => {
+      queue.addEntry({
+        endpoint: "UNKNOWN_ENDPOINT",
+        runAfter: 1234567890,
+      });
+      queue.processQueue(logger);
+      expect(queue.getQueue()).toEqual([missingEndpoint]);
     });
   });
 
