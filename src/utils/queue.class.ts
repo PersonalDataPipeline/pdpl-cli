@@ -112,7 +112,7 @@ export default class Queue {
         runQueue.push({ endpoint, historic: false, params: {} });
       }
     }
-
+    this.queue = this.queue.filter((entry) => entry);
     this.writeQueue();
     return runQueue;
   }
@@ -128,12 +128,7 @@ export default class Queue {
     params?: object;
     historic?: boolean;
   }) {
-    this.queue.push({
-      historic: historic || false,
-      runAfter,
-      endpoint,
-      params,
-    });
+    this.queue.push({ historic, runAfter, endpoint, params });
     this.writeQueue();
   }
 
