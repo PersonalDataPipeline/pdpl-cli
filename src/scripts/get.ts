@@ -17,19 +17,19 @@ import Queue, { QueueEntry } from "../utils/queue.class.js";
 /// Startup
 //
 
-const logger = new RunLog();
-
-export const run = async () => {
+export const run = async (cliArgs: string[], logger: RunLog) => {
   const apisSupported = readDirectory("src/apis");
-  const apiName = process.argv[2];
+  const apiName = cliArgs[2];
 
   if (!apiName) {
-    logger.error({ stage: "startup", error: "No API name in command" }).shutdown();
+    logger.error({ stage: "startup", error: "No API name in command" });
+    logger.shutdown();
     return;
   }
 
   if (!apisSupported.includes(apiName)) {
-    logger.error({ stage: "startup", error: `Unknown API name "${apiName}"` }).shutdown();
+    logger.error({ stage: "startup", error: `Unknown API name "${apiName}"` });
+    logger.shutdown();
     return;
   }
 
@@ -263,8 +263,9 @@ export const run = async () => {
   } // END endpointsSecondary
 };
 
+const logger = new RunLog();
 try {
-  await run();
+  await run(process.argv, logger);
 } catch (error) {
   logger.error({ stage: "other", error });
 }

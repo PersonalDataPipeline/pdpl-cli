@@ -7,13 +7,20 @@ Notes taken during development, newest to oldest.
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
 - [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
+- [ ] Data source: GitHub API
 - [ ] Data source: Day One import
 - [ ] Fix: TS-eslint warnings
 - [ ] Fix: `// TODO:` entries in code
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Combine scripts into a single command
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
+## [[2024-03-22]]
+
+I'm excited to be past some of the foundational issues and headed towards adding sources and seeing what we can do with all this data!
+
+Writing unit tests for the getter script today. Just found [date mocking functionality in Vitest](https://vitest.dev/guide/mocking.html#dates), which will be very handy for other modules. 
 ## [[2024-03-21]]
 
 I left this yesterday with the queue not updating standard entries and dove into that this morning. With this work, I refactored the queue management to process entries in place rather than clear the queue out and add entries back. The latter was meant to make it more "scalable" in that multiple services could potentially run against the same queue at the same time and there would not be a problem. But I'm realizing that that is a minor or none issue if the scripts are setup to run properly. Runs pulling down 8 endpoints for an API are taking  ~5 seconds and there is no reason for the script to run anywhere near that often. 

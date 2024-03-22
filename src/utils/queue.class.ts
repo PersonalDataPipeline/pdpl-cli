@@ -150,14 +150,12 @@ export default class Queue {
     const runDate = runDateUtc();
     for (const [index, entry] of this.queue.entries()) {
       if (entry.endpoint !== endpoint || !this.isStandardEntry(entry)) {
-        console.log(`Skipping ${entry.endpoint} when updating ${endpoint}`);
         continue;
       }
 
       // TODO: Remove duplicate standard entries
 
       const runAfter = this.handlerDict[endpoint].getDelay() + runDate.seconds;
-      console.log(`Updating ${endpoint} to ${runAfter}`);
       this.queue[index].runAfter = runAfter;
     }
     this.writeQueue();
