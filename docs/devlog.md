@@ -3,18 +3,23 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
 - [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Data source: GitHub API
 - [ ] Data source: Day One import
+- [ ] Add tests for get script (might need to come with refactoring how the CLI works)
+- [ ] Refactor: queue class -> module
 - [ ] Fix: TS-eslint warnings
 - [ ] Fix: `// TODO:` entries in code
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Combine scripts into a single command
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-24]]
+
+I feel like testing is in a pretty good spot now and it's time to start moving forward on getting this tested and more data sources added. The getter script is mostly not tested but a number of underlying components are. Still feel good about swapping in Vitest for Jest, no more (maybe less) fussing around with configuration and mocks. Feels like a much better choice for a TypeScript project.
 
 ## [[2024-03-22]]
 
