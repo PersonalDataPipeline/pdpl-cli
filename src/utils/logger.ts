@@ -17,19 +17,19 @@ export interface RunLogger {
   shutdown: () => void;
 }
 
-interface InfoEntry {
+export interface InfoEntry {
   message: string;
   stage: string;
   endpoint?: string;
 }
 
-interface ErrorEntry {
+export interface ErrorEntry {
   stage: string;
   error: unknown;
   endpoint?: string;
 }
 
-interface SuccessEntry {
+export interface SuccessEntry {
   endpoint: string;
   filesWritten?: number;
   filesSkipped?: number;
@@ -62,9 +62,9 @@ export interface RunLogSuccessEntry
 interface RunLogFile {
   dateTime: string;
   startTimeMs: number;
+  entries: (RunLogInfoEntry | RunLogErrorEntry | RunLogSuccessEntry)[];
   endTimeMs?: number;
   runDurationMs?: number;
-  entries: (RunLogInfoEntry | RunLogErrorEntry | RunLogSuccessEntry)[];
 }
 
 ////
@@ -132,9 +132,10 @@ const runLogger: RunLogger = {
   shutdown: () => {
     runLog.endTimeMs = Date.now();
     runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
-    const savePath = [apiName, "_runs"];
-    const logContent = JSON.stringify(runLog, null, 2);
+    const savePath = apiName ? [apiName, "_runs"] : ["_runs"];
     ensureOutputPath(savePath);
+
+    const logContent = JSON.stringify(runLog, null, 2);
     writeFile(
       path.join(getConfig().outputDir, ...savePath, runDateUtc().fileName + ".json"),
       JSON.stringify(runLog, null, 2)
@@ -143,6 +144,8 @@ const runLogger: RunLogger = {
     if (getConfig().debugLogOutput) {
       console.log(logContent);
     }
+
+    runLog.entries = [];
   },
 };
 
