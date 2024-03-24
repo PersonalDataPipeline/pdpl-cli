@@ -14,7 +14,8 @@ module.exports = {
   root: true,
   "ignorePatterns": [
     ".eslintrc.cjs",
-    "vitest.config.js"
+    "vitest.config.js",
+    "src/scripts/test.ts"
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
