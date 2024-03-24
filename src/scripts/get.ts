@@ -1,7 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
-import RunLog from "../utils/logger.class.js";
+import logger, { RunLogger } from "../utils/logger.class.js";
 import {
   ensureOutputPath,
   writeOutputFile,
@@ -17,7 +17,7 @@ import Queue, { QueueEntry } from "../utils/queue.class.js";
 /// Startup
 //
 
-export const run = async (cliArgs: string[], logger: RunLog) => {
+export const run = async (cliArgs: string[], logger: RunLogger) => {
   const apisSupported = readDirectory("src/apis");
   const apiName = cliArgs[2];
 
@@ -263,7 +263,6 @@ export const run = async (cliArgs: string[], logger: RunLog) => {
   } // END endpointsSecondary
 };
 
-const logger = new RunLog();
 try {
   await run(process.argv, logger);
 } catch (error) {

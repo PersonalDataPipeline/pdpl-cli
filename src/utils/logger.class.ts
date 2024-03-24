@@ -9,6 +9,34 @@ import { AxiosError } from "axios";
 /// Types
 //
 
+export interface RunLogger {
+  setApiName: (name: string) => void;
+  info: (entry: InfoEntry) => void;
+  error: (entry: ErrorEntry) => void;
+  success: (entry: SuccessEntry) => void;
+  shutdown: () => void;
+}
+
+interface InfoEntry {
+  message: string;
+  stage: string;
+  endpoint?: string;
+}
+
+interface ErrorEntry {
+  stage: string;
+  error: unknown;
+  endpoint?: string;
+}
+
+interface SuccessEntry {
+  endpoint: string;
+  filesWritten?: number;
+  filesSkipped?: number;
+  total?: number;
+  days?: number;
+}
+
 export interface RunLogInfoEntry {
   stage: "startup" | "http" | "parsing_response" | "queue_management" | "other";
   type: "info" | "error" | "success";
@@ -40,110 +68,82 @@ interface RunLogFile {
 }
 
 ////
+/// Helpers
+//
+
+const runLog: RunLogFile = {
+  dateTime: runDateUtc().dateTime,
+  startTimeMs: Date.now(),
+  entries: [],
+};
+
+let apiName = "";
+
+////
 /// Export
 //
 
-export default class RunLog {
-  name: string = "<none>";
-  log: RunLogFile;
-
-  constructor() {
-    this.log = {
-      dateTime: runDateUtc().dateTime,
-      startTimeMs: Date.now(),
-      entries: [],
-    };
-  }
-
-  setApiName(name: string) {
-    this.name = name;
-  }
-
-  info({
-    message,
-    stage,
-    endpoint,
-  }: {
-    message: string;
-    stage: string;
-    endpoint?: string;
-  }): RunLog {
-    this.log.entries.push({
+const runLogger: RunLogger = {
+  setApiName: (name: string) => {
+    apiName = name;
+  },
+  info: ({ message, stage, endpoint }: InfoEntry) => {
+    runLog.entries.push({
       type: "info",
+      timeMs: Date.now(),
       message,
       stage,
-      timeMs: Date.now(),
       endpoint,
     } as RunLogInfoEntry);
-    return this;
-  }
-
-  error({
-    stage,
-    endpoint,
-    error,
-  }: {
-    stage: string;
-    error: unknown;
-    endpoint?: string;
-  }): RunLog {
-    this.log.entries.push({
-      type: "error",
-      stage,
-      endpoint,
-      message:
-        typeof error === "string"
-          ? error
-          : error instanceof Error
-            ? error.message
-            : "Unknown error",
-      data:
-        error instanceof AxiosError && error.response
-          ? (error.response.data as object)
-          : {},
-      timeMs: Date.now(),
-    } as RunLogErrorEntry);
-    return this;
-  }
-
-  success({
-    endpoint,
-    filesWritten,
-    filesSkipped,
-    total,
-    days,
-  }: {
-    endpoint: string;
-    filesWritten?: number;
-    filesSkipped?: number;
-    total?: number;
-    days?: number;
-  }): RunLog {
-    this.log.entries.push({
+  },
+  success: ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessEntry) => {
+    runLog.entries.push({
       type: "success",
+      timeMs: Date.now(),
       endpoint,
       filesWritten,
       filesSkipped,
       total,
       days,
-      timeMs: Date.now(),
     } as RunLogSuccessEntry);
-    return this;
-  }
+  },
+  error: ({ stage, endpoint, error }: ErrorEntry) => {
+    const message =
+      typeof error === "string"
+        ? error
+        : error instanceof Error
+          ? error.message
+          : "Unknown error";
 
-  shutdown() {
-    this.log.endTimeMs = Date.now();
-    this.log.runDurationMs = Math.floor(this.log.endTimeMs - this.log.startTimeMs);
-    const savePath = [this.name, "_runs"];
-    const logContent = JSON.stringify(this.log, null, 2);
+    const data =
+      error instanceof AxiosError && error.response
+        ? (error.response.data as object)
+        : {};
+
+    runLog.entries.push({
+      type: "error",
+      timeMs: Date.now(),
+      stage,
+      endpoint,
+      message,
+      data,
+    } as RunLogErrorEntry);
+  },
+  shutdown: () => {
+    runLog.endTimeMs = Date.now();
+    runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
+    const savePath = [apiName, "_runs"];
+    const logContent = JSON.stringify(runLog, null, 2);
     ensureOutputPath(savePath);
     writeFile(
       path.join(getConfig().outputDir, ...savePath, runDateUtc().fileName + ".json"),
-      JSON.stringify(this.log, null, 2)
+      JSON.stringify(runLog, null, 2)
     );
 
     if (getConfig().debugLogOutput) {
       console.log(logContent);
     }
-  }
-}
+  },
+};
+
+export default runLogger;

@@ -1,13 +1,10 @@
 import { run } from "./get.js";
-import RunLog from "../utils/logger.class.js";
+import logger from "../utils/logger.class.js";
 
 vi.mock("../utils/logger.class.js");
 
 describe("Script: Get API data", () => {
-  let logger: RunLog;
-  beforeEach(() => {
-    logger = new RunLog();
-  });
+  beforeEach(() => {});
 
   it("fails with a logged error if no API name was included", async () => {
     await run([], logger);

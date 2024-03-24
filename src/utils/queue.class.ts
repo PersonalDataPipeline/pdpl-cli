@@ -1,7 +1,7 @@
 import * as path from "path";
 import getConfig from "./config.js";
 import { ensureOutputPath, pathExists, readFile, writeFile } from "../utils/fs.js";
-import RunLog from "./logger.class.js";
+import { RunLogger } from "./logger.class.js";
 import { runDateUtc } from "./date.js";
 import { ApiHandler, ApiPrimaryEndpoint } from "./types.js";
 
@@ -21,7 +21,6 @@ interface RunEntry extends Omit<QueueEntry, "runAfter"> {}
 ////
 /// Export
 //
-
 export default class Queue {
   apiHandler: ApiHandler;
   queueFile: string;
@@ -60,7 +59,7 @@ export default class Queue {
     return this.queue;
   }
 
-  processQueue(logger: RunLog): RunEntry[] {
+  processQueue(logger: RunLogger): RunEntry[] {
     const runQueue: RunEntry[] = [];
     const runDate = runDateUtc();
 

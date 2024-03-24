@@ -9,14 +9,13 @@ import {
   pathExists,
   readFile,
 } from "../utils/fs.js";
-import RunLog from "../utils/logger.class.js";
+import logger from "../utils/logger.class.js";
 import { DailyData } from "../utils/types.js";
 
 ////
 /// Helpers
 //
 
-const logger = new RunLog();
 const importsSupported = readDirectory("src/imports");
 
 const importName = process.argv[2];
@@ -24,21 +23,20 @@ const importType = process.argv[3] || "";
 const importFile = process.argv[4];
 
 if (!importName) {
-  logger.error({ stage: "startup", error: "No import name in command" }).shutdown();
+  logger.error({ stage: "startup", error: "No import name in command" });
+  logger.shutdown();
   process.exit();
 }
 
 if (!importsSupported.includes(importName)) {
-  logger
-    .error({ stage: "startup", error: `Unknown import name "${importName}"` })
-    .shutdown();
+  logger.error({ stage: "startup", error: `Unknown import name "${importName}"` });
+  logger.shutdown();
   process.exit();
 }
 
 if (!importFile || !pathExists(importFile)) {
-  logger
-    .error({ stage: "startup", error: `Import file "${importFile}" not found` })
-    .shutdown();
+  logger.error({ stage: "startup", error: `Import file "${importFile}" not found` });
+  logger.shutdown();
   process.exit();
 }
 
@@ -46,12 +44,11 @@ const importHandler = await import(`../imports/${importName}/index.js`);
 const allImportTypes = Object.keys(importHandler.importTypes);
 
 if (!importType && !allImportTypes.includes(importType)) {
-  logger
-    .error({
-      stage: "startup",
-      error: `Unsupported import type "${importType}" for import "${importName}"`,
-    })
-    .shutdown();
+  logger.error({
+    stage: "startup",
+    error: `Unsupported import type "${importType}" for import "${importName}"`,
+  });
+  logger.shutdown();
   process.exit();
 }
 

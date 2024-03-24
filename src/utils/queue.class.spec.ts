@@ -4,7 +4,7 @@ import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC } from "./constants.js";
 import { runDateUtc } from "./date.js";
 import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
-import RunLog from "./logger.class.js";
+import logger from "./logger.class.js";
 
 vi.mock("./fs.js", () => ({
   ensureOutputPath: vi.fn(),
@@ -18,7 +18,6 @@ import { ApiHandler } from "./types.js";
 
 const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
-const logger = new RunLog();
 
 const mockApiHandler: ApiHandler = {
   getApiName: vi.fn(() => "API_NAME"),
