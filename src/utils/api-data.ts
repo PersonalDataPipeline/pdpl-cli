@@ -1,5 +1,6 @@
 import path from "path";
 import axios, { AxiosResponse } from "axios";
+import axiosRetry, { exponentialDelay } from "axios-retry";
 
 import getConfig from "./config.js";
 import { ApiHandler, ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "./types.js";
@@ -14,6 +15,8 @@ export interface MockAxiosResponse extends Omit<AxiosResponse, "config"> {}
 ////
 /// Helpers
 //
+
+axiosRetry(axios, { retries: 3, retryDelay: exponentialDelay });
 
 const makeMockPath = (apiName: string, endpointDir: string) =>
   path.join(

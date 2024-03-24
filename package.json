@@ -26,6 +26,7 @@
   "type": "module",
   "dependencies": {
     "axios": "^1.6.5",
+    "axios-retry": "^4.1.0",
     "csv": "^6.3.6",
     "dotenv": "^16.3.1"
   },

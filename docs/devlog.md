@@ -19,7 +19,7 @@ Notes taken during development, newest to oldest.
 
 ## [[2024-03-24]]
 
-I feel like testing is in a pretty good spot now and it's time to start moving forward on getting this tested and more data sources added. The getter script is mostly not tested but a number of underlying components are. Still feel good about swapping in Vitest for Jest, no more (maybe less) fussing around with configuration and mocks. Feels like a much better choice for a TypeScript project.
+I feel like testing is in a pretty good spot now and it's time to start moving forward on getting this tested and more data sources added. The getter script is mostly not tested but a number of underlying components are. I need to I still feel great about swapping in Vitest for Jest, no more (maybe less) fussing around with configuration and mocks. Feels like a much better choice for a TypeScript project.
 
 ## [[2024-03-22]]
 
