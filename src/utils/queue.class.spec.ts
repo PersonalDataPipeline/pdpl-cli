@@ -4,7 +4,7 @@ import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC } from "./constants.js";
 import { runDateUtc } from "./date.js";
 import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
-import logger from "./logger.class.js";
+import logger from "./logger.js";
 
 vi.mock("./fs.js", () => ({
   ensureOutputPath: vi.fn(),

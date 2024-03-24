@@ -1,7 +1,7 @@
 import { run } from "./get.js";
-import logger from "../utils/logger.class.js";
+import logger from "../utils/logger.js";
 
-vi.mock("../utils/logger.class.js");
+vi.mock("../utils/logger.js");
 
 describe("Script: Get API data", () => {
   beforeEach(() => {});

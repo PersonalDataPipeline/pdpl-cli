@@ -9,7 +9,7 @@ import {
   pathExists,
   readFile,
 } from "../utils/fs.js";
-import logger from "../utils/logger.class.js";
+import logger from "../utils/logger.js";
 import { DailyData } from "../utils/types.js";
 
 ////

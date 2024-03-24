@@ -1,7 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
-import logger, { RunLogger } from "../utils/logger.class.js";
+import logger, { RunLogger } from "../utils/logger.js";
 import {
   ensureOutputPath,
   writeOutputFile,
