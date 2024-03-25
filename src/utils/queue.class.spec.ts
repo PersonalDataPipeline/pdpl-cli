@@ -7,9 +7,10 @@ import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
 import logger from "./logger.js";
 
 vi.mock("./fs.js", () => ({
+  __dirname: "",
   ensureOutputPath: vi.fn(),
-  pathExists: vi.fn(),
-  readFile: vi.fn(),
+  pathExists: vi.fn(() => true),
+  readFile: vi.fn(() => "[]"),
   writeFile: vi.fn(),
 }));
 
@@ -190,15 +191,19 @@ describe("Class: Queue", () => {
       expect(queue.hasHistoricEntryFor("this/endpoint")).toEqual(false);
     });
 
-    describe("finds entries", () => {
+    describe("finds standard entries", () => {
       beforeEach(() => {
         queue.addEntry(mockStandardEntry);
-        queue.addEntry(mockHistoricEntry);
-        queue.addEntry(mockOtherEntry);
       });
 
       it("finds a standard entry", () => {
         expect(queue.hasStandardEntryFor("this/endpoint")).toEqual(true);
+      });
+    });
+
+    describe("finds historic entries", () => {
+      beforeEach(() => {
+        queue.addEntry(mockHistoricEntry);
       });
 
       it("finds a historic entry", () => {

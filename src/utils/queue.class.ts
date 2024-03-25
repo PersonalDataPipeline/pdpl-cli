@@ -132,17 +132,16 @@ export default class Queue {
   }
 
   hasStandardEntryFor(endpoint: string) {
-    return (
-      this.queue.filter((entry: QueueEntry) => {
-        const sameEndpoint = entry.endpoint === endpoint;
-        const hasParams = Queue.entryHasParams(entry);
-        return sameEndpoint && !hasParams && !entry.historic;
-      }).length > 0
-    );
+    return this.getStandardEntriesFor(endpoint).length > 0;
   }
 
   hasHistoricEntryFor(endpoint: string) {
-    return this.getStandardEntriesFor(endpoint).length > 0;
+    return (
+      this.queue.filter((entry: QueueEntry) => {
+        const sameEndpoint = entry.endpoint === endpoint;
+        return sameEndpoint && entry.historic;
+      }).length > 0
+    );
   }
 
   updateStandardEntryFor(endpoint: string) {
