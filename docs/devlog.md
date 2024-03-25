@@ -3,7 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Add `axios-retry` to the get script and add caught errors to the queue
 - [ ] Hook this up to Automator and see what happens
 - [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Data source: GitHub API
@@ -16,6 +15,12 @@ Notes taken during development, newest to oldest.
 - [ ] Combine scripts into a single command
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-25]]
+
+Started working on the external configuration file yesterday. Ran into a couple of complications stemming from circular dependencies, now working through just processing the config file once. I landed on something I like but need to document what we've got before I forget how it works 🙃
+
+
 
 ## [[2024-03-24]]
 
