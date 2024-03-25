@@ -1,7 +1,7 @@
 import type { Mock } from "vitest";
 
 import getConfig from "./config.js";
-import { ONE_DAY_IN_SEC } from "./constants.js";
+import { ONE_DAY_IN_SEC, ONE_HOUR_IN_SEC } from "./constants.js";
 import { runDateUtc } from "./date.js";
 import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
 import logger from "./logger.js";
@@ -24,6 +24,7 @@ const mockApiHandler: ApiHandler = {
   getApiName: vi.fn(() => "API_NAME"),
   getApiBaseUrl: vi.fn(() => "API_BASE_URL"),
   getApiAuthHeaders: vi.fn(async () => ({})),
+  getHistoricDelay: vi.fn(() => ONE_HOUR_IN_SEC),
   endpointsPrimary: [
     {
       getEndpoint: vi.fn(() => "API_ENDPOINT"),

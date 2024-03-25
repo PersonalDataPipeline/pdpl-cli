@@ -14,9 +14,9 @@ export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<object>;
+  getHistoricDelay: () => number;
   endpointsPrimary: ApiPrimaryEndpoint[];
   endpointsSecondary: ApiSecondaryEndpoint[];
-  getHistoricDelay?: () => number;
   authorizeEndpoint?: string;
   tokenEndpoint?: string;
 }
@@ -38,18 +38,17 @@ export interface ApiPrimaryEndpoint {
   getNextCallParams?: (response?: AxiosResponse | MockAxiosResponse) => object;
 }
 
-export interface ApiSecondaryEndpoint
-  extends Omit<
-    ApiPrimaryEndpoint,
-    | "getEndpoint"
-    | "getDelay"
-    | "getHistoricParams"
-    | "getHistoricDelay"
-    | "shouldHistoricContinue"
-  > {
+export interface ApiSecondaryEndpoint {
+  getDirName: () => string;
   getEndpoint: (entity: any) => string;
   getPrimary: () => string;
   getIdentifier: (entity: any) => string;
+  getParams?: () => object;
+  getMethod?: () => string;
+  transformResponseData?: (
+    response: AxiosResponse | MockAxiosResponse,
+    existingData?: [] | object
+  ) => [] | object;
 }
 
 export interface EndpointRecord {

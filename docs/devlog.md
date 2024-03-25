@@ -20,7 +20,10 @@ Notes taken during development, newest to oldest.
 
 Started working on the external configuration file yesterday. Ran into a couple of complications stemming from circular dependencies, now working through just processing the config file once. I landed on something I like but need to document what we've got before I forget how it works 🙃
 
+OK, it is time! Time to hook this up to Automator and see what happens! Here's what I did to get it started ... well, after I found a bug in the queue ... 
 
+- Ran `npm run historic oura` to start the full download. Got the "outputDir" not found error 👍 created the directory and ran again, no problem.
+- Ran `npm run oura` and it finished properly
 
 ## [[2024-03-24]]
 
