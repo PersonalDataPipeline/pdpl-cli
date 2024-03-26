@@ -177,10 +177,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       const didReturnData = !!Object.keys(apiResponseData).length;
       const continueHistoric =
         typeof endpointHandler.shouldHistoricContinue === "function"
-          ? endpointHandler.shouldHistoricContinue(
-              apiResponseData,
-              endpointHandler.getParams!()
-            )
+          ? endpointHandler.shouldHistoricContinue(apiResponseData, runEntry.params)
           : didReturnData;
 
       if (continueHistoric) {
