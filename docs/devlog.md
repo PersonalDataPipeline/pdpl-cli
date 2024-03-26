@@ -3,10 +3,9 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Hook this up to Automator and see what happens
-- [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Data source: GitHub API
 - [ ] Data source: Day One import
+- [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Refactor: queue class -> module
 - [ ] Fix: TS-eslint warnings
@@ -14,8 +13,35 @@ Notes taken during development, newest to oldest.
 - [ ] Problem with secondary endpoints failing with no way to re-run
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Combine scripts into a single command
+- [ ] Add APIs and endpoints to run in config; figure out how to output config -> JSON for bash
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-26]]
+
+I don't know why I was pushing on the Automator path so hard when I could just use crontab ... 
+
+Now that I'm running these from a different directory, it looks like the paths are not lining up and I don't have env variables. After some path changes, landed on this as the bash script:
+
+```bash
+#!/bin/bash
+
+export $(egrep -v '^#' ./api-getter/.env | xargs)
+/Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/node \
+	/Users/joshcanhelp/Code/api-getter/dist/scripts/get.js oura
+
+# Repeated for all other APIs
+```
+
+Crontab looks like this:
+
+```
+*/15 * * * * /Users/joshcanhelp/Code/run_api_get.sh
+```
+
+Now we wait and hope that the script isn't malfunctioning when the script runs! Safest thing to do now is add another API (which I've been excited to do for a while). 
+
+(Just saw the cron run ... works!! I got a little permission notification window popup, I wonder if it's possible to pre-authorize that)
 
 ## [[2024-03-25]]
 
