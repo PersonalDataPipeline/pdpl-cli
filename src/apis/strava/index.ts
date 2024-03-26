@@ -2,7 +2,11 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
-import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/date-time.js";
+import {
+  HALF_HOUR_IN_SEC,
+  ONE_DAY_IN_SEC,
+  ONE_QUATER_IN_SEC,
+} from "../../utils/date-time.js";
 import { getEpochNow } from "../../utils/date-time.js";
 
 const {
@@ -94,9 +98,9 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricParams: (currentParams?: StravaUrlParams): StravaUrlParams => ({
       page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
-      per_page: 40,
+      per_page: 30,
     }),
-    getHistoricDelay: () => 0,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     parseDayFromEntity: (entity: StravaActivityEntity) =>
       entity.start_date_local.split("T")[0] || "",
   },
