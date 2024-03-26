@@ -1,5 +1,7 @@
+import path from "path";
+
 import { config as dotenvConfig } from "dotenv";
-dotenvConfig();
+dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 import logger, { RunLogger } from "../utils/logger.js";
 import {
@@ -13,7 +15,6 @@ import { runDateUtc } from "../utils/date-time.js";
 import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
-import path from "path";
 
 ////
 /// Startup

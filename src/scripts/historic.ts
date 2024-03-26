@@ -1,5 +1,7 @@
-import { config } from "dotenv";
-config();
+import path from "path";
+
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 import { readDirectory } from "../utils/fs.js";
 import Queue from "../utils/queue.class.js";

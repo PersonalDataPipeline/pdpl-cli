@@ -1,4 +1,8 @@
 import { parse } from "csv-parse/sync";
+import path from "path";
+
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 import { runDateUtc } from "../utils/date-time.js";
 import {
