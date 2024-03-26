@@ -95,12 +95,15 @@ const getNextCallParams = (response?: AxiosResponse | MockAxiosResponse): object
 
 const getApiName = () => "oura";
 const getApiBaseUrl = () => "https://api.ouraring.com/v2/";
-const getApiAuthHeaders = async (): Promise<object> => {
-  return await new Promise((resolver) => {
-    resolver({
-      Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
-    });
-  });
+const getApiAuthHeaders = (): object => {
+  if (!OURA_AUTH_TOKEN) {
+    console.log("❌ No Oura auth token stored. See README for more information.");
+    process.exit(1);
+  }
+
+  return {
+    Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
+  };
 };
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 

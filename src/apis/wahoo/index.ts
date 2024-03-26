@@ -41,7 +41,7 @@ let accessToken = "";
 const getApiAuthHeaders = async () => {
   if (!WAHOO_REFRESH_TOKEN) {
     console.log("❌ No Wahoo refresh token stored. See README for more information.");
-    process.exit();
+    process.exit(1);
   }
 
   let tokenResponse: AxiosResponse;

@@ -11,6 +11,16 @@ const {
   WAHOO_REFRESH_TOKEN = "",
 } = process.env;
 
+if (!WAHOO_AUTHORIZE_CLIENT_ID) {
+  console.log("❌ No Wahoo Client ID stored. See README for more information.");
+  process.exit(1);
+}
+
+if (!WAHOO_AUTHORIZE_CLIENT_SECRET) {
+  console.log("❌ No Wahoo Client Secret stored. See README for more information.");
+  process.exit(1);
+}
+
 http
   .createServer(
     serverCallback({

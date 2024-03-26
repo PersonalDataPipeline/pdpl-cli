@@ -44,9 +44,16 @@ const parseDayFromEntity = (entity: ApiNinjasHistoricEventEntity) => {
 
 const getApiName = () => "api-ninjas";
 const getApiBaseUrl = () => "https://api.api-ninjas.com/v1/";
-const getApiAuthHeaders = () => ({
-  "X-Api-Key": API_NINJAS_KEY,
-});
+const getApiAuthHeaders = () => {
+  if (!API_NINJAS_KEY) {
+    console.log("❌ No API Ninjas key stored. See README for more information.");
+    process.exit(1);
+  }
+
+  return {
+    "X-Api-Key": API_NINJAS_KEY,
+  };
+};
 const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 
 const endpointsPrimary: ApiPrimaryEndpoint[] = [
