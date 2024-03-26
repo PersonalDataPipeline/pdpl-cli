@@ -19,6 +19,7 @@
     "strava": "node ./dist/scripts/get.js strava",
     "oura": "node ./dist/scripts/get.js oura",
     "wahoo": "node ./dist/scripts/get.js wahoo",
+    "github": "node ./dist/scripts/get.js github",
     "api-ninjas": "node ./dist/scripts/get.js api-ninjas"
   },
   "author": "",

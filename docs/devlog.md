@@ -14,6 +14,7 @@ Notes taken during development, newest to oldest.
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Combine scripts into a single command
 - [ ] Add APIs and endpoints to run in config; figure out how to output config -> JSON for bash
+- [ ] Add health check script to check configuration and activated APIs + endpoints
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
@@ -42,6 +43,8 @@ Crontab looks like this:
 Now we wait and hope that the script isn't malfunctioning when the script runs! Safest thing to do now is add another API (which I've been excited to do for a while). 
 
 (Just saw the cron run ... works!! I got a little permission notification window popup, I wonder if it's possible to pre-authorize that)
+
+Adding a new API is not that bad of an experience currently. I added some documentation for that and it feels like the hardest part will be directing folks on how to add historic parameters and logic. I think, with a bunch of examples and tests, that won't be too hard to overcome.
 
 ## [[2024-03-25]]
 

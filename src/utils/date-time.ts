@@ -22,6 +22,7 @@ const runStartStatic = new Date();
 //
 
 export const HALF_HOUR_IN_SEC = 60 * 30;
+export const QUARTER_HOUR_IN_SEC = 60 * 15;
 export const ONE_HOUR_IN_SEC = 60 * 60;
 export const ONE_DAY_IN_SEC = 24 * ONE_HOUR_IN_SEC;
 export const ONE_DAY_IN_MS = ONE_DAY_IN_SEC * 1000;
