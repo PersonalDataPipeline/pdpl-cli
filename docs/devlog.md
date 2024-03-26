@@ -11,6 +11,7 @@ Notes taken during development, newest to oldest.
 - [ ] Refactor: queue class -> module
 - [ ] Fix: TS-eslint warnings
 - [ ] Fix: `// TODO:` entries in code
+- [ ] Problem with secondary endpoints failing with no way to re-run
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Combine scripts into a single command
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
@@ -22,8 +23,13 @@ Started working on the external configuration file yesterday. Ran into a couple 
 
 OK, it is time! Time to hook this up to Automator and see what happens! Here's what I did to get it started ... well, after I found a bug in the queue ... 
 
-- Ran `npm run historic oura` to start the full download. Got the "outputDir" not found error 👍 created the directory and ran again, no problem.
+- Ran `npm run historic oura` to start the full download. Got the "outputDir" not found error and created the directory and ran again, no problem.
 - Ran `npm run oura` and it finished properly
+- Ran `npm run oura` again and it finished with no API calls
+- Tried the same for Strava but did not notice that the historic delay was set to zero ... I thought it would be hard to unwire but I just set the historic params back to page 2 and now it will run the same pass next time around.
+- Ran `npm run strava` a few time and no API calls, as expected
+- Same for Wahoo ... adjusted delay and ran with no calls
+- I'm realizing that I never finished up the parameters for the historical events
 
 ## [[2024-03-24]]
 
