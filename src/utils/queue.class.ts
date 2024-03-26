@@ -111,7 +111,6 @@ export default class Queue {
         runQueue.push({ endpoint, historic: false, params: {} });
       }
     }
-    this.queue = this.queue.filter((entry) => entry);
     this.writeQueue();
     return runQueue;
   }
@@ -159,6 +158,24 @@ export default class Queue {
     this.writeQueue();
   }
 
+  updateHistoricEntry({
+    runAfter,
+    endpoint,
+    params,
+  }: {
+    runAfter: number;
+    endpoint: string;
+    params: object;
+  }) {
+    for (const [index, entry] of this.queue.entries()) {
+      if (entry.historic && entry.endpoint === endpoint) {
+        delete this.queue[index];
+      }
+    }
+    this.queue.push({ historic: true, runAfter, endpoint, params });
+    this.writeQueue();
+  }
+
   private isStandardEntry(entry: QueueEntry) {
     const hasParams = Queue.entryHasParams(entry);
     return !hasParams && !entry.historic;
@@ -172,6 +189,7 @@ export default class Queue {
   }
 
   private writeQueue() {
+    this.queue = this.queue.filter((entry) => entry);
     ensureOutputPath([this.apiName]);
     writeFile(this.queueFile, JSON.stringify(this.queue, null, 2));
   }

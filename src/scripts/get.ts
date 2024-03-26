@@ -166,11 +166,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       ...runMetadata,
     });
 
-    if (
-      runEntry.historic &&
-      typeof endpointHandler.getHistoricParams === "function" &&
-      typeof apiHandler.getHistoricDelay === "function"
-    ) {
+    if (runEntry.historic && typeof endpointHandler.getHistoricParams === "function") {
       const newQueueEntry: QueueEntry = {
         endpoint: endpoint,
         historic: true,
@@ -203,12 +199,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
         newQueueEntry.params = endpointHandler.getHistoricParams();
       }
-      logger.info({
-        endpoint,
-        stage: "queue_management",
-        message: `Adding historic queue entry`,
-      });
-      queueInstance.addEntry(newQueueEntry);
+      queueInstance.updateHistoricEntry(newQueueEntry);
       continue;
     }
 
