@@ -7,18 +7,20 @@ import {
   writeOutputFile,
   makeOutputPath,
   readDirectory,
+  __dirname,
 } from "../utils/fs.js";
 import { runDateUtc } from "../utils/date-time.js";
 import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
+import path from "path";
 
 ////
 /// Startup
 //
 
 export const run = async (cliArgs: string[], logger: RunLogger) => {
-  const apisSupported = readDirectory("src/apis");
+  const apisSupported = readDirectory(path.join(__dirname, "..", "apis"));
   const apiName = cliArgs[2];
 
   if (!apiName) {
