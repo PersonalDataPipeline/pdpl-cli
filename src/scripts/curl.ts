@@ -1,10 +1,12 @@
-import { config } from "dotenv";
-config();
+import path from "path";
 
-import { readDirectory } from "../utils/fs.js";
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
-const apisSupported = readDirectory("./src/apis");
+import { readDirectory, __dirname } from "../utils/fs.js";
+import { ApiHandler } from "../utils/types.js";
 
+const apisSupported = readDirectory(path.join(__dirname, "..", "apis"));
 const apiName = process.argv[2];
 
 if (!apiName) {
@@ -17,12 +19,14 @@ if (!apisSupported.includes(apiName)) {
   process.exit();
 }
 
-const apiHandler = await import(`../apis/${apiName}/index.js`);
+const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 let curlCommand = "curl";
 
-const authHeaders = await apiHandler.getApiAuthHeaders();
+const authHeaders: { [key: string]: string } = await apiHandler.getApiAuthHeaders();
 for (const header in authHeaders) {
   curlCommand += ` -H "${header}: ${authHeaders[header]}"`;
 }
 
-console.log(`${curlCommand} ${apiHandler.getApiBaseUrl()}`);
+for (const epHandler of apiHandler.endpointsPrimary) {
+  console.log(`${curlCommand} ${apiHandler.getApiBaseUrl() + epHandler.getEndpoint()}`);
+}

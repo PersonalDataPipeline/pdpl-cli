@@ -13,7 +13,7 @@ export interface DailyData {
 export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
-  getApiAuthHeaders: () => Promise<object>;
+  getApiAuthHeaders: () => Promise<{ [key: string]: string }>;
   getHistoricDelay: () => number;
   endpointsPrimary: ApiPrimaryEndpoint[];
   endpointsSecondary: ApiSecondaryEndpoint[];
