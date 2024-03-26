@@ -64,4 +64,21 @@ describe("Module: API Ninja API handler", () => {
       offset: 0,
     });
   });
+
+  it("does not continue by default", () => {
+    expect(epHandler.shouldHistoricContinue!([], {})).toEqual(false);
+  });
+
+  it("continues when there is full data set", () => {
+    const tenThings = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    expect(epHandler.shouldHistoricContinue!(tenThings, {})).toEqual(true);
+  });
+
+  it("continues when there are still years left before origin", () => {
+    expect(epHandler.shouldHistoricContinue!([], { year: 2023 })).toEqual(true);
+  });
+
+  it("does not continue when there are no more years left", () => {
+    expect(epHandler.shouldHistoricContinue!([], { year: 1899 })).toEqual(false);
+  });
 });

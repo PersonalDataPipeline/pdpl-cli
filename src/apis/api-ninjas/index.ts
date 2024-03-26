@@ -72,7 +72,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
       };
     },
     shouldHistoricContinue: (responseData: object | [], params: object): boolean => {
-      if (Object.keys(responseData).length) {
+      if (Object.keys(responseData).length === 10) {
         return true;
       }
 
