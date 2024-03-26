@@ -8,7 +8,7 @@ import {
   makeOutputPath,
   readDirectory,
 } from "../utils/fs.js";
-import { runDateUtc } from "../utils/date.js";
+import { runDateUtc } from "../utils/date-time.js";
 import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";

@@ -4,7 +4,7 @@ config();
 import { readDirectory } from "../utils/fs.js";
 import Queue from "../utils/queue.class.js";
 import { ApiHandler } from "../utils/types.js";
-import { getEpochNow } from "../utils/date.js";
+import { getEpochNow } from "../utils/date-time.js";
 
 const apiName = process.argv[2];
 if (!apiName) {

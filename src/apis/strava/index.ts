@@ -2,8 +2,8 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
-import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/constants.js";
-import { getEpochNow } from "../../utils/date.js";
+import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/date-time.js";
+import { getEpochNow } from "../../utils/date-time.js";
 
 const {
   STRAVA_REFRESH_TOKEN = "",

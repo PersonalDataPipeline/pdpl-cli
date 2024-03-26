@@ -1,7 +1,7 @@
 import type { Mock } from "vitest";
 
 import logger, { InfoEntry, SuccessEntry } from "./logger.js";
-import { runDateUtc } from "./date.js";
+import { runDateUtc } from "./date-time.js";
 import { ensureOutputPath, writeFile } from "./fs.js";
 
 vi.mock("./config.js", () => ({

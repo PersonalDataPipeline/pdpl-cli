@@ -1,6 +1,6 @@
 import { parse } from "csv-parse/sync";
 
-import { runDateUtc } from "../utils/date.js";
+import { runDateUtc } from "../utils/date-time.js";
 import {
   makeOutputPath,
   writeOutputFile,

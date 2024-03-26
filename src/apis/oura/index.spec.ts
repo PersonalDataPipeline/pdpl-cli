@@ -1,4 +1,4 @@
-import { getFormattedDate } from "../../utils/date.js";
+import { getFormattedDate } from "../../utils/date-time.js";
 import { ApiPrimaryEndpoint } from "../../utils/types.js";
 import * as ouraHandler from "./index.js";
 

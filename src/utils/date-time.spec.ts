@@ -1,4 +1,4 @@
-import { runDateUtc, getFormattedDate, adjustDateByDays } from "./date.js";
+import { runDateUtc, getFormattedDate, adjustDateByDays } from "./date-time.js";
 
 describe("Function: adjustDateByDays", () => {
   it("removes days correctly", () => {
