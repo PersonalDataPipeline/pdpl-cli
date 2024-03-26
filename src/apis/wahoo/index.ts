@@ -3,7 +3,11 @@ import axios, { AxiosResponse } from "axios";
 import { envWrite } from "../../utils/fs.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/api-data.js";
-import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/date-time.js";
+import {
+  HALF_HOUR_IN_SEC,
+  ONE_DAY_IN_SEC,
+  ONE_QUATER_IN_SEC,
+} from "../../utils/date-time.js";
 
 const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
   process.env;
@@ -76,7 +80,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
       page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
       per_page: 30,
     }),
-    getHistoricDelay: () => 0,
+    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.created_at.split("T")[0],
     transformResponseData: (
       response: AxiosResponse | MockAxiosResponse,
