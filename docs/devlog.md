@@ -31,6 +31,19 @@ OK, it is time! Time to hook this up to Automator and see what happens! Here's w
 - Same for Wahoo ... adjusted delay and ran with no calls
 - I'm realizing that I never finished up the parameters for the historical events
 
+Glad I walked through that manually first! Walking through [Automator](https://support.apple.com/guide/automator/use-a-shell-script-action-in-a-workflow-autbbd4cc11c/mac) now ...
+
+- **New Document** > **Workflow**
+- **Library** > **Utilities** > **Run Shell Script** for each API I want to call
+- Enter the command ... had to use the full `node` path, probably because this isn't running as a specific user?
+```
+/Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/node \
+/Users/joshcanhelp/Code/tapestry/api-getter/dist/scripts/get.js oura
+```
+
+That runs well manually, now looking into scheduling ... and I'm surprised to find that Automator doesn't have a native "cron" functionality. I found [this](https://support.apple.com/guide/automator/loop-action-repeat-parts-workflow-atmtr27899/mac) which says you can use a loop. Add a delay in there and I guess that would work? But it wants an ending condition (time or quantity) so that's not going to work. There is a **Calendar Alarm** workflow type but that responds to Calendar events. There's a [long tutorial for doing this with Applescript](https://forums.macrumors.com/threads/running-shell-script-every-30min-with-automator.2281446/?post=29533611#post-29533611) that I need to try. 
+
+
 ## [[2024-03-24]]
 
 I feel like testing is in a pretty good spot now and it's time to start moving forward on getting this tested and more data sources added. The getter script is mostly not tested but a number of underlying components are. I need to I still feel great about swapping in Vitest for Jest, no more (maybe less) fussing around with configuration and mocks. Feels like a much better choice for a TypeScript project.
