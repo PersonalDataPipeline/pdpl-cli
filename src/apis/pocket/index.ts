@@ -25,7 +25,7 @@ interface PocketRequestBody {
 }
 
 interface PocketEntity {
-  time_added: string;
+  time_added?: string;
 }
 
 ////
@@ -63,8 +63,9 @@ const endpointsPrimary: ApiSnapshotEndpoint[] = [
       since: getEpochNow(new Date(getConfig().originDate + "T00:00:00")),
     }),
     getDelay: () => ONE_DAY_IN_SEC,
-    parseDayFromEntity: (entity: PocketEntity) => {
-      return getFormattedDate(0, new Date(parseInt(entity.time_added, 10) * 1000));
+    parseDayFromEntity: (entity: object) => {
+      const timeAdded = (entity as PocketEntity).time_added || "";
+      return getFormattedDate(0, new Date(parseInt(timeAdded, 10) * 1000));
     },
     transformResponseData: (
       response: AxiosResponse | MockAxiosResponse

@@ -76,7 +76,7 @@ const getHeartrateParams = (params?: OuraHeartRateUrlParams): OuraHeartRateUrlPa
   };
 };
 
-const parseDayFromEntity = (entity: OuraEntity) => entity.day;
+const parseDayFromEntity = (entity: object) => (entity as OuraEntity).day;
 
 const transformResponseData = (
   response: AxiosResponse | MockAxiosResponse,
@@ -197,8 +197,8 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: getHeartrateParams,
-    parseDayFromEntity: (entity: OuraEntity) => {
-      return getFormattedDate(0, new Date(entity.timestamp));
+    parseDayFromEntity: (entity: object) => {
+      return getFormattedDate(0, new Date((entity as OuraEntity).timestamp));
     },
     transformResponseData,
     getNextCallParams,

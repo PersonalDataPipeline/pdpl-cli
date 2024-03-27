@@ -34,8 +34,12 @@ const defaultParams = {
   offset: 0,
 };
 
-const parseDayFromEntity = (entity: ApiNinjasHistoricEventEntity) => {
-  return `${entity.year}-${entity.month}-${entity.day}`;
+const parseDayFromEntity = (entity: object) => {
+  return (
+    `${(entity as ApiNinjasHistoricEventEntity).year}-` +
+    `${(entity as ApiNinjasHistoricEventEntity).month}-` +
+    `${(entity as ApiNinjasHistoricEventEntity).day}`
+  );
 };
 
 ////

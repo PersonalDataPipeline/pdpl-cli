@@ -49,6 +49,15 @@ const getStandardNextCallParams = (
     : {};
 };
 
+const parseDayFromEntity = (entity: object): string => {
+  return (entity as GitHubEventEntity).created_at.split("T")[0];
+};
+
+const getHistoricParams = (currentParams?: GitHubUrlParams): GitHubUrlParams => ({
+  page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
+  per_page: 100,
+});
+
 ////
 /// Exports
 //
@@ -106,14 +115,9 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
       ...getDefaultParams(),
       since: `${getFormattedDate(-7)}T00:00:00Z`,
     }),
-    parseDayFromEntity: (entity: GitHubEventEntity): string => {
-      return entity.created_at.split("T")[0];
-    },
+    parseDayFromEntity,
     getHistoricDelay: () => QUARTER_HOUR_IN_SEC,
-    getHistoricParams: (currentParams?: GitHubUrlParams) => ({
-      page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
-      per_page: 100,
-    }),
+    getHistoricParams,
   },
   {
     isHistoric: () => true,
@@ -121,14 +125,9 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
     getDirName: () => "user--events",
     getDelay: () => ONE_DAY_IN_SEC,
     getParams: getDefaultParams,
-    parseDayFromEntity: (entity: GitHubEventEntity): string => {
-      return entity.created_at.split("T")[0];
-    },
+    parseDayFromEntity,
     getHistoricDelay: () => QUARTER_HOUR_IN_SEC,
-    getHistoricParams: (currentParams?: GitHubUrlParams) => ({
-      page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
-      per_page: 100,
-    }),
+    getHistoricParams,
   },
 ];
 const endpointsSecondary: ApiSecondaryEndpoint[] = [];

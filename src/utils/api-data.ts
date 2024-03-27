@@ -64,7 +64,9 @@ export const getApiData = async (
   entity?: object
 ): Promise<AxiosResponse | MockAxiosResponse> => {
   const isEnriching = typeof entity !== "undefined";
-  const endpoint = handler.getEndpoint(entity);
+  const endpoint = isEnriching
+    ? (handler as ApiSecondaryEndpoint).getEndpoint(entity)
+    : (handler as ApiHistoricEndpoint | ApiSnapshotEndpoint).getEndpoint();
 
   const mockFilename = isEnriching
     ? endpoint.replaceAll("/", "--")

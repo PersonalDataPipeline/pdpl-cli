@@ -48,7 +48,7 @@ interface StravaActivityEntity {
 /// Helpers
 //
 
-const getIdentifier = (entity: StravaActivityEntity) => entity.id;
+const getIdentifier = (entity: object) => (entity as StravaActivityEntity).id;
 
 ////
 /// Exports
@@ -107,15 +107,15 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
       per_page: 30,
     }),
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    parseDayFromEntity: (entity: StravaActivityEntity) =>
-      entity.start_date_local.split("T")[0] || "",
+    parseDayFromEntity: (entity: object) =>
+      (entity as StravaActivityEntity).start_date_local.split("T")[0] || "",
   },
 ];
 
 const endpointsSecondary: ApiSecondaryEndpoint[] = [
   {
     getDirName: () => "activities",
-    getEndpoint: (entity: StravaActivityEntity) => `activities/${getIdentifier(entity)}`,
+    getEndpoint: (entity: object) => `activities/${getIdentifier(entity)}`,
     getPrimary: () => "athlete/activities",
     getIdentifier,
   },
@@ -124,7 +124,7 @@ const endpointsSecondary: ApiSecondaryEndpoint[] = [
     getParams: () => ({
       keys: "latlng,time,altitude,distance",
     }),
-    getEndpoint: (entity: StravaActivityEntity) => {
+    getEndpoint: (entity: object) => {
       return `activities/${getIdentifier(entity)}/streams`;
     },
     getPrimary: () => "athlete/activities",

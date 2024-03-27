@@ -87,7 +87,8 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
       per_page: 30,
     }),
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
-    parseDayFromEntity: (entity: WahooWorkoutEntity) => entity.created_at.split("T")[0],
+    parseDayFromEntity: (entity: object) =>
+      (entity as WahooWorkoutEntity).created_at.split("T")[0],
     transformResponseData: (
       response: AxiosResponse | MockAxiosResponse,
       existingData?: object | []
