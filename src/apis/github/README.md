@@ -17,3 +17,4 @@ The documentation above links to a fine-grained access token, which is recommend
 ## Resources
 
 - [GitHub API authentication](https://docs.github.com/en/rest/authentication/authenticating-to-the-rest-api)
+- [GitHub API rate limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28)

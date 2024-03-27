@@ -1,13 +1,16 @@
+import { AxiosResponse } from "axios";
 import {
   ONE_DAY_IN_SEC,
   ONE_QUATER_IN_SEC,
   QUARTER_HOUR_IN_SEC,
+  getFormattedDate,
 } from "../../utils/date-time.js";
 import {
   ApiHistoricEndpoint,
   ApiSecondaryEndpoint,
   ApiSnapshotEndpoint,
 } from "../../utils/types.js";
+import { MockAxiosResponse } from "../../utils/api-data.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
 
@@ -22,7 +25,29 @@ interface GitHubEventEntity {
 interface GitHubUrlParams {
   page?: number;
   per_page?: number;
+  since?: string;
 }
+
+////
+/// Helpers
+//
+
+const getDefaultParams = (): GitHubUrlParams => ({
+  page: 1,
+  per_page: 100,
+});
+
+const getStandardNextCallParams = (
+  response: AxiosResponse | MockAxiosResponse,
+  params?: GitHubUrlParams
+): GitHubUrlParams => {
+  return params && (response.data as object[]).length === 100
+    ? {
+        page: params.page ? params.page + 1 : 1,
+        per_page: 100,
+      }
+    : {};
+};
 
 ////
 /// Exports
@@ -52,19 +77,50 @@ const getApiAuthHeaders = (): object => {
 const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
   {
     isHistoric: () => false,
+    getEndpoint: () => `users/${GITHUB_USERNAME}`,
+    getDirName: () => "user",
+    getDelay: () => ONE_DAY_IN_SEC,
+  },
+  {
+    isHistoric: () => false,
+    getEndpoint: () => "user/starred",
+    getDirName: () => "user--starred",
+    getDelay: () => ONE_DAY_IN_SEC,
+    getParams: getDefaultParams,
+    getNextCallParams: getStandardNextCallParams,
+  },
+  {
+    isHistoric: () => false,
     getEndpoint: () => "user/followers",
     getDirName: () => "user--followers",
     getDelay: () => ONE_DAY_IN_SEC,
+    getParams: getDefaultParams,
+    getNextCallParams: getStandardNextCallParams,
+  },
+  {
+    isHistoric: () => true,
+    getEndpoint: () => "gists",
+    getDirName: () => "user--gists",
+    getDelay: () => ONE_DAY_IN_SEC,
+    getParams: () => ({
+      ...getDefaultParams(),
+      since: `${getFormattedDate(-7)}T00:00:00Z`,
+    }),
+    parseDayFromEntity: (entity: GitHubEventEntity): string => {
+      return entity.created_at.split("T")[0];
+    },
+    getHistoricDelay: () => QUARTER_HOUR_IN_SEC,
+    getHistoricParams: (currentParams?: GitHubUrlParams) => ({
+      page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
+      per_page: 100,
+    }),
   },
   {
     isHistoric: () => true,
     getEndpoint: () => `users/${GITHUB_USERNAME}/events`,
     getDirName: () => "user--events",
     getDelay: () => ONE_DAY_IN_SEC,
-    getParams: (): GitHubUrlParams => ({
-      page: 1,
-      per_page: 100,
-    }),
+    getParams: getDefaultParams,
     parseDayFromEntity: (entity: GitHubEventEntity): string => {
       return entity.created_at.split("T")[0];
     },
