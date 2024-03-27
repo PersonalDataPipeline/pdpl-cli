@@ -1,12 +1,13 @@
 import path from "path";
 
 import { config as dotenvConfig } from "dotenv";
-dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
-import { readDirectory } from "../utils/fs.js";
+import { readDirectory, __dirname } from "../utils/fs.js";
 import Queue from "../utils/queue.class.js";
 import { ApiHandler } from "../utils/types.js";
 import { getEpochNow } from "../utils/date-time.js";
+
+dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 const apiName = process.argv[2];
 if (!apiName) {
