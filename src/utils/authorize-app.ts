@@ -73,15 +73,22 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
       }
       authorizeState = "";
 
-      let tokenResponse;
       try {
-        tokenResponse = await axios.post(options.tokenEndpoint, {
+        const tokenResponse = await axios.post(options.tokenEndpoint, {
           client_id: options.clientId,
           client_secret: options.clientSecret,
           grant_type: "authorization_code",
           redirect_uri: baseUrl,
           code: codeParam,
         });
+        envWrite(
+          options.refreshTokenEnvKey,
+          tokenResponse.data.refresh_token,
+          options.refreshToken
+        );
+        response.writeHead(200, responseHeaders);
+        response.write(`${options.refreshTokenEnvKey} written to .env.`);
+        return response.end();
       } catch (tokenError: any) {
         response.writeHead(
           (tokenError.response as AxiosResponse).status,
@@ -94,15 +101,6 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
         );
         return response.end();
       }
-
-      response.writeHead(200, responseHeaders);
-      envWrite(
-        options.refreshTokenEnvKey,
-        tokenResponse.data.refresh_token,
-        options.refreshToken
-      );
-      response.write(`${options.refreshTokenEnvKey} written to .env.`);
-      return response.end();
     }
 
     const authorizeUrl = new URL(options.authorizeEndpoint);
