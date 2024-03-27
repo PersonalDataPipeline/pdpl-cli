@@ -4,7 +4,6 @@ Notes taken during development, newest to oldest.
 
 ## TODO:
 - [ ] Data source: Day One import
-- [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Refactor: queue class -> module
 - [ ] Refactor: Axios -> native (fetch or HTTP)

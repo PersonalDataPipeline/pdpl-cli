@@ -25,7 +25,7 @@ Next, start the HTTPS proxy and local server:
 # First run:
 $ npm run caddy
 # ... then, in a separate terminal window or tab:
-$ node dist/apis/wahoo/getRefreshToken.js
+$ node dist/apis/wahoo/get-token.js
 ```
 
 ... and go to [localhost:8889](https://localhost:8889) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed.
