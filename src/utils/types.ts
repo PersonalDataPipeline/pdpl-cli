@@ -28,6 +28,10 @@ export interface ApiSnapshotEndpoint {
   getDelay: () => number;
   getMethod?: () => string;
   getParams?: () => object;
+  getNextCallParams?: (
+    response: AxiosResponse | MockAxiosResponse,
+    params?: object
+  ) => object;
   transformResponseData?: (
     response: AxiosResponse | MockAxiosResponse,
     existingData?: [] | object
@@ -40,7 +44,6 @@ export interface ApiHistoricEndpoint extends Omit<ApiSnapshotEndpoint, "isHistor
   getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
   getHistoricDelay: () => number;
   shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
-  getNextCallParams?: (response?: AxiosResponse | MockAxiosResponse) => object;
 }
 
 export interface ApiSecondaryEndpoint {

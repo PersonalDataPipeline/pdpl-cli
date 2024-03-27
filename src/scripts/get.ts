@@ -77,8 +77,11 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
     const endpoint = runEntry.endpoint;
     const epHandler = Object.assign(
       {
-        shouldHistoricContinue: (apiData: [] | object) => !!Object.keys(apiData).length,
+        getParams: () => ({}),
+        getMethod: () => "get",
         getNextCallParams: () => ({}),
+        getHistoricDelay: handlerDict[endpoint].getDelay,
+        shouldHistoricContinue: (apiData: [] | object) => !!Object.keys(apiData).length,
         transformResponseData: (response: AxiosResponse): unknown => response.data,
       },
       handlerDict[endpoint]
@@ -112,7 +115,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         continue;
       }
       apiResponseData = epHandler.transformResponseData(apiResponse, apiResponseData);
-      nextCallParams = epHandler.getNextCallParams(apiResponse);
+      nextCallParams = epHandler.getNextCallParams(apiResponse, epHandler.getParams());
       if (isNotEmptyObject(nextCallParams)) {
         epHandler.getParams = () => nextCallParams;
       }
