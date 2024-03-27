@@ -5,11 +5,7 @@ import {
   QUARTER_HOUR_IN_SEC,
   getFormattedDate,
 } from "../../utils/date-time.js";
-import {
-  ApiHistoricEndpoint,
-  ApiSecondaryEndpoint,
-  ApiSnapshotEndpoint,
-} from "../../utils/types.js";
+import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/api-data.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
@@ -83,7 +79,7 @@ const getApiAuthHeaders = (): object => {
   };
 };
 
-const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
+const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
     isHistoric: () => false,
     getEndpoint: () => `users/${GITHUB_USERNAME}`,
@@ -130,7 +126,7 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
     getHistoricParams,
   },
 ];
-const endpointsSecondary: ApiSecondaryEndpoint[] = [];
+const endpointsSecondary: EpSecondary[] = [];
 
 export {
   getApiName,

@@ -3,12 +3,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import axiosRetry, { exponentialDelay } from "axios-retry";
 
 import getConfig from "./config.js";
-import {
-  ApiHandler,
-  ApiHistoricEndpoint,
-  ApiSecondaryEndpoint,
-  ApiSnapshotEndpoint,
-} from "./types.js";
+import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "./types.js";
 import { __dirname, readFile, writeFile } from "./fs.js";
 
 ////
@@ -60,13 +55,13 @@ const getMockApiData = (
 
 export const getApiData = async (
   apiHandler: ApiHandler,
-  handler: ApiHistoricEndpoint | ApiSnapshotEndpoint | ApiSecondaryEndpoint,
+  handler: EpHistoric | EpSnapshot | EpSecondary,
   entity?: object
 ): Promise<AxiosResponse | MockAxiosResponse> => {
   const isEnriching = typeof entity !== "undefined";
   const endpoint = isEnriching
-    ? (handler as ApiSecondaryEndpoint).getEndpoint(entity)
-    : (handler as ApiHistoricEndpoint | ApiSnapshotEndpoint).getEndpoint();
+    ? (handler as EpSecondary).getEndpoint(entity)
+    : (handler as EpHistoric | EpSnapshot).getEndpoint();
 
   const mockFilename = isEnriching
     ? endpoint.replaceAll("/", "--")

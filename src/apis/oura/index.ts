@@ -1,11 +1,7 @@
 import { AxiosResponse } from "axios";
 
 import { adjustDateByDays, getFormattedDate } from "../../utils/date-time.js";
-import {
-  ApiHistoricEndpoint,
-  ApiSecondaryEndpoint,
-  ApiSnapshotEndpoint,
-} from "../../utils/types.js";
+import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/api-data.js";
 import {
   HALF_HOUR_IN_SEC,
@@ -111,7 +107,7 @@ const getApiAuthHeaders = (): object => {
 };
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
-const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
+const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
     isHistoric: () => true,
     getEndpoint: () => "usercollection/workout",
@@ -205,7 +201,7 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
   },
 ];
 
-const endpointsSecondary: ApiSecondaryEndpoint[] = [];
+const endpointsSecondary: EpSecondary[] = [];
 
 export {
   getApiName,

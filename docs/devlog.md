@@ -29,6 +29,8 @@ For example ... the Gists endpoint got GitHub. We can just go ahead and get all 
 
 Just ran into an "interesting challenge" (we're going to phrase it like that instead of getting annoyed with API designers) with the Pocket API. First, the authorization process is kind of OAuth-flavored (redirect for consent, exchange codes for tokens) but was so different that I had to write a whole now authorization flow. Not a huge deal. But, when writing API requests, the access token (and "client ID") go in the body. I say body because it's a POST request for a "retrieve" call to an endpoint named ... wait for it ... `/get`. So all of the work that went into the logic around URL parameters would somehow need to be recreated (or ported over somehow) to the POST body. WAT? Well, this particular endpoint allows us to just get absolutely everything all at once so we're going to go ahead and do that instead! The interesting part here is that the endpoint is kind of a snapshot (get everything all at once, no historic run needed) but is also parsed by day. 
 
+I'm thinking about this task on the list to add tests for the getter script ... it feels like that's very handler-dependent. Part of me feels like maybe the testing should be per API? Like the get script should be written so that it can be used in individual tests for APIs and their endpoints.
+
 ## [[2024-03-26]]
 
 I don't know why I was pushing on the Automator path so hard when I could just use crontab ... 

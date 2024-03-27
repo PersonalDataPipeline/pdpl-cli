@@ -4,7 +4,7 @@ import { config as dotenvConfig } from "dotenv";
 
 import { readDirectory, __dirname } from "../utils/fs.js";
 import Queue from "../utils/queue.class.js";
-import { ApiHandler, ApiHistoricEndpoint } from "../utils/types.js";
+import { ApiHandler, EpHistoric } from "../utils/types.js";
 import { getEpochNow } from "../utils/date-time.js";
 
 dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
@@ -34,7 +34,7 @@ for (const endpointHandler of apiHandler.endpointsPrimary) {
       endpoint: endpointName,
       runAfter: getEpochNow(),
       historic: true,
-      params: (endpointHandler as ApiHistoricEndpoint).getHistoricParams(),
+      params: (endpointHandler as EpHistoric).getHistoricParams(),
     });
   } else {
     console.log(`🤖 No historic entry needed for ${endpointName}`);

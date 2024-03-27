@@ -12,12 +12,7 @@ import {
   __dirname,
 } from "../utils/fs.js";
 import { runDateUtc } from "../utils/date-time.js";
-import {
-  ApiHandler,
-  ApiHistoricEndpoint,
-  ApiSnapshotEndpoint,
-  DailyData,
-} from "../utils/types.js";
+import { ApiHandler, EpHistoric, EpSnapshot, DailyData } from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
 import { AxiosResponse } from "axios";
@@ -48,7 +43,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 
   // TODO: Should this be the shape of the endpoint handler collection?
-  const handlerDict: { [key: string]: ApiHistoricEndpoint | ApiSnapshotEndpoint } = {};
+  const handlerDict: { [key: string]: EpHistoric | EpSnapshot } = {};
   for (const endpointHandler of apiHandler.endpointsPrimary) {
     handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
   }
@@ -196,16 +191,16 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
 
       if (continueHistoric) {
         // Potentially more historic entries to get
-        newQueueEntry.params = (epHandler as ApiHistoricEndpoint).getHistoricParams(
+        newQueueEntry.params = (epHandler as EpHistoric).getHistoricParams(
           runEntry.params,
           didReturnData
         );
         newQueueEntry.runAfter =
-          runDate.seconds + (epHandler as ApiHistoricEndpoint).getHistoricDelay();
+          runDate.seconds + (epHandler as EpHistoric).getHistoricDelay();
       } else {
         // Schedule next historic run for this endpoint
         newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
-        newQueueEntry.params = (epHandler as ApiHistoricEndpoint).getHistoricParams();
+        newQueueEntry.params = (epHandler as EpHistoric).getHistoricParams();
       }
       queueInstance.updateHistoricEntry(newQueueEntry);
       continue;

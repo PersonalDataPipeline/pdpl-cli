@@ -4,7 +4,7 @@ import { config as dotenvConfig } from "dotenv";
 dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 import { readDirectory } from "../utils/fs.js";
-import { ApiHandler, ApiHistoricEndpoint } from "../utils/types.js";
+import { ApiHandler, EpHistoric } from "../utils/types.js";
 import getConfig from "../utils/config.js";
 
 const apisSupported = readDirectory("./src/apis");
@@ -43,10 +43,10 @@ for (const apiName of apisSupported) {
   for (const endpoint of apiHandler.endpointsPrimary) {
     const params = typeof endpoint.getParams === "function" ? endpoint.getParams() : {};
     const histParams = endpoint.isHistoric()
-      ? (endpoint as ApiHistoricEndpoint).getHistoricParams()
+      ? (endpoint as EpHistoric).getHistoricParams()
       : params;
     const histDelay = endpoint.isHistoric()
-      ? (endpoint as ApiHistoricEndpoint).getHistoricDelay()
+      ? (endpoint as EpHistoric).getHistoricDelay()
       : endpoint.getDelay();
     console.log(``);
     console.log(`  | Endpoint: ${endpoint.getEndpoint()}`);

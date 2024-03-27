@@ -13,9 +13,9 @@ The steps to add a new API module are as follows:
 ```typescript
 import { ONE_QUATER_IN_SEC } from "../../utils/date-time.js";
 import {
-	ApiHistoricEndpoint,
-	ApiSecondaryEndpoint,
-	ApiSnapshotEndpoint,
+	EpHistoric,
+	EpSecondary,
+	EpSnapshot,
 } from "../../utils/types.js";
 
 const { API_ACCESS_TOKEN = "" } = process.env;
@@ -40,8 +40,8 @@ const getApiAuthHeaders = (): object => {
 };
 
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
-const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [];
-const endpointsSecondary: ApiSecondaryEndpoint[] = [];
+const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [];
+const endpointsSecondary: EpSecondary[] = [];
 
 export {
 	getApiName,

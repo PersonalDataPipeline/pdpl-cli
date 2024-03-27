@@ -15,13 +15,13 @@ export interface ApiHandler {
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<{ [key: string]: string }>;
   getHistoricDelay: () => number;
-  endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[];
-  endpointsSecondary: ApiSecondaryEndpoint[];
+  endpointsPrimary: (EpHistoric | EpSnapshot)[];
+  endpointsSecondary: EpSecondary[];
   authorizeEndpoint?: string;
   tokenEndpoint?: string;
 }
 
-export interface ApiSnapshotEndpoint {
+export interface EpSnapshot {
   isHistoric: () => false;
   getDirName: () => string;
   getEndpoint: () => string;
@@ -40,8 +40,8 @@ export interface ApiSnapshotEndpoint {
   parseDayFromEntity?: (entity: object) => string;
 }
 
-export interface ApiHistoricEndpoint
-  extends Omit<ApiSnapshotEndpoint, "isHistoric" | "parseDayFromEntity"> {
+export interface EpHistoric
+  extends Omit<EpSnapshot, "isHistoric" | "parseDayFromEntity"> {
   isHistoric: () => true;
   parseDayFromEntity: (entity: object) => string;
   getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
@@ -49,7 +49,7 @@ export interface ApiHistoricEndpoint
   shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
 }
 
-export interface ApiSecondaryEndpoint {
+export interface EpSecondary {
   getDirName: () => string;
   getEndpoint: (entity: object) => string;
   getPrimary: () => string;

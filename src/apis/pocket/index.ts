@@ -5,7 +5,7 @@ import {
   getEpochNow,
   getFormattedDate,
 } from "../../utils/date-time.js";
-import { ApiSecondaryEndpoint, ApiSnapshotEndpoint } from "../../utils/types.js";
+import { EpSecondary, EpSnapshot } from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/api-data.js";
 import getConfig from "../../utils/config.js";
 
@@ -48,7 +48,7 @@ const getApiAuthHeaders = (): object => {
 };
 
 const getHistoricDelay = () => ONE_YEAR_IN_SEC;
-const endpointsPrimary: ApiSnapshotEndpoint[] = [
+const endpointsPrimary: EpSnapshot[] = [
   {
     isHistoric: () => false,
     getEndpoint: () => "get",
@@ -80,7 +80,7 @@ const endpointsPrimary: ApiSnapshotEndpoint[] = [
     },
   },
 ];
-const endpointsSecondary: ApiSecondaryEndpoint[] = [];
+const endpointsSecondary: EpSecondary[] = [];
 
 export {
   authorizeEndpoint,

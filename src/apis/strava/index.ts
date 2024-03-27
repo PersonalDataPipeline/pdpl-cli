@@ -1,11 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import {
-  ApiHistoricEndpoint,
-  ApiSecondaryEndpoint,
-  ApiSnapshotEndpoint,
-} from "../../utils/types.js";
+import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -86,7 +82,7 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
+const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
     isHistoric: () => false,
     getEndpoint: () => "athlete",
@@ -112,7 +108,7 @@ const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
   },
 ];
 
-const endpointsSecondary: ApiSecondaryEndpoint[] = [
+const endpointsSecondary: EpSecondary[] = [
   {
     getDirName: () => "activities",
     getEndpoint: (entity: object) => `activities/${getIdentifier(entity)}`,

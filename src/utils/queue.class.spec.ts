@@ -15,7 +15,7 @@ vi.mock("./fs.js", () => ({
 }));
 
 import Queue, { QueueEntry } from "./queue.class.js";
-import { ApiHandler, ApiSnapshotEndpoint } from "./types.js";
+import { ApiHandler, EpSnapshot } from "./types.js";
 
 const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
@@ -31,7 +31,7 @@ const mockApiHandler: ApiHandler = {
       getEndpoint: vi.fn(() => "API_ENDPOINT"),
       getDirName: () => "API_DIRECTORY",
       getDelay: () => ONE_DAY_IN_SEC,
-    } as ApiSnapshotEndpoint,
+    } as EpSnapshot,
   ],
   endpointsSecondary: [],
 };
