@@ -21,6 +21,7 @@ import {
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
 import { AxiosResponse } from "axios";
+import { isNotEmptyObject } from "../utils/object.js";
 
 ////
 /// Startup
@@ -75,17 +76,15 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   for (const runEntry of runQueue) {
     const endpoint = runEntry.endpoint;
     const epHandler = Object.assign(
-      {},
       {
-        shouldHistoricContinue: (apiResponseData: [] | object) =>
-          !!Object.keys(apiResponseData).length,
+        shouldHistoricContinue: (apiData: [] | object) => !!Object.keys(apiData).length,
         getNextCallParams: () => ({}),
-        transformResponseData: (apiResponse: AxiosResponse): unknown => apiResponse.data,
+        transformResponseData: (response: AxiosResponse): unknown => response.data,
       },
       handlerDict[endpoint]
     );
 
-    if (typeof runEntry.params === "object") {
+    if (isNotEmptyObject(runEntry.params)) {
       epHandler.getParams = () => runEntry.params;
     }
 
@@ -113,10 +112,10 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         continue;
       }
       apiResponseData = epHandler.transformResponseData(apiResponse, apiResponseData);
-
       nextCallParams = epHandler.getNextCallParams(apiResponse);
-
-      epHandler.getParams = () => nextCallParams as object;
+      if (isNotEmptyObject(nextCallParams)) {
+        epHandler.getParams = () => nextCallParams;
+      }
     } while (Object.keys(nextCallParams).length);
 
     // Store all the entity data for the endpoint for secondary endpoints
@@ -215,42 +214,45 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   ////
   /// Endpoints: Secondary
   //
-  for (const endpointHandler of apiHandler.endpointsSecondary) {
-    const entities = (perEndpointData[endpointHandler.getPrimary()] as []) || [];
-    const savePath = [apiName, endpointHandler.getDirName()];
+  for (const originalEpHandler of apiHandler.endpointsSecondary) {
+    const epHandler = Object.assign(
+      {
+        transformResponseData: (response: AxiosResponse): unknown => response.data,
+      },
+      originalEpHandler
+    );
+    const entities = (perEndpointData[epHandler.getPrimary()] as []) || [];
+    const savePath = [apiName, epHandler.getDirName()];
     ensureOutputPath(savePath);
 
     for (const entity of entities) {
       const runMetadata = {
-        endpoint: endpointHandler.getEndpoint(entity),
+        endpoint: epHandler.getEndpoint(entity),
         filesWritten: 0,
         filesSkipped: 0,
-        total: 0,
+        total: 1,
       };
 
       let apiResponse;
       try {
-        apiResponse = await getApiData(apiHandler, endpointHandler, entity);
+        apiResponse = await getApiData(apiHandler, epHandler, entity);
       } catch (error) {
         logger.error({
           stage: "http",
-          endpoint: runMetadata.endpoint,
+          endpoint: epHandler.getEndpoint(entity),
           error,
         });
         continue;
       }
 
-      const apiResponseData =
-        typeof endpointHandler.transformResponseData === "function"
-          ? endpointHandler.transformResponseData(apiResponse)
-          : apiResponse.data;
+      const apiResponseData = epHandler.transformResponseData(apiResponse);
 
-      runMetadata.total = 1;
       const outputPath = makeOutputPath(
         savePath,
-        endpointHandler.getIdentifier(entity),
+        epHandler.getIdentifier(entity),
         runDate.fileName
       );
+
       writeOutputFile(outputPath, apiResponseData)
         ? runMetadata.filesWritten++
         : runMetadata.filesSkipped++;
