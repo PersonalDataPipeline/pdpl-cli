@@ -1,4 +1,8 @@
-import { ONE_DAY_IN_SEC, ONE_QUATER_IN_SEC } from "../../utils/date-time.js";
+import {
+  ONE_DAY_IN_SEC,
+  ONE_QUATER_IN_SEC,
+  QUARTER_HOUR_IN_SEC,
+} from "../../utils/date-time.js";
 import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
@@ -9,6 +13,11 @@ const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
 
 interface GitHubEventEntity {
   created_at: string;
+}
+
+interface GitHubUrlParams {
+  page?: number;
+  per_page?: number;
 }
 
 ////
@@ -45,8 +54,18 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     getEndpoint: () => `users/${GITHUB_USERNAME}/events`,
     getDirName: () => "user--events",
     getDelay: () => ONE_DAY_IN_SEC,
-    parseDayFromEntity: (entity: GitHubEventEntity): string =>
-      entity.created_at.split("T")[0],
+    getParams: (): GitHubUrlParams => ({
+      page: 1,
+      per_page: 100,
+    }),
+    parseDayFromEntity: (entity: GitHubEventEntity): string => {
+      return entity.created_at.split("T")[0];
+    },
+    getHistoricDelay: () => QUARTER_HOUR_IN_SEC,
+    getHistoricParams: (currentParams?: GitHubUrlParams) => ({
+      page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
+      per_page: 100,
+    }),
   },
 ];
 const endpointsSecondary: ApiSecondaryEndpoint[] = [];
