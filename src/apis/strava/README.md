@@ -6,7 +6,7 @@
 
 This API requires an access token which is retrieved using a rotating refresh token. In order to get this process started the first time, you'll need to authorize the local application for the Strava API.
 
-First, create a Strava application using [the steps in section B here](https://developers.strava.com/docs/getting-started/#account). Use the information shown to add the following to the `.env` file here:
+First, create an application using [the steps in section B here](https://developers.strava.com/docs/getting-started/#account). Use the information shown to add the following to the `.env` file here:
 
 ```bash
 # .env
