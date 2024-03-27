@@ -26,8 +26,9 @@ export interface ApiSnapshotEndpoint {
   getDirName: () => string;
   getEndpoint: () => string;
   getDelay: () => number;
-  getMethod?: () => string;
+  getMethod?: () => "get" | "post";
   getParams?: () => object;
+  getRequestData?: () => object;
   getNextCallParams?: (
     response: AxiosResponse | MockAxiosResponse,
     params?: object
@@ -36,9 +37,11 @@ export interface ApiSnapshotEndpoint {
     response: AxiosResponse | MockAxiosResponse,
     existingData?: [] | object
   ) => [] | object;
+  parseDayFromEntity?: (entity: any) => string;
 }
 
-export interface ApiHistoricEndpoint extends Omit<ApiSnapshotEndpoint, "isHistoric"> {
+export interface ApiHistoricEndpoint
+  extends Omit<ApiSnapshotEndpoint, "isHistoric" | "parseDayFromEntity"> {
   isHistoric: () => true;
   parseDayFromEntity: (entity: any) => string;
   getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
@@ -53,6 +56,7 @@ export interface ApiSecondaryEndpoint {
   getIdentifier: (entity: any) => string;
   getParams?: () => object;
   getMethod?: () => string;
+  getRequestData?: () => object;
   transformResponseData?: (
     response: AxiosResponse | MockAxiosResponse,
     existingData?: [] | object

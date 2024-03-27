@@ -1,5 +1,5 @@
 import path from "path";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import axiosRetry, { exponentialDelay } from "axios-retry";
 
 import getConfig from "./config.js";
@@ -79,13 +79,22 @@ export const getApiData = async (
     return apiData;
   }
 
-  const axiosConfig = {
+  const axiosConfig: AxiosRequestConfig = {
     url: endpoint,
     baseURL: apiHandler.getApiBaseUrl(),
     headers: await apiHandler.getApiAuthHeaders(),
-    method: typeof handler.getMethod === "function" ? handler.getMethod() : "get",
+    method:
+      typeof handler.getMethod === "function" ? handler.getMethod().toLowerCase() : "get",
     params: typeof handler.getParams === "function" ? handler.getParams() : {},
   };
+
+  if (typeof handler.getRequestData === "function" && axiosConfig.method === "post") {
+    axiosConfig.data = handler.getRequestData();
+  }
+
+  if (getConfig().debugLogOutput) {
+    console.log(axiosConfig);
+  }
 
   const response = await axios(axiosConfig);
 

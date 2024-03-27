@@ -20,6 +20,7 @@
     "oura": "node ./dist/scripts/get.js oura",
     "wahoo": "node ./dist/scripts/get.js wahoo",
     "github": "node ./dist/scripts/get.js github",
+    "pocket": "node ./dist/scripts/get.js pocket",
     "api-ninjas": "node ./dist/scripts/get.js api-ninjas"
   },
   "author": "",

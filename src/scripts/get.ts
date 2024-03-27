@@ -127,7 +127,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
     const savePath = [apiName, epHandler.getDirName()];
     ensureOutputPath(savePath);
 
-    if (epHandler.isHistoric()) {
+    if (typeof epHandler.parseDayFromEntity === "function") {
       // Need to parse returned to days if not a snapshot
       const dailyData: DailyData = {};
       const entities = apiResponseData as [];
@@ -143,7 +143,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
 
       try {
         for (const entity of entities) {
-          const day = (epHandler as ApiHistoricEndpoint).parseDayFromEntity(entity);
+          const day = epHandler.parseDayFromEntity(entity);
           if (!dailyData[day]) {
             dailyData[day] = [];
           }
