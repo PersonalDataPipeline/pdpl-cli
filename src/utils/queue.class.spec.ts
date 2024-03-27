@@ -15,7 +15,7 @@ vi.mock("./fs.js", () => ({
 }));
 
 import Queue, { QueueEntry } from "./queue.class.js";
-import { ApiHandler } from "./types.js";
+import { ApiHandler, ApiSnapshotEndpoint } from "./types.js";
 
 const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
@@ -27,10 +27,11 @@ const mockApiHandler: ApiHandler = {
   getHistoricDelay: vi.fn(() => ONE_HOUR_IN_SEC),
   endpointsPrimary: [
     {
+      isHistoric: vi.fn(() => false),
       getEndpoint: vi.fn(() => "API_ENDPOINT"),
       getDirName: () => "API_DIRECTORY",
       getDelay: () => ONE_DAY_IN_SEC,
-    },
+    } as ApiSnapshotEndpoint,
   ],
   endpointsSecondary: [],
 };

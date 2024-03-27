@@ -1,7 +1,11 @@
 import { AxiosResponse } from "axios";
 
 import { adjustDateByDays, getFormattedDate } from "../../utils/date-time.js";
-import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import {
+  ApiHistoricEndpoint,
+  ApiSecondaryEndpoint,
+  ApiSnapshotEndpoint,
+} from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/api-data.js";
 import {
   HALF_HOUR_IN_SEC,
@@ -107,8 +111,9 @@ const getApiAuthHeaders = (): object => {
 };
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
-const endpointsPrimary: ApiPrimaryEndpoint[] = [
+const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
@@ -119,6 +124,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/sleep",
     getDirName: () => "user--sleep",
     getParams: () => defaultParams,
@@ -129,6 +135,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/daily_stress",
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
@@ -139,6 +146,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/daily_readiness",
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
@@ -149,6 +157,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/daily_activity",
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
@@ -159,6 +168,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/daily_spo2",
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
@@ -169,6 +179,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/sleep_time",
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
@@ -179,6 +190,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [
     transformResponseData,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
     getParams: getHeartrateParams,

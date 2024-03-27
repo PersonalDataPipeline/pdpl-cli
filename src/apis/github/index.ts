@@ -3,7 +3,11 @@ import {
   ONE_QUATER_IN_SEC,
   QUARTER_HOUR_IN_SEC,
 } from "../../utils/date-time.js";
-import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import {
+  ApiHistoricEndpoint,
+  ApiSecondaryEndpoint,
+  ApiSnapshotEndpoint,
+} from "../../utils/types.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
 
@@ -26,6 +30,7 @@ interface GitHubUrlParams {
 
 const getApiName = () => "github";
 const getApiBaseUrl = () => "https://api.github.com/";
+const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 const getApiAuthHeaders = (): object => {
   if (!GITHUB_PERSONAL_ACCESS_TOKEN) {
     console.log("❌ No GitHub access token stored. See README for more information.");
@@ -43,14 +48,16 @@ const getApiAuthHeaders = (): object => {
     "X-GitHub-Api-Version": "2022-11-28",
   };
 };
-const getHistoricDelay = () => ONE_QUATER_IN_SEC;
-const endpointsPrimary: ApiPrimaryEndpoint[] = [
+
+const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
   {
+    isHistoric: () => false,
     getEndpoint: () => "user/followers",
     getDirName: () => "user--followers",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => `users/${GITHUB_USERNAME}/events`,
     getDirName: () => "user--events",
     getDelay: () => ONE_DAY_IN_SEC,

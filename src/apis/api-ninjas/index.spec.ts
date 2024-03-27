@@ -1,11 +1,11 @@
 import { padLeftZero } from "../../utils/string.js";
-import { ApiPrimaryEndpoint } from "../../utils/types.js";
+import { ApiHistoricEndpoint } from "../../utils/types.js";
 import * as apiNinjaHandler from "./index.js";
 
 const todaysDate = new Date();
 
 describe("Module: API Ninja API handler", () => {
-  let epHandler: ApiPrimaryEndpoint;
+  let epHandler: ApiHistoricEndpoint;
 
   const defaultParams = {
     year: `${todaysDate.getFullYear()}`,
@@ -27,7 +27,7 @@ describe("Module: API Ninja API handler", () => {
 
   it("gets the correct historic params", () => {
     // TODO: Setup test config with a known timezone
-    expect(epHandler.getHistoricParams!()).toEqual({
+    expect(epHandler.getHistoricParams()).toEqual({
       year: `${todaysDate.getFullYear()}`,
       offset: 0,
     });
@@ -36,7 +36,7 @@ describe("Module: API Ninja API handler", () => {
   it("calculates the correct next historic params when there is data", () => {
     // TODO: Setup test config with a known timezone
     expect(
-      epHandler.getHistoricParams!(
+      epHandler.getHistoricParams(
         {
           year: `${todaysDate.getFullYear()}`,
           offset: 0,
@@ -52,7 +52,7 @@ describe("Module: API Ninja API handler", () => {
   it("calculates the correct next historic params when there is not data", () => {
     // TODO: Setup test config with a known timezone
     expect(
-      epHandler.getHistoricParams!(
+      epHandler.getHistoricParams(
         {
           year: `${todaysDate.getFullYear()}`,
           offset: 0,

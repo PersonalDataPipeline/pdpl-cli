@@ -15,26 +15,31 @@ export interface ApiHandler {
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<{ [key: string]: string }>;
   getHistoricDelay: () => number;
-  endpointsPrimary: ApiPrimaryEndpoint[];
+  endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[];
   endpointsSecondary: ApiSecondaryEndpoint[];
   authorizeEndpoint?: string;
   tokenEndpoint?: string;
 }
 
-export interface ApiPrimaryEndpoint {
+export interface ApiSnapshotEndpoint {
+  isHistoric: () => false;
   getDirName: () => string;
   getEndpoint: () => string;
   getDelay: () => number;
   getMethod?: () => string;
   getParams?: () => object;
-  shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
-  getHistoricParams?: (currentParams?: object, didReturnData?: boolean) => object;
-  getHistoricDelay?: () => number;
   transformResponseData?: (
     response: AxiosResponse | MockAxiosResponse,
     existingData?: [] | object
   ) => [] | object;
-  parseDayFromEntity?: (entity: any) => string;
+}
+
+export interface ApiHistoricEndpoint extends Omit<ApiSnapshotEndpoint, "isHistoric"> {
+  isHistoric: () => true;
+  parseDayFromEntity: (entity: any) => string;
+  getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
+  getHistoricDelay: () => number;
+  shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
   getNextCallParams?: (response?: AxiosResponse | MockAxiosResponse) => object;
 }
 

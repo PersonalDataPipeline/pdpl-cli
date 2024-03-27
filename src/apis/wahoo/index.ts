@@ -1,7 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import {
+  ApiHistoricEndpoint,
+  ApiSecondaryEndpoint,
+  ApiSnapshotEndpoint,
+} from "../../utils/types.js";
 import { MockAxiosResponse } from "../../utils/api-data.js";
 import {
   HALF_HOUR_IN_SEC,
@@ -62,13 +66,15 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpointsPrimary: ApiPrimaryEndpoint[] = [
+const endpointsPrimary: (ApiHistoricEndpoint | ApiSnapshotEndpoint)[] = [
   {
+    isHistoric: () => false,
     getEndpoint: () => "user",
     getDirName: () => "user",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
+    isHistoric: () => true,
     getEndpoint: () => "workouts",
     getDirName: () => "workouts",
     getParams: (): WahooUrlParams => ({

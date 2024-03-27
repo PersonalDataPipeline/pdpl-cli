@@ -1,5 +1,5 @@
 import { ONE_DAY_IN_SEC, ONE_YEAR_IN_SEC } from "../../utils/date-time.js";
-import { ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
+import { ApiHistoricEndpoint, ApiSecondaryEndpoint } from "../../utils/types.js";
 import getConfig from "../../utils/config.js";
 import { getFormattedDate } from "../../utils/date-time.js";
 
@@ -56,8 +56,9 @@ const getApiAuthHeaders = () => {
 };
 const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 
-const endpointsPrimary: ApiPrimaryEndpoint[] = [
+const endpointsPrimary: ApiHistoricEndpoint[] = [
   {
+    isHistoric: () => true,
     getEndpoint: () => "historicalevents",
     getDirName: () => "historicalevents",
     getParams: () => defaultParams,

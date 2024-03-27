@@ -12,9 +12,15 @@ import {
   __dirname,
 } from "../utils/fs.js";
 import { runDateUtc } from "../utils/date-time.js";
-import { ApiHandler, ApiPrimaryEndpoint, DailyData } from "../utils/types.js";
+import {
+  ApiHandler,
+  ApiHistoricEndpoint,
+  ApiSnapshotEndpoint,
+  DailyData,
+} from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
+import { AxiosResponse } from "axios";
 
 ////
 /// Startup
@@ -41,7 +47,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
 
   // TODO: Should this be the shape of the endpoint handler collection?
-  const handlerDict: { [key: string]: ApiPrimaryEndpoint } = {};
+  const handlerDict: { [key: string]: ApiHistoricEndpoint | ApiSnapshotEndpoint } = {};
   for (const endpointHandler of apiHandler.endpointsPrimary) {
     handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
   }
@@ -64,11 +70,20 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   /// Endpoints: Primary
   //
 
-  const perEndpointData: { [key: string]: any[] } = {};
+  const perEndpointData: { [key: string]: unknown } = {};
 
   for (const runEntry of runQueue) {
     const endpoint = runEntry.endpoint;
-    const endpointHandler = Object.assign({}, handlerDict[endpoint]);
+    const endpointHandler = Object.assign(
+      {},
+      {
+        shouldHistoricContinue: (apiResponseData: [] | object) =>
+          !!Object.keys(apiResponseData).length,
+        getNextCallParams: () => ({}),
+        transformResponseData: (apiResponse: AxiosResponse): unknown => apiResponse.data,
+      },
+      handlerDict[endpoint]
+    );
 
     if (typeof runEntry.params === "object") {
       endpointHandler.getParams = () => runEntry.params;
@@ -97,29 +112,26 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         nextCallParams = {};
         continue;
       }
-      apiResponseData =
-        typeof endpointHandler.transformResponseData === "function"
-          ? endpointHandler.transformResponseData(apiResponse, apiResponseData)
-          : apiResponse.data;
+      apiResponseData = endpointHandler.transformResponseData(
+        apiResponse,
+        apiResponseData
+      );
 
-      nextCallParams =
-        typeof endpointHandler.getNextCallParams === "function"
-          ? endpointHandler.getNextCallParams(apiResponse)
-          : {};
+      nextCallParams = endpointHandler.getNextCallParams(apiResponse);
 
       endpointHandler.getParams = () => nextCallParams as object;
     } while (Object.keys(nextCallParams).length);
 
     // Store all the entity data for the endpoint for secondary endpoints
-    perEndpointData[endpoint] = apiResponseData;
+    perEndpointData[endpoint] = apiResponseData as unknown;
 
     const savePath = [apiName, endpointHandler.getDirName()];
     ensureOutputPath(savePath);
 
-    if (typeof endpointHandler.parseDayFromEntity === "function") {
+    if (endpointHandler.isHistoric()) {
       // Need to parse returned to days if not a snapshot
       const dailyData: DailyData = {};
-      const entities = apiResponseData;
+      const entities = apiResponseData as [];
 
       if (!Array.isArray(entities)) {
         logger.error({
@@ -132,7 +144,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
 
       try {
         for (const entity of entities) {
-          const day = endpointHandler.parseDayFromEntity(entity);
+          const day = (endpointHandler as ApiHistoricEndpoint).parseDayFromEntity(entity);
           if (!dailyData[day]) {
             dailyData[day] = [];
           }
@@ -169,7 +181,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       ...runMetadata,
     });
 
-    if (runEntry.historic && typeof endpointHandler.getHistoricParams === "function") {
+    if (runEntry.historic && endpointHandler.isHistoric()) {
       const newQueueEntry: QueueEntry = {
         endpoint: endpoint,
         historic: true,
@@ -177,27 +189,26 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         params: {},
       };
 
-      const didReturnData = !!Object.keys(apiResponseData).length;
-      const continueHistoric =
-        typeof endpointHandler.shouldHistoricContinue === "function"
-          ? endpointHandler.shouldHistoricContinue(apiResponseData, runEntry.params)
-          : didReturnData;
+      const didReturnData = !!Object.keys(apiResponseData as []).length;
+      const continueHistoric = endpointHandler.shouldHistoricContinue(
+        apiResponseData as [],
+        runEntry.params
+      );
 
       if (continueHistoric) {
         // Potentially more historic entries to get
-        newQueueEntry.params = endpointHandler.getHistoricParams(
+        newQueueEntry.params = (endpointHandler as ApiHistoricEndpoint).getHistoricParams(
           runEntry.params,
           didReturnData
         );
         newQueueEntry.runAfter =
-          runDate.seconds +
-          (typeof endpointHandler.getHistoricDelay === "function"
-            ? endpointHandler.getHistoricDelay()
-            : endpointHandler.getDelay());
+          runDate.seconds + (endpointHandler as ApiHistoricEndpoint).getHistoricDelay();
       } else {
         // Schedule next historic run for this endpoint
         newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
-        newQueueEntry.params = endpointHandler.getHistoricParams();
+        newQueueEntry.params = (
+          endpointHandler as ApiHistoricEndpoint
+        ).getHistoricParams();
       }
       queueInstance.updateHistoricEntry(newQueueEntry);
       continue;
@@ -210,7 +221,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   /// Endpoints: Secondary
   //
   for (const endpointHandler of apiHandler.endpointsSecondary) {
-    const entities = perEndpointData[endpointHandler.getPrimary()] || [];
+    const entities = (perEndpointData[endpointHandler.getPrimary()] as []) || [];
     const savePath = [apiName, endpointHandler.getDirName()];
     ensureOutputPath(savePath);
 

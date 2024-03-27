@@ -3,7 +3,12 @@ import axios, { AxiosResponse } from "axios";
 import axiosRetry, { exponentialDelay } from "axios-retry";
 
 import getConfig from "./config.js";
-import { ApiHandler, ApiPrimaryEndpoint, ApiSecondaryEndpoint } from "./types.js";
+import {
+  ApiHandler,
+  ApiHistoricEndpoint,
+  ApiSecondaryEndpoint,
+  ApiSnapshotEndpoint,
+} from "./types.js";
 import { __dirname, readFile, writeFile } from "./fs.js";
 
 ////
@@ -29,6 +34,7 @@ const makeMockPath = (apiName: string, endpointDir: string) =>
     `${endpointDir}.json`
   );
 
+// TODO: Make MockAxiosResponse === AxiosResponse or mock with interceptors
 const getMockApiData = (
   apiName: string,
   endpointDir: string
@@ -54,7 +60,7 @@ const getMockApiData = (
 
 export const getApiData = async (
   apiHandler: ApiHandler,
-  handler: ApiPrimaryEndpoint | ApiSecondaryEndpoint,
+  handler: ApiHistoricEndpoint | ApiSnapshotEndpoint | ApiSecondaryEndpoint,
   entity?: object
 ): Promise<AxiosResponse | MockAxiosResponse> => {
   const isEnriching = typeof entity !== "undefined";
