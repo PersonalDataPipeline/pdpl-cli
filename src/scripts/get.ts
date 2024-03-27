@@ -74,7 +74,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
 
   for (const runEntry of runQueue) {
     const endpoint = runEntry.endpoint;
-    const endpointHandler = Object.assign(
+    const epHandler = Object.assign(
       {},
       {
         shouldHistoricContinue: (apiResponseData: [] | object) =>
@@ -86,7 +86,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
     );
 
     if (typeof runEntry.params === "object") {
-      endpointHandler.getParams = () => runEntry.params;
+      epHandler.getParams = () => runEntry.params;
     }
 
     const runMetadata = {
@@ -102,7 +102,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
     let nextCallParams = {};
     do {
       try {
-        apiResponse = await getApiData(apiHandler, endpointHandler);
+        apiResponse = await getApiData(apiHandler, epHandler);
       } catch (error) {
         logger.error({
           stage: "http",
@@ -112,23 +112,20 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         nextCallParams = {};
         continue;
       }
-      apiResponseData = endpointHandler.transformResponseData(
-        apiResponse,
-        apiResponseData
-      );
+      apiResponseData = epHandler.transformResponseData(apiResponse, apiResponseData);
 
-      nextCallParams = endpointHandler.getNextCallParams(apiResponse);
+      nextCallParams = epHandler.getNextCallParams(apiResponse);
 
-      endpointHandler.getParams = () => nextCallParams as object;
+      epHandler.getParams = () => nextCallParams as object;
     } while (Object.keys(nextCallParams).length);
 
     // Store all the entity data for the endpoint for secondary endpoints
     perEndpointData[endpoint] = apiResponseData as unknown;
 
-    const savePath = [apiName, endpointHandler.getDirName()];
+    const savePath = [apiName, epHandler.getDirName()];
     ensureOutputPath(savePath);
 
-    if (endpointHandler.isHistoric()) {
+    if (epHandler.isHistoric()) {
       // Need to parse returned to days if not a snapshot
       const dailyData: DailyData = {};
       const entities = apiResponseData as [];
@@ -144,7 +141,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
 
       try {
         for (const entity of entities) {
-          const day = (endpointHandler as ApiHistoricEndpoint).parseDayFromEntity(entity);
+          const day = (epHandler as ApiHistoricEndpoint).parseDayFromEntity(entity);
           if (!dailyData[day]) {
             dailyData[day] = [];
           }
@@ -181,7 +178,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       ...runMetadata,
     });
 
-    if (runEntry.historic && endpointHandler.isHistoric()) {
+    if (runEntry.historic && epHandler.isHistoric()) {
       const newQueueEntry: QueueEntry = {
         endpoint: endpoint,
         historic: true,
@@ -190,25 +187,23 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       };
 
       const didReturnData = !!Object.keys(apiResponseData as []).length;
-      const continueHistoric = endpointHandler.shouldHistoricContinue(
+      const continueHistoric = epHandler.shouldHistoricContinue(
         apiResponseData as [],
         runEntry.params
       );
 
       if (continueHistoric) {
         // Potentially more historic entries to get
-        newQueueEntry.params = (endpointHandler as ApiHistoricEndpoint).getHistoricParams(
+        newQueueEntry.params = (epHandler as ApiHistoricEndpoint).getHistoricParams(
           runEntry.params,
           didReturnData
         );
         newQueueEntry.runAfter =
-          runDate.seconds + (endpointHandler as ApiHistoricEndpoint).getHistoricDelay();
+          runDate.seconds + (epHandler as ApiHistoricEndpoint).getHistoricDelay();
       } else {
         // Schedule next historic run for this endpoint
         newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
-        newQueueEntry.params = (
-          endpointHandler as ApiHistoricEndpoint
-        ).getHistoricParams();
+        newQueueEntry.params = (epHandler as ApiHistoricEndpoint).getHistoricParams();
       }
       queueInstance.updateHistoricEntry(newQueueEntry);
       continue;
