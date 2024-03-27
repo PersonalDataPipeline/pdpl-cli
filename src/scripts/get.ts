@@ -21,7 +21,7 @@ import {
 import { getApiData } from "../utils/api-data.js";
 import Queue, { QueueEntry } from "../utils/queue.class.js";
 import { AxiosResponse } from "axios";
-import { isNotEmptyObject } from "../utils/object.js";
+import { isObjectWithKeys } from "../utils/object.js";
 
 ////
 /// Startup
@@ -87,7 +87,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       handlerDict[endpoint]
     );
 
-    if (isNotEmptyObject(runEntry.params)) {
+    if (isObjectWithKeys(runEntry.params)) {
       epHandler.getParams = () => runEntry.params;
     }
 
@@ -116,7 +116,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       }
       apiResponseData = epHandler.transformResponseData(apiResponse, apiResponseData);
       nextCallParams = epHandler.getNextCallParams(apiResponse, epHandler.getParams());
-      if (isNotEmptyObject(nextCallParams)) {
+      if (isObjectWithKeys(nextCallParams)) {
         epHandler.getParams = () => nextCallParams;
       }
     } while (Object.keys(nextCallParams).length);

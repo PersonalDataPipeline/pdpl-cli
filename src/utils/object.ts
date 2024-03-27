@@ -1,4 +1,4 @@
-export const isNotEmptyObject = (inspect: unknown) => {
+export const isObjectWithKeys = (inspect: unknown) => {
   if (!inspect || typeof inspect !== "object") {
     return false;
   }

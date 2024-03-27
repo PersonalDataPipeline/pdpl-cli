@@ -1,27 +1,27 @@
-import { isNotEmptyObject } from "./object.js";
+import { isObjectWithKeys } from "./object.js";
 
 describe("Object utilities", () => {
   beforeEach(() => {});
   describe("Function: isNotEmptyObject", () => {
     it("checks if it exists", () => {
-      expect(isNotEmptyObject(null)).toEqual(false);
-      expect(isNotEmptyObject(undefined)).toEqual(false);
-      expect(isNotEmptyObject(false)).toEqual(false);
+      expect(isObjectWithKeys(null)).toEqual(false);
+      expect(isObjectWithKeys(undefined)).toEqual(false);
+      expect(isObjectWithKeys(false)).toEqual(false);
     });
 
     it("checks the type", () => {
-      expect(isNotEmptyObject([])).toEqual(false);
-      expect(isNotEmptyObject("hi")).toEqual(false);
-      expect(isNotEmptyObject(1)).toEqual(false);
-      expect(isNotEmptyObject(true)).toEqual(false);
+      expect(isObjectWithKeys([])).toEqual(false);
+      expect(isObjectWithKeys("hi")).toEqual(false);
+      expect(isObjectWithKeys(1)).toEqual(false);
+      expect(isObjectWithKeys(true)).toEqual(false);
     });
 
     it("checks an empty object", () => {
-      expect(isNotEmptyObject({})).toEqual(false);
+      expect(isObjectWithKeys({})).toEqual(false);
     });
 
     it("checks a non-empty object", () => {
-      expect(isNotEmptyObject({ a: false })).toEqual(true);
+      expect(isObjectWithKeys({ a: false })).toEqual(true);
     });
   });
 });
