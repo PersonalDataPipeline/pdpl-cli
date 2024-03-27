@@ -3,20 +3,30 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Data source: GitHub API
 - [ ] Data source: Day One import
 - [ ] Data source: Pocket API ([ref](https://getpocket.com/developer/docs/authentication) ... non-standard authorization)
 - [ ] Add tests for get script (might need to come with refactoring how the CLI works)
 - [ ] Refactor: queue class -> module
+- [ ] Refactor: Axios -> native (fetch or HTTP)
 - [ ] Fix: TS-eslint warnings
 - [ ] Fix: `// TODO:` entries in code
 - [ ] Problem with secondary endpoints failing with no way to re-run
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Log report script (aggregate run data, errors, etc)
+- [ ] Log level selector in config and env
 - [ ] Combine scripts into a single command
 - [ ] Add APIs and endpoints to run in config; figure out how to output config -> JSON for bash
 - [ ] Add health check script to check configuration and activated APIs + endpoints
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-27]]
+
+I was just thinking about this yesterday and having this all hooked up to an automated process, downloading data in the background feels like a big achievement. I'm seeing some places that could use some attention, like a way to parse out logs and report on the current condition of the API and filtering out info log entries.
+
+I'm still working on the GitHub API for a bit today as I keep finding new endpoints to add. What's becoming clear to me, I guess maybe just more clear, is that some endpoints can be just added to the list and they run great out of the box. But there are always one or two that really need to be puzzled through. Calling the API and getting all the results is usually not a problem but when it comes to how it's stored, day parsing, historic walking ... some endpoints need some additional thought to make sure it's stored well. 
+
+For example ... the Gists endpoint got GitHub. We can just go ahead and get all the Gists and that's that, big snapshot that changes over time. But that could be the same as, say, Strava workouts. Big list of workouts in a file. But that kind of goes against a more timeline-like view. Gists have two dates: created and updated. Do we instead group these by created date? Or updated date using a `since` parameter? Updated date probably doesn't make much sense because the date files will change too much. Using created means that the daily files will update too much. All this to say ... it's a challenge!
 
 ## [[2024-03-26]]
 
