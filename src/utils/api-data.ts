@@ -5,6 +5,7 @@ import axiosRetry, { exponentialDelay } from "axios-retry";
 import getConfig from "./config.js";
 import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "./types.js";
 import { __dirname, readFile, writeFile } from "./fs.js";
+import { existsSync, mkdirSync } from "fs";
 
 ////
 /// Types
@@ -18,16 +19,21 @@ export interface MockAxiosResponse extends Omit<AxiosResponse, "config"> {}
 
 axiosRetry(axios, { retries: 3, retryDelay: exponentialDelay });
 
-const makeMockPath = (apiName: string, endpointDir: string) =>
-  path.join(
-    __dirname,
-    "..",
-    "..",
-    "__mocks__",
-    "api-data",
-    apiName,
-    `${endpointDir}.json`
-  );
+const makeMockPath = (apiName: string, endpointDir: string) => {
+  let mockPath = path.join(__dirname, "..", "..", "__mocks__", "api-data");
+
+  if (!existsSync(mockPath)) {
+    mkdirSync(mockPath);
+  }
+
+  mockPath = path.join(mockPath, apiName);
+
+  if (!existsSync(mockPath)) {
+    mkdirSync(mockPath);
+  }
+
+  return path.join(mockPath, `${endpointDir}.json`);
+};
 
 // TODO: Make MockAxiosResponse === AxiosResponse or mock with interceptors
 const getMockApiData = (
@@ -66,13 +72,12 @@ export const getApiData = async (
   const mockFilename = isEnriching
     ? endpoint.replaceAll("/", "--")
     : handler.getDirName();
+
   if (getConfig().debugUseMocks) {
     const apiData = getMockApiData(apiHandler.getApiName(), mockFilename);
-
     if (apiData === null) {
       throw new Error(`No mock data found for ${endpoint}`);
     }
-
     return apiData;
   }
 
@@ -87,10 +92,6 @@ export const getApiData = async (
 
   if (typeof handler.getRequestData === "function" && axiosConfig.method === "post") {
     axiosConfig.data = handler.getRequestData();
-  }
-
-  if (getConfig().debugLogOutput) {
-    console.log(axiosConfig);
   }
 
   const response = await axios(axiosConfig);
