@@ -14,7 +14,7 @@ vi.mock("./fs.js", () => ({
   writeFile: vi.fn(),
 }));
 
-import Queue, { QueueEntry } from "./queue.class.js";
+import * as queue from "./queue.class.js";
 import { ApiHandler, EpSnapshot } from "./types.js";
 
 const outputDir = getConfig().outputDir;
@@ -36,7 +36,7 @@ const mockApiHandler: ApiHandler = {
   endpointsSecondary: [],
 };
 
-const missingEndpoint: QueueEntry = {
+const missingEndpoint: queue.QueueEntry = {
   endpoint: "API_ENDPOINT",
   runAfter: ONE_DAY_IN_SEC + runDateUtc().seconds,
   historic: false,
@@ -70,16 +70,14 @@ const mockOtherEntry = {
 
 describe("Class: Queue", () => {
   it("looks for a queue file when a new instance is created", () => {
-    new Queue(mockApiHandler);
+    queue.loadQueue(mockApiHandler);
     expect(pathExists).toHaveBeenCalledWith(queueFilePath);
   });
 
   describe("queue file does not exist", () => {
-    let queue: Queue;
-
     beforeAll(() => {
       (pathExists as Mock).mockImplementation(() => false);
-      queue = new Queue(mockApiHandler);
+      queue.loadQueue(mockApiHandler);
     });
 
     it("checks the write path", () => {
@@ -96,12 +94,10 @@ describe("Class: Queue", () => {
   });
 
   describe("queue file exists", () => {
-    let queue: Queue;
-
     beforeAll(() => {
       (pathExists as Mock).mockImplementation(() => true);
       (readFile as Mock).mockImplementation(() => '[{"test": true}]');
-      queue = new Queue(mockApiHandler);
+      queue.loadQueue(mockApiHandler);
     });
 
     it("reads the existing queue file", () => {
@@ -114,11 +110,9 @@ describe("Class: Queue", () => {
   });
 
   describe("queue management", () => {
-    let queue: Queue;
-
     beforeEach(() => {
       (readFile as Mock).mockImplementation(() => "[]");
-      queue = new Queue(mockApiHandler);
+      queue.loadQueue(mockApiHandler);
     });
 
     it("is initiated as an empty queue", () => {
@@ -136,20 +130,18 @@ describe("Class: Queue", () => {
   });
 
   describe("queue processing", () => {
-    let queue: Queue;
-
     beforeEach(() => {
       (readFile as Mock).mockImplementation(() => "[]");
-      queue = new Queue(mockApiHandler);
+      queue.loadQueue(mockApiHandler);
     });
 
     it("adds handled endpoints to the queue", () => {
-      queue.processQueue(logger);
+      queue.processQueue(mockApiHandler, logger);
       expect(queue.getQueue()).toEqual([missingEndpoint]);
     });
 
     it("returns added endpoints", () => {
-      const runQueue = queue.processQueue(logger);
+      const runQueue = queue.processQueue(mockApiHandler, logger);
       expect(runQueue).toEqual([
         {
           endpoint: missingEndpoint.endpoint,
@@ -161,9 +153,9 @@ describe("Class: Queue", () => {
 
     it("does not return endpoints scheduled for the future", () => {
       // First call returns the missing endpoint
-      queue.processQueue(logger);
+      queue.processQueue(mockApiHandler, logger);
       // Second call skips the existing endpoint
-      const runQueue = queue.processQueue(logger);
+      const runQueue = queue.processQueue(mockApiHandler, logger);
       expect(runQueue).toEqual([]);
     });
 
@@ -172,17 +164,15 @@ describe("Class: Queue", () => {
         endpoint: "UNKNOWN_ENDPOINT",
         runAfter: 1234567890,
       });
-      queue.processQueue(logger);
+      queue.processQueue(mockApiHandler, logger);
       expect(queue.getQueue()).toEqual([missingEndpoint]);
     });
   });
 
   describe("entry management", () => {
-    let queue: Queue;
-
     beforeEach(() => {
       (readFile as Mock).mockImplementation(() => "[]");
-      queue = new Queue(mockApiHandler);
+      queue.loadQueue(mockApiHandler);
     });
 
     it("finds no standard entries in an empty queue", () => {

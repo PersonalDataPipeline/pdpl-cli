@@ -19,178 +19,187 @@ export interface QueueEntry {
 interface RunEntry extends Omit<QueueEntry, "runAfter"> {}
 
 ////
+/// Helpers
+//
+
+const getStandardEntriesFor = (endpoint: string): QueueEntry[] => {
+  return queue.filter((entry: QueueEntry) => {
+    const sameEndpoint = entry.endpoint === endpoint;
+    return sameEndpoint && isStandardEntry(entry);
+  });
+};
+
+const isStandardEntry = (entry: QueueEntry) => {
+  const hasParams = entryHasParams(entry);
+  return !hasParams && !entry.historic;
+};
+
+const writeQueue = () => {
+  if (!queueFile) {
+    throw new Error("Trying to write to a queue that has not been initialized");
+  }
+  queue = queue.filter((entry) => entry);
+  writeFile(queueFile, JSON.stringify(queue, null, 2));
+};
+
+////
 /// Export
 //
-export default class Queue {
-  apiHandler: ApiHandler;
-  queueFile: string;
-  apiName: string;
-  queue: QueueEntry[];
-  handledEndpoints: string[];
-  handlerDict: { [key: string]: EpHistoric | EpSnapshot };
 
-  constructor(apiHandler: ApiHandler) {
-    this.apiHandler = apiHandler;
-    this.apiName = apiHandler.getApiName();
-    this.queueFile = path.join(getConfig().outputDir, this.apiName, "_queue.json");
+let queue: QueueEntry[] = [];
+let queueFile = "";
 
-    if (!pathExists(this.queueFile)) {
-      ensureOutputPath([this.apiName]);
-      writeFile(this.queueFile, "[]");
-      this.queue = [];
-    } else {
-      const queueContents = readFile(this.queueFile);
-      this.queue = JSON.parse(queueContents) as QueueEntry[];
-    }
+export const loadQueue = (apiHandler: ApiHandler) => {
+  const apiName = apiHandler.getApiName();
+  queueFile = path.join(getConfig().outputDir, apiName, "_queue.json");
 
-    this.handledEndpoints = [];
-    this.handlerDict = {};
-    for (const endpointHandler of this.apiHandler.endpointsPrimary) {
-      this.handledEndpoints.push(endpointHandler.getEndpoint());
-      this.handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
-    }
+  if (!pathExists(queueFile)) {
+    ensureOutputPath([apiName]);
+    writeFile(queueFile, "[]");
+    queue = [];
+  } else {
+    const queueContents = readFile(queueFile);
+    queue = JSON.parse(queueContents) as QueueEntry[];
+  }
+};
+
+export const entryHasParams = (entry: { params?: object }) => {
+  return !!(entry.params && Object.keys(entry.params).length);
+};
+
+export const getQueue = () => {
+  return queue;
+};
+
+export const hasStandardEntryFor = (endpoint: string) => {
+  return getStandardEntriesFor(endpoint).length > 0;
+};
+
+export const addEntry = ({
+  runAfter,
+  endpoint,
+  params = {},
+  historic = false,
+}: {
+  runAfter: number;
+  endpoint: string;
+  params?: object;
+  historic?: boolean;
+}) => {
+  queue.push({ historic, runAfter, endpoint, params });
+  writeQueue();
+};
+
+export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntry[] => {
+  if (!queueFile) {
+    loadQueue(apiHandler);
   }
 
-  static entryHasParams(entry: { params?: object }) {
-    return !!(entry.params && Object.keys(entry.params).length);
+  const runQueue: RunEntry[] = [];
+  const runDate = runDateUtc();
+  const handledEndpoints: string[] = [];
+  const handlerDict: { [key: string]: EpHistoric | EpSnapshot } = {};
+  for (const endpointHandler of apiHandler.endpointsPrimary) {
+    handledEndpoints.push(endpointHandler.getEndpoint());
+    handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
   }
 
-  getQueue() {
-    return this.queue;
-  }
+  for (const [index, entry] of queue.entries()) {
+    const endpoint = entry.endpoint;
 
-  processQueue(logger: RunLogger): RunEntry[] {
-    const runQueue: RunEntry[] = [];
-    const runDate = runDateUtc();
-
-    for (const [index, entry] of this.queue.entries()) {
-      const endpoint = entry.endpoint;
-
-      // If an endpoint was removed from the handler, remove from the queue
-      if (!this.handledEndpoints.includes(endpoint)) {
-        logger.info({
-          stage: "queue_management",
-          message: "Removing unknown endpoint",
-          endpoint,
-        });
-        delete this.queue[index];
-        continue;
-      }
-
-      // If we're too early for an entry to run, add back as-is
-      if (entry.runAfter > runDate.seconds) {
-        const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
-        logger.info({
-          stage: "queue_management",
-          message: `Skipping for ${waitMinutes} minutes`,
-          endpoint,
-        });
-        continue;
-      }
-
-      const entryHasParams = Queue.entryHasParams(entry);
-      runQueue.push({
+    // If an endpoint was removed from the handler, remove from the queue
+    if (!handledEndpoints.includes(endpoint)) {
+      logger.info({
+        stage: "queue_management",
+        message: "Removing unknown endpoint",
         endpoint,
-        historic: !entryHasParams ? false : !!entry.historic,
-        params: entryHasParams ? entry.params : {},
       });
+      delete queue[index];
+      continue;
     }
 
-    // Find any new endpoints that don't have a queue entry
-    for (const endpoint of this.handledEndpoints) {
-      if (!this.hasStandardEntryFor(endpoint)) {
-        logger.info({
-          stage: "queue_management",
-          message: `Adding standard entry for unhandled endpoint`,
-          endpoint,
-        });
-        this.addEntry({
-          endpoint,
-          runAfter: this.handlerDict[endpoint].getDelay() + runDate.seconds,
-        });
-        runQueue.push({ endpoint, historic: false, params: {} });
-      }
+    // If we're too early for an entry to run, add back as-is
+    if (entry.runAfter > runDate.seconds) {
+      const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
+      logger.info({
+        stage: "queue_management",
+        message: `Skipping for ${waitMinutes} minutes`,
+        endpoint,
+      });
+      continue;
     }
-    this.writeQueue();
-    return runQueue;
-  }
 
-  addEntry({
-    runAfter,
-    endpoint,
-    params = {},
-    historic = false,
-  }: {
-    runAfter: number;
-    endpoint: string;
-    params?: object;
-    historic?: boolean;
-  }) {
-    this.queue.push({ historic, runAfter, endpoint, params });
-    this.writeQueue();
-  }
-
-  hasStandardEntryFor(endpoint: string) {
-    return this.getStandardEntriesFor(endpoint).length > 0;
-  }
-
-  hasHistoricEntryFor(endpoint: string) {
-    return (
-      this.queue.filter((entry: QueueEntry) => {
-        const sameEndpoint = entry.endpoint === endpoint;
-        return sameEndpoint && entry.historic;
-      }).length > 0
-    );
-  }
-
-  updateStandardEntryFor(endpoint: string) {
-    const runDate = runDateUtc();
-    for (const [index, entry] of this.queue.entries()) {
-      if (entry.endpoint !== endpoint || !this.isStandardEntry(entry)) {
-        continue;
-      }
-
-      // TODO: Remove duplicate standard entries
-
-      const runAfter = this.handlerDict[endpoint].getDelay() + runDate.seconds;
-      this.queue[index].runAfter = runAfter;
-    }
-    this.writeQueue();
-  }
-
-  updateHistoricEntry({
-    runAfter,
-    endpoint,
-    params,
-  }: {
-    runAfter: number;
-    endpoint: string;
-    params: object;
-  }) {
-    for (const [index, entry] of this.queue.entries()) {
-      if (entry.historic && entry.endpoint === endpoint) {
-        delete this.queue[index];
-      }
-    }
-    this.queue.push({ historic: true, runAfter, endpoint, params });
-    this.writeQueue();
-  }
-
-  private isStandardEntry(entry: QueueEntry) {
-    const hasParams = Queue.entryHasParams(entry);
-    return !hasParams && !entry.historic;
-  }
-
-  private getStandardEntriesFor(endpoint: string): QueueEntry[] {
-    return this.queue.filter((entry: QueueEntry) => {
-      const sameEndpoint = entry.endpoint === endpoint;
-      return sameEndpoint && this.isStandardEntry(entry);
+    const hasParams = entryHasParams(entry);
+    runQueue.push({
+      endpoint,
+      historic: !hasParams ? false : !!entry.historic,
+      params: hasParams ? entry.params : {},
     });
   }
 
-  private writeQueue() {
-    this.queue = this.queue.filter((entry) => entry);
-    ensureOutputPath([this.apiName]);
-    writeFile(this.queueFile, JSON.stringify(this.queue, null, 2));
+  // Find any new endpoints that don't have a queue entry
+  for (const endpoint of handledEndpoints) {
+    if (!hasStandardEntryFor(endpoint)) {
+      logger.info({
+        stage: "queue_management",
+        message: `Adding standard entry for unhandled endpoint`,
+        endpoint,
+      });
+      addEntry({
+        endpoint,
+        runAfter: handlerDict[endpoint].getDelay() + runDate.seconds,
+      });
+      runQueue.push({ endpoint, historic: false, params: {} });
+    }
   }
-}
+  writeQueue();
+  return runQueue;
+};
+
+export const hasHistoricEntryFor = (endpoint: string) => {
+  return (
+    queue.filter((entry: QueueEntry) => {
+      const sameEndpoint = entry.endpoint === endpoint;
+      return sameEndpoint && entry.historic;
+    }).length > 0
+  );
+};
+
+export const updateStandardEntryFor = (epHandler: EpHistoric | EpSnapshot) => {
+  const runDate = runDateUtc();
+  const endpoint = epHandler.getEndpoint();
+  let seenStandard = false;
+  for (const [index, entry] of queue.entries()) {
+    if (entry.endpoint !== endpoint || !isStandardEntry(entry)) {
+      continue;
+    }
+
+    if (seenStandard) {
+      delete queue[index];
+      continue;
+    }
+
+    const runAfter = epHandler.getDelay() + runDate.seconds;
+    queue[index].runAfter = runAfter;
+    seenStandard = true;
+  }
+  writeQueue();
+};
+
+export const updateHistoricEntry = ({
+  runAfter,
+  endpoint,
+  params,
+}: {
+  runAfter: number;
+  endpoint: string;
+  params: object;
+}) => {
+  for (const [index, entry] of queue.entries()) {
+    if (entry.historic && entry.endpoint === endpoint) {
+      delete queue[index];
+    }
+  }
+  queue.push({ historic: true, runAfter, endpoint, params });
+  writeQueue();
+};

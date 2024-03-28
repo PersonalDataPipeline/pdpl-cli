@@ -14,7 +14,7 @@ import {
 import { runDateUtc } from "../utils/date-time.js";
 import { ApiHandler, EpHistoric, EpSnapshot, DailyData } from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
-import Queue, { QueueEntry } from "../utils/queue.class.js";
+import * as queue from "../utils/queue.class.js";
 import { AxiosResponse } from "axios";
 import { isObjectWithKeys } from "../utils/object.js";
 
@@ -52,8 +52,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   /// Queue management
   //
 
-  const queueInstance = new Queue(apiHandler);
-  const runQueue = queueInstance.processQueue(logger);
+  const runQueue = queue.processQueue(apiHandler, logger);
   if (!runQueue.length) {
     logger.info({
       stage: "queue_management",
@@ -176,7 +175,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
     });
 
     if (runEntry.historic && epHandler.isHistoric()) {
-      const newQueueEntry: QueueEntry = {
+      const newQueueEntry: queue.QueueEntry = {
         endpoint: endpoint,
         historic: true,
         runAfter: runDate.seconds,
@@ -202,11 +201,11 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
         newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
         newQueueEntry.params = (epHandler as EpHistoric).getHistoricParams();
       }
-      queueInstance.updateHistoricEntry(newQueueEntry);
+      queue.updateHistoricEntry(newQueueEntry);
       continue;
     }
 
-    queueInstance.updateStandardEntryFor(endpoint);
+    queue.updateStandardEntryFor(epHandler);
   } // END endpointsPrimary
 
   ////
