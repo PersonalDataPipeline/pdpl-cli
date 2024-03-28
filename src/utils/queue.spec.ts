@@ -14,7 +14,7 @@ vi.mock("./fs.js", () => ({
   writeFile: vi.fn(),
 }));
 
-import * as queue from "./queue.class.js";
+import * as queue from "./queue.js";
 import { ApiHandler, EpSnapshot } from "./types.js";
 
 const outputDir = getConfig().outputDir;

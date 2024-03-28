@@ -3,7 +3,7 @@ import path from "path";
 import { config as dotenvConfig } from "dotenv";
 
 import { readDirectory, __dirname } from "../utils/fs.js";
-import * as queue from "../utils/queue.class.js";
+import * as queue from "../utils/queue.js";
 import { ApiHandler, EpHistoric } from "../utils/types.js";
 import { getEpochNow } from "../utils/date-time.js";
 

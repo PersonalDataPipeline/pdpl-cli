@@ -14,7 +14,7 @@ import {
 import { runDateUtc } from "../utils/date-time.js";
 import { ApiHandler, EpHistoric, EpSnapshot, DailyData } from "../utils/types.js";
 import { getApiData } from "../utils/api-data.js";
-import * as queue from "../utils/queue.class.js";
+import * as queue from "../utils/queue.js";
 import { AxiosResponse } from "axios";
 import { isObjectWithKeys } from "../utils/object.js";
 
