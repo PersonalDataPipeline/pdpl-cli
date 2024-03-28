@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
 import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
-import { MockAxiosResponse } from "../../utils/api-data.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -85,10 +84,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getHistoricDelay: () => HALF_HOUR_IN_SEC,
     parseDayFromEntity: (entity: object) =>
       (entity as WahooWorkoutEntity).created_at.split("T")[0],
-    transformResponseData: (
-      response: AxiosResponse | MockAxiosResponse,
-      existingData?: object | []
-    ) => {
+    transformResponseData: (response: AxiosResponse, existingData?: object | []) => {
       existingData = existingData ? existingData : [];
       return [...(response.data as { workouts: [] }).workouts, ...(existingData as [])];
     },

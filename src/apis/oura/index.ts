@@ -2,7 +2,6 @@ import { AxiosResponse } from "axios";
 
 import { adjustDateByDays, getFormattedDate } from "../../utils/date-time.js";
 import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
-import { MockAxiosResponse } from "../../utils/api-data.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -75,14 +74,14 @@ const getHeartrateParams = (params?: OuraHeartRateUrlParams): OuraHeartRateUrlPa
 const parseDayFromEntity = (entity: object) => (entity as OuraEntity).day;
 
 const transformResponseData = (
-  response: AxiosResponse | MockAxiosResponse,
+  response: AxiosResponse,
   existingData?: object | []
 ): [] => {
   existingData = existingData ? existingData : [];
   return [...(existingData as []), ...(response.data as { data: [] }).data];
 };
 
-const getNextCallParams = (response?: AxiosResponse | MockAxiosResponse): object => {
+const getNextCallParams = (response?: AxiosResponse): object => {
   if (response && response.data && response.data.next_token) {
     return { next_token: response.data.next_token };
   }

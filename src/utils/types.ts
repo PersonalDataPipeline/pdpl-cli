@@ -1,7 +1,5 @@
 import { AxiosResponse } from "axios";
 
-import { MockAxiosResponse } from "./api-data.js";
-
 export interface DailyEntity {
   day: string;
 }
@@ -29,12 +27,9 @@ export interface EpSnapshot {
   getMethod?: () => "get" | "post";
   getParams?: () => object;
   getRequestData?: () => object;
-  getNextCallParams?: (
-    response: AxiosResponse | MockAxiosResponse,
-    params?: object
-  ) => object;
+  getNextCallParams?: (response: AxiosResponse, params?: object) => object;
   transformResponseData?: (
-    response: AxiosResponse | MockAxiosResponse,
+    response: AxiosResponse,
     existingData?: [] | object
   ) => [] | object;
   parseDayFromEntity?: (entity: object) => string;
@@ -58,7 +53,7 @@ export interface EpSecondary {
   getMethod?: () => string;
   getRequestData?: () => object;
   transformResponseData?: (
-    response: AxiosResponse | MockAxiosResponse,
+    response: AxiosResponse,
     existingData?: [] | object
   ) => [] | object;
 }

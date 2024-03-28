@@ -6,7 +6,6 @@ import {
   getFormattedDate,
 } from "../../utils/date-time.js";
 import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
-import { MockAxiosResponse } from "../../utils/api-data.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
 
@@ -34,7 +33,7 @@ const getDefaultParams = (): GitHubUrlParams => ({
 });
 
 const getStandardNextCallParams = (
-  response: AxiosResponse | MockAxiosResponse,
+  response: AxiosResponse,
   params?: GitHubUrlParams
 ): GitHubUrlParams => {
   return params && (response.data as object[]).length === 100

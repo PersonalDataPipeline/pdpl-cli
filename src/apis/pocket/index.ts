@@ -6,7 +6,6 @@ import {
   getFormattedDate,
 } from "../../utils/date-time.js";
 import { EpSecondary, EpSnapshot } from "../../utils/types.js";
-import { MockAxiosResponse } from "../../utils/api-data.js";
 import getConfig from "../../utils/config.js";
 
 const { POCKET_CONSUMER_KEY = "", POCKET_ACCESS_TOKEN = "" } = process.env;
@@ -67,9 +66,7 @@ const endpointsPrimary: EpSnapshot[] = [
       const timeAdded = (entity as PocketEntity).time_added || "";
       return getFormattedDate(0, new Date(parseInt(timeAdded, 10) * 1000));
     },
-    transformResponseData: (
-      response: AxiosResponse | MockAxiosResponse
-    ): PocketEntity[] => {
+    transformResponseData: (response: AxiosResponse): PocketEntity[] => {
       const listData = [];
       for (const entity of Object.values(response.data.list as object)) {
         if ("time_added" in (entity as object)) {

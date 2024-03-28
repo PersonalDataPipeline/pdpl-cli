@@ -65,7 +65,7 @@ const endpointsPrimary: ApiPrimaryEndpoint[] = [;
 		getParams: () => ({}), // URL parameters to use for a standard run
 		getDelay: () => ONE_DAY_IN_SEC, // Delay between standard runs
 		parseDayFromEntity: (entity: object) => entity.day, // If the entities returned from the endpoint should be grouped by day, return the day in YYYY-MM-DD format based on the entity data.
-		transformResponseData: (response: AxiosResponse | MockAxiosResponse, existingData?: object | []) => existingData.length, // (Optional) Should the default response data be transformed before processing?
+		transformResponseData: (response: AxiosResponse, existingData?: object | []) => existingData.length, // (Optional) Should the default response data be transformed before processing?
 	},
 ]
 ```
