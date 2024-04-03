@@ -13,6 +13,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   root: true,
   "ignorePatterns": [
+    "bin/run.js",
     ".config.js",
     ".eslintrc.cjs",
     "vitest.config.js",
