@@ -41,8 +41,6 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   logger.setApiName(apiName);
   const runDate = runDateUtc();
   const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
-
-  // TODO: Should this be the shape of the endpoint handler collection?
   const handlerDict: { [key: string]: EpHistoric | EpSnapshot } = {};
   for (const endpointHandler of apiHandler.endpointsPrimary) {
     handlerDict[endpointHandler.getEndpoint()] = endpointHandler;

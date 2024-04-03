@@ -3,19 +3,14 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Data source: Day One import
-- [ ] Add tests for get script (might need to come with refactoring how the CLI works)
-- [ ] Refactor: queue class -> module
-- [ ] Refactor: Axios -> native (fetch or HTTP)
-- [ ] Fix: TS-eslint warnings
-- [ ] Fix: `// TODO:` entries in code
-- [ ] Problem with secondary endpoints failing with no way to re-run
-- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Time box implementing [oclif](https://github.com/oclif/core?tab=readme-ov-file) and see if it's worth it
+- [ ] Unit tests for getter script
+- [ ] Improve date-based tests
 - [ ] Log report script (aggregate run data, errors, etc)
-- [ ] Log level selector in config and env
-- [ ] Combine scripts into a single command
-- [ ] Add APIs and endpoints to run in config; figure out how to output config -> JSON for bash
+- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Add APIs and endpoints to run in config; output config -> JSON for bash
 - [ ] Add health check script to check configuration and activated APIs + endpoints
+- [ ] Problem with secondary endpoints failing with no way to re-run
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
@@ -29,7 +24,7 @@ For example ... the Gists endpoint got GitHub. We can just go ahead and get all 
 
 Just ran into an "interesting challenge" (we're going to phrase it like that instead of getting annoyed with API designers) with the Pocket API. First, the authorization process is kind of OAuth-flavored (redirect for consent, exchange codes for tokens) but was so different that I had to write a whole now authorization flow. Not a huge deal. But, when writing API requests, the access token (and "client ID") go in the body. I say body because it's a POST request for a "retrieve" call to an endpoint named ... wait for it ... `/get`. So all of the work that went into the logic around URL parameters would somehow need to be recreated (or ported over somehow) to the POST body. WAT? Well, this particular endpoint allows us to just get absolutely everything all at once so we're going to go ahead and do that instead! The interesting part here is that the endpoint is kind of a snapshot (get everything all at once, no historic run needed) but is also parsed by day. 
 
-I'm thinking about this task on the list to add tests for the getter script ... it feels like that's very handler-dependent. Part of me feels like maybe the testing should be per API? Like the get script should be written so that it can be used in individual tests for APIs and their endpoints.
+I'm thinking about this task on the list to add tests for the getter script ... it feels like that's very handler-dependent. Part of me feels like maybe the testing should be per API? Like the get script should be written so that it can be used in individual tests for APIs and their endpoints. But then maybe that's putting too much onus on the API authors. One of the things we want to optimize big-time is making it easy for folks to ad the APIs they want and that starts ASAP. If people are going to use this then they need to be able to add data sources. Having a getter script that functions as expected for a bunch of different cases and tests that illustrate how things work would make those contributions easier. The less that folks need to screw around with testing harnesses and unpredictable outcomes, the better.
 
 ## [[2024-03-26]]
 
