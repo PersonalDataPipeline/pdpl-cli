@@ -3,16 +3,37 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Time box implementing [oclif](https://github.com/oclif/core?tab=readme-ov-file) and see if it's worth it
-- [ ] Unit tests for getter script
-- [ ] Improve date-based tests
 - [ ] Log report script (aggregate run data, errors, etc)
-- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Time box implementing [oclif](https://github.com/oclif/core?tab=readme-ov-file) and see if it's worth it
 - [ ] Add APIs and endpoints to run in config; output config -> JSON for bash
+- [ ] Improve date-based tests
+- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add health check script to check configuration and activated APIs + endpoints
 - [ ] Problem with secondary endpoints failing with no way to re-run
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-03-27]]
+
+Took a pause to investigate [oclif](https://www.joshcanhelp.com/oclif/) and see if it was a good framework for handling all the different parts of a CLI. I'm sold on at least doing a PoC with it, keeping the business logic separate from the framework.
+
+I want to make sure the command structure makes sense. This is the outline I had in my head. The words themselves might change:
+
+- `api <api name>`
+	- get data
+	- log reporting
+	- queue management
+	- readiness check
+- `import <api name>`
+	- import single file or directory of files
+	- log reporting
+	- dry run to check importability
+- `add`
+	- Event on date/time
+	- Period of time
+
+Feels like this is a big topic, now that I'm writing it out. This is something I want to get as right as I can early on so I don't have to unwire anything. I think the core actions of API getting and file importing aren't going to change much, just need to figure out how to structure it for commands that require an API name and ones that don't. 
 
 ## [[2024-03-27]]
 
