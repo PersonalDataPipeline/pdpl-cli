@@ -27,6 +27,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "@oclif/core": "^3.26.2",
     "axios": "^1.6.5",
     "axios-retry": "^4.1.0",
     "csv": "^6.3.6",
@@ -42,5 +43,20 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "vitest": "^1.4.0"
+  },
+  "bin": {
+    "xtrct": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "xtrct",
+    "dirname": "xtrct",
+    "commands": {
+      "strategy": "pattern",
+      "target": "./dist/commands",
+      "globPatterns": [
+         "**/*.+(js)",
+        "!**/_*"
+      ]
+    }
   }
 }
