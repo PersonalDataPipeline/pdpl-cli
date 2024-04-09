@@ -3,14 +3,15 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Log report script (aggregate run data, errors, etc)
-- [ ] Time box implementing [oclif](https://github.com/oclif/core?tab=readme-ov-file) and see if it's worth it
-- [ ] Add APIs and endpoints to run in config; output config -> JSON for bash
+- [ ] Implement [oclif](https://github.com/oclif/core?tab=readme-ov-file) 
+- [ ] Add APIs and endpoints to run in config and output to JSON for bash
 - [ ] Improve date-based tests
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
-- [ ] Add health check script to check configuration and activated APIs + endpoints
-- [ ] Problem with secondary endpoints failing with no way to re-run
+- [ ] Add health check script to check configuration against activated APIs + endpoints
+- [ ] Fix: Secondary endpoints fail with no way to re-run
+- [ ] Fix: Check headers for GitHub events to see if calls should continue
+- [ ] Fix: Don't process data if HTTP call fails (continue main loop)
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
