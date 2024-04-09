@@ -56,4 +56,11 @@ export const getFormattedDate = (adjustDays: number = 0, date: Date = new Date()
   return `${yyyy}-${padLeftZero(mm)}-${padLeftZero(dd)}`;
 };
 
+export const getFormattedTime = (date: Date = new Date()) => {
+  const hh = date.getHours();
+  const mm = date.getMinutes() + 1;
+  const ss = date.getSeconds();
+  return `${padLeftZero(hh)}:${padLeftZero(mm)}:${padLeftZero(ss)}`;
+};
+
 export const getEpochNow = (nowDate = new Date()) => Math.floor(nowDate.getTime() / 1000);

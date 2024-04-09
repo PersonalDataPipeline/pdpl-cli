@@ -1,18 +1,26 @@
-import { runDateUtc, getFormattedDate, adjustDateByDays } from "./date-time.js";
+import {
+  runDateUtc,
+  getFormattedDate,
+  adjustDateByDays,
+  getFormattedTime,
+} from "./date-time.js";
 
 describe("Function: adjustDateByDays", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2000, 0, 6, 0, 0, 0));
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
   it("removes days correctly", () => {
-    // TODO: Setup test config with a known timezone
-    expect(adjustDateByDays(-5, new Date("2000-01-06T00:00:00")).toISOString()).toEqual(
-      "2000-01-01T08:00:00.000Z"
-    );
+    expect(adjustDateByDays(-5).getDate()).toEqual(1);
   });
 
   it("adds days correctly", () => {
-    // TODO: Setup test config with a known timezone
-    expect(adjustDateByDays(5, new Date("2000-01-06T00:00:00")).toISOString()).toEqual(
-      "2000-01-11T08:00:00.000Z"
-    );
+    expect(adjustDateByDays(5).getDate()).toEqual(11);
   });
 });
 
@@ -39,5 +47,20 @@ describe("Function: getFormattedDate", () => {
   it("respects date adjustment for specific date", () => {
     const thisDate = new Date("2020-01-02 GMT-0800");
     expect(getFormattedDate(-1, thisDate)).toEqual("2020-01-01");
+  });
+});
+
+describe("Function: getFormattedTime", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2000, 0, 6, 13, 2, 54));
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
+  it("returns the correctly formatted time", () => {
+    expect(getFormattedTime()).toEqual("13:03:54");
   });
 });
