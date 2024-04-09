@@ -15,6 +15,11 @@ Notes taken during development, newest to oldest.
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
 
+## [[2024-04-09]]
+
+Back in the swing of things, going to see if I can implement oclif for the commands that I currently have. Going with `xtrct` for the command for now. 
+
+OK, that went really well! I moved the newest log script over and it was, for the most part, uneventful. The shared args and flags will be very nice to have and the command structure feels good so far. The one thing I'm thinking about here is testing. It might be better to keep the business logic in separate files to test. I'll try writing a test against oclif and make sure it's easy to do and doesn't require a bunch of black magic.
 ## [[2024-04-08]]
 
 Took a pause to investigate [oclif](https://www.joshcanhelp.com/oclif/) and see if it was a good framework for handling all the different parts of a CLI. I'm sold on at least doing a PoC with it, keeping the business logic separate from the framework.
