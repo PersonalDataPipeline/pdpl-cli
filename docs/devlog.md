@@ -35,7 +35,7 @@ I want to make sure the command structure makes sense. This is the outline I had
 
 Feels like this is a big topic, now that I'm writing it out. This is something I want to get as right as I can early on so I don't have to unwire anything. I think the core actions of API getting and file importing aren't going to change much, just need to figure out how to structure it for commands that require an API name and ones that don't. 
 
-I haven't checked on the automated API getting in a while and I want a command to be able to check in on what the API has done so I'll write that as a way to solve my own problem here.
+I haven't checked on the automated API getting in a while and I want a command to be able to check in on what the API has done so I'll write that as a way to solve my own problem here. Realizing right away that oclif would help with all of this command boilerplate.
 
 ## [[2024-03-27]]
 

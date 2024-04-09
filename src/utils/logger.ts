@@ -59,7 +59,7 @@ export interface RunLogSuccessEntry
   days?: number;
 }
 
-interface RunLogFile {
+export interface RunLogFile {
   dateTime: string;
   startTimeMs: number;
   entries: (RunLogInfoEntry | RunLogErrorEntry | RunLogSuccessEntry)[];
