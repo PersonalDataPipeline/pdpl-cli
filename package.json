@@ -5,8 +5,8 @@
   "scripts": {
     "test": "vitest run",
     "test-watch": "vitest",
-    "dev": "tsc -w",
-    "build": "tsc",
+    "dev": "rm -rf ./dist && tsc -w",
+    "build": "rm -rf ./dist && tsc",
     "eslint": "eslint --fix src",
     "eslint-ci": "eslint src",
     "prettier": "prettier --write ./src",
