@@ -4,7 +4,7 @@ import { pathExists } from "./fs.js";
 import path, { dirname } from "path";
 import runLogger from "./logger.js";
 import { fileURLToPath } from "url";
-import { existsSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 
 const {
   DEBUG_OUTPUT = "false",
@@ -19,11 +19,15 @@ const {
 /// Types
 //
 
-interface Config {
+export interface Config {
   outputDir: string;
   compressJson: boolean;
   timezone: string;
   originDate: string;
+  apis: {
+    [key: string]: string[] | true;
+  };
+  apisSupported: string[];
   debugUseMocks: boolean;
   debugLogOutput: boolean;
   debugSaveMocks: boolean;
@@ -41,6 +45,8 @@ const config: Config = {
   timezone: "GMT",
   outputDir: path.join(homedir(), "api-data"),
   originDate: "1900-01-01",
+  apis: {},
+  apisSupported: [],
   compressJson: true,
   debugUseMocks: false,
   debugLogOutput: false,
@@ -109,9 +115,17 @@ export default (): Config => {
   }
 
   if (!pathExists(processedConfig.outputDir)) {
-    console.log(`❌ Output dir ${processedConfig.outputDir} does not exist`);
-    process.exit(1);
+    throw new Error(`Output dir ${processedConfig.outputDir} does not exist`);
   }
+
+  const apisSupported = readdirSync(path.join(__dirname, "..", "apis"));
+  for (const api of Object.keys(processedConfig.apis)) {
+    if (!apisSupported.includes(api)) {
+      throw new Error(`Configured API "${api}" is not supported`);
+    }
+  }
+
+  processedConfig.apisSupported = apisSupported;
 
   process.env.TZ = processedConfig.timezone;
 

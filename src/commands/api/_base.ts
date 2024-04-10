@@ -1,8 +1,7 @@
 import { Args, Command, Flags, Interfaces } from "@oclif/core";
-import path from "path";
 
-import { readDirectory, __dirname } from "../../utils/fs.js";
 import logger from "../../utils/logger.js";
+import getConfig, { Config } from "../../utils/config.js";
 
 ////
 /// Types
@@ -37,6 +36,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected flags!: Flags<T>;
   protected args!: Args<T>;
+  protected conf!: Config;
 
   public override async init(): Promise<void> {
     await super.init();
@@ -50,10 +50,15 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
     this.flags = flags as Flags<T>;
     this.args = args as Args<T>;
+    this.conf = getConfig();
 
-    const apisSupported = readDirectory(path.join(__dirname, "..", "apis"));
-    if (!apisSupported.includes(args["apiName"] as string)) {
-      throw new Error(`Unknown API name "${args["apiName"]}"`);
+    if (!this.conf.apisSupported.includes(args["apiName"] as string)) {
+      throw new Error(`API "${args["apiName"]}" is not supported`);
+    }
+
+    const configuredApis = Object.keys(this.conf.apis);
+    if (!configuredApis.includes(args["apiName"] as string)) {
+      throw new Error(`API "${args["apiName"]}" is not configured to be run`);
     }
   }
 
