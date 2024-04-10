@@ -1,10 +1,15 @@
 import { homedir } from "os";
+import { existsSync, readdirSync } from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+
+import { config as dotenvConfig } from "dotenv";
 
 import { pathExists } from "./fs.js";
-import path, { dirname } from "path";
 import runLogger from "./logger.js";
-import { fileURLToPath } from "url";
-import { existsSync, readdirSync } from "fs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 const {
   DEBUG_OUTPUT = "false",
@@ -55,7 +60,6 @@ const config: Config = {
   debugCompressJson: false,
 };
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const configPath = PATH_TO_CONFIG
   ? PATH_TO_CONFIG
   : path.join(__dirname, "..", "..", ".config.js");
