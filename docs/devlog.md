@@ -4,16 +4,22 @@ Notes taken during development, newest to oldest.
 
 ## TODO:
 - [ ] Implement [oclif](https://github.com/oclif/core?tab=readme-ov-file) 
-- [ ] Add APIs and endpoints to run in config and output to JSON for bash
 - [ ] Improve date-based tests
-- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
-- [ ] Add health check script to check configuration against activated APIs + endpoints
+- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Rethink logging ... output to `stdout` vs storing in a file; call stack for errors
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Fix: Check headers for GitHub events to see if calls should continue
 - [ ] Fix: Don't process data if HTTP call fails (continue main loop)
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-04-10]]
+
+Lots of wins lately! oclif is proving to be a great way to organize and develop. Very easy to add new commands, most of the DX is straightforward, and no long side quests to understand it's behavior. I moved an existing command and added a new one and it all worked as expected. 
+
+I've been thinking about logging and how that's still not where I need it. The current system is OK and more or less works for checking back through what's there after it's been running for a while. But it's not great for debugging and I'm missing the call stack. I sort of feel like I unintentionally reinvented logging and did not end up in a better place. I think the idea of structured logs is probably a good idea but how it's all working now is not ideal. I'm also not sure how oclif is going to affect what I've got. 
+
 
 ## [[2024-04-09]]
 
