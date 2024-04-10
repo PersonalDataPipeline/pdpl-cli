@@ -45,6 +45,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     this.args = args as Args<T>;
     this.conf = getConfig();
 
+    // This arg is required when included, see above for definition
     if (args["apiName"]) {
       if (!this.conf.apisSupported.includes(args["apiName"] as string)) {
         throw new Error(`API "${args["apiName"]}" is not supported`);
