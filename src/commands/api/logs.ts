@@ -6,6 +6,7 @@ import getConfig from "../../utils/config.js";
 import { readDirectory, readFile } from "../../utils/fs.js";
 import { getFormattedDate, getFormattedTime } from "../../utils/date-time.js";
 import { RunLogFile } from "../../utils/logger.js";
+import CliTable3 from "cli-table3";
 
 export default class Logs extends BaseCommand<typeof Logs> {
   static override summary = "Output log stats";
@@ -46,9 +47,11 @@ export default class Logs extends BaseCommand<typeof Logs> {
       .sort((a, b) => (a > b ? -1 : b > a ? 1 : 0))
       .slice(0, numberToDisplay);
 
-    console.log("");
-    console.log(`Date       | Time     | Err |${errOnly ? "" : " Suc |"} Filename`);
-    console.log(`-----------|----------|-----|${errOnly ? "" : "-----|"}---------`);
+    const table = new CliTable3({
+      head: ["Date", "Time", "Errors", !errOnly ? "Success" : null, "Filename"].filter(
+        (head) => head !== null
+      ) as string[],
+    });
 
     for (const logFile of logFiles) {
       const log = readFile(path.join(apiLogsPath, logFile));
@@ -59,22 +62,18 @@ export default class Logs extends BaseCommand<typeof Logs> {
       const time = getFormattedTime(dateLocal);
 
       const errCount = entries.filter((entry) => entry.type === "error").length;
+      const sucCount = entries.filter((entry) => entry.type === "success").length;
 
       if (errOnly && !errCount) {
         continue;
       }
 
-      const errPad = errCount < 10 ? "  " : " ";
-      const sucCount = entries.filter((entry) => entry.type === "success").length;
-      const sucPad = sucCount < 10 ? "  " : " ";
-      console.log(
-        `${date} |`,
-        `${time} |`,
-        `${errCount} ${errPad}|`,
-        errOnly ? "" : `${sucCount} ${sucPad}|`,
-        logFile
+      table.push(
+        [date, time, errCount, !errOnly ? sucCount : null, logFile].filter(
+          (cell) => cell !== null
+        ) as string[]
       );
     }
-    console.log("");
+    console.log(table.toString());
   }
 }

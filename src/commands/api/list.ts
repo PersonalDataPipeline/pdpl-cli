@@ -1,3 +1,4 @@
+import CliTable3 from "cli-table3";
 import { ApiHandler } from "../../utils/types.js";
 import { BaseCommand } from "./_base.js";
 
@@ -7,7 +8,9 @@ export default class Logs extends BaseCommand<typeof Logs> {
   static override examples = ["<%= config.bin %> <%= command.id %>"];
 
   public override async run(): Promise<void> {
-    console.log("Name", "URL", "Ready?", "Conf?", "Ep #", "Ep conf");
+    const table = new CliTable3({
+      head: ["Name", "URL", "Ready?", "Conf?", "Ep #", "Ep conf"],
+    });
 
     for (const apiName of this.conf.apisSupported) {
       const { default: handler } = (await import(`../../apis/${apiName}/index.js`)) as {
@@ -15,8 +18,7 @@ export default class Logs extends BaseCommand<typeof Logs> {
       };
 
       const isConfigured = Object.keys(this.conf.apis).includes(apiName);
-
-      console.log(
+      table.push([
         handler.getApiName(),
         handler.getApiBaseUrl(),
         handler.isReady() ? "yes" : "no",
@@ -26,8 +28,10 @@ export default class Logs extends BaseCommand<typeof Logs> {
           ? "-"
           : this.conf.apis[apiName] === true
             ? handler.endpointsPrimary.length
-            : (this.conf.apis[apiName] as []).length
-      );
+            : (this.conf.apis[apiName] as []).length,
+      ]);
     }
+
+    console.log(table.toString());
   }
 }
