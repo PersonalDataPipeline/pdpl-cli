@@ -4,11 +4,26 @@ import path from "path";
 import { readDirectory, __dirname } from "../../utils/fs.js";
 import logger from "../../utils/logger.js";
 
+////
+/// Types
+//
+
 export type Flags<T extends typeof Command> = Interfaces.InferredFlags<
   (typeof BaseCommand)["baseFlags"] & T["flags"]
 >;
 
 export type Args<T extends typeof Command> = Interfaces.InferredArgs<T["args"]>;
+
+////
+/// Exports
+//
+
+export const apiNameArg = {
+  apiName: Args.string({
+    required: true,
+    name: "APINAME",
+  }),
+};
 
 export abstract class BaseCommand<T extends typeof Command> extends Command {
   static override baseFlags = {};

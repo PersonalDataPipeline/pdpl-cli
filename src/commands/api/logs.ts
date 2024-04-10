@@ -1,7 +1,7 @@
 import { Flags } from "@oclif/core";
 import path from "path";
 
-import { BaseCommand } from "./_base.js";
+import { BaseCommand, apiNameArg } from "./_base.js";
 import getConfig from "../../utils/config.js";
 import { readDirectory, readFile } from "../../utils/fs.js";
 import { getFormattedDate, getFormattedTime } from "../../utils/date-time.js";
@@ -9,6 +9,10 @@ import { RunLogFile } from "../../utils/logger.js";
 
 export default class Logs extends BaseCommand<typeof Logs> {
   static override summary = "child class that extends BaseCommand";
+
+  static override args = {
+    ...apiNameArg,
+  };
 
   static override flags = {
     "number": Flags.integer({
@@ -64,10 +68,8 @@ export default class Logs extends BaseCommand<typeof Logs> {
       const sucCount = entries.filter((entry) => entry.type === "success").length;
       const sucPad = sucCount < 10 ? "  " : " ";
       console.log(
-        date,
-        "|",
-        time,
-        "|",
+        `${date} |`,
+        `${time} |`,
         `${errCount} ${errPad}|`,
         errOnly ? "" : `${sucCount} ${sucPad}|`,
         logFile
