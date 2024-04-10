@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -32,6 +32,8 @@ interface WahooWorkoutEntity {
 const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
 const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
 
+const isReady = () =>
+  !!WAHOO_AUTHORIZE_CLIENT_ID && !!WAHOO_AUTHORIZE_CLIENT_SECRET && !!WAHOO_REFRESH_TOKEN;
 const getApiName = () => "wahoo";
 const getApiBaseUrl = () => "https://api.wahooligan.com/v1/";
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
@@ -92,9 +94,10 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
 ];
 const endpointsSecondary: EpSecondary[] = [];
 
-export {
+const handler: ApiHandler = {
   authorizeEndpoint,
   tokenEndpoint,
+  isReady,
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
@@ -102,3 +105,5 @@ export {
   endpointsPrimary,
   endpointsSecondary,
 };
+
+export default handler;

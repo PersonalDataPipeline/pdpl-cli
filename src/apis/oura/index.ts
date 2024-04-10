@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 
 import { adjustDateByDays, getFormattedDate } from "../../utils/date-time.js";
-import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -92,18 +92,12 @@ const getNextCallParams = (response?: AxiosResponse): object => {
 /// Exports
 //
 
+const isReady = () => !!OURA_AUTH_TOKEN;
 const getApiName = () => "oura";
 const getApiBaseUrl = () => "https://api.ouraring.com/v2/";
-const getApiAuthHeaders = (): object => {
-  if (!OURA_AUTH_TOKEN) {
-    console.log("❌ No Oura auth token stored. See README for more information.");
-    process.exit(1);
-  }
-
-  return {
-    Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
-  };
-};
+const getApiAuthHeaders = async () => ({
+  Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
+});
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
@@ -202,7 +196,8 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
 
 const endpointsSecondary: EpSecondary[] = [];
 
-export {
+const handler: ApiHandler = {
+  isReady,
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
@@ -210,3 +205,5 @@ export {
   endpointsPrimary,
   endpointsSecondary,
 };
+
+export default handler;

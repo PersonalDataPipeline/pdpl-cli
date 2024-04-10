@@ -5,7 +5,7 @@ import {
   QUARTER_HOUR_IN_SEC,
   getFormattedDate,
 } from "../../utils/date-time.js";
-import { EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
 
@@ -57,26 +57,15 @@ const getHistoricParams = (currentParams?: GitHubUrlParams): GitHubUrlParams => 
 /// Exports
 //
 
+const isReady = () => !!GITHUB_PERSONAL_ACCESS_TOKEN && !!GITHUB_USERNAME;
 const getApiName = () => "github";
 const getApiBaseUrl = () => "https://api.github.com/";
 const getHistoricDelay = () => ONE_QUATER_IN_SEC;
-const getApiAuthHeaders = (): object => {
-  if (!GITHUB_PERSONAL_ACCESS_TOKEN) {
-    console.log("❌ No GitHub access token stored. See README for more information.");
-    process.exit(1);
-  }
-
-  if (!GITHUB_USERNAME) {
-    console.log("❌ No GitHub username stored. See README for more information.");
-    process.exit(1);
-  }
-
-  return {
-    "Authorization": `Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`,
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
-};
+const getApiAuthHeaders = async () => ({
+  "Authorization": `Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`,
+  "Accept": "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28",
+});
 
 const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
@@ -127,7 +116,8 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
 ];
 const endpointsSecondary: EpSecondary[] = [];
 
-export {
+const handler: ApiHandler = {
+  isReady,
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
@@ -135,3 +125,5 @@ export {
   endpointsPrimary,
   endpointsSecondary,
 };
+
+export default handler;

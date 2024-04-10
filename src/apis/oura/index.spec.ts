@@ -1,6 +1,6 @@
 import { getFormattedDate } from "../../utils/date-time.js";
 import { EpHistoric } from "../../utils/types.js";
-import * as ouraHandler from "./index.js";
+import ouraHandler from "./index.js";
 
 describe("Module: Oura API handler", () => {
   describe("Heartrate endpoint", () => {

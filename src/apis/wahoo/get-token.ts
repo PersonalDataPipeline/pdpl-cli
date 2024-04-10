@@ -2,7 +2,7 @@ import * as http from "http";
 import { config } from "dotenv";
 config();
 
-import { authorizeEndpoint, tokenEndpoint } from "./index.js";
+import wahooHandler from "./index.js";
 import { serverPort, serverCallback } from "../../utils/authorize-app.js";
 
 const {
@@ -30,8 +30,8 @@ http
       refreshToken: WAHOO_REFRESH_TOKEN,
       refreshTokenEnvKey: "WAHOO_REFRESH_TOKEN",
       scope: "workouts_read plans_read power_zones_read offline_data user_read",
-      authorizeEndpoint,
-      tokenEndpoint,
+      authorizeEndpoint: wahooHandler.authorizeEndpoint!,
+      tokenEndpoint: wahooHandler.tokenEndpoint!,
     })
   )
   .listen(serverPort);

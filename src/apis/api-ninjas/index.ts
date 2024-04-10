@@ -1,5 +1,5 @@
 import { ONE_DAY_IN_SEC, ONE_YEAR_IN_SEC } from "../../utils/date-time.js";
-import { EpHistoric, EpSecondary } from "../../utils/types.js";
+import { ApiHandler, EpHistoric, EpSecondary } from "../../utils/types.js";
 import getConfig from "../../utils/config.js";
 import { getFormattedDate } from "../../utils/date-time.js";
 
@@ -46,18 +46,12 @@ const parseDayFromEntity = (entity: object) => {
 /// Exports
 //
 
+const isReady = () => !!API_NINJAS_KEY;
 const getApiName = () => "api-ninjas";
 const getApiBaseUrl = () => "https://api.api-ninjas.com/v1/";
-const getApiAuthHeaders = () => {
-  if (!API_NINJAS_KEY) {
-    console.log("❌ No API Ninjas key stored. See README for more information.");
-    process.exit(1);
-  }
-
-  return {
-    "X-Api-Key": API_NINJAS_KEY,
-  };
-};
+const getApiAuthHeaders = async () => ({
+  "X-Api-Key": API_NINJAS_KEY,
+});
 const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 
 const endpointsPrimary: EpHistoric[] = [
@@ -105,7 +99,8 @@ const endpointsPrimary: EpHistoric[] = [
 
 const endpointsSecondary: EpSecondary[] = [];
 
-export {
+const handler: ApiHandler = {
+  isReady,
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
@@ -113,3 +108,5 @@ export {
   endpointsPrimary,
   endpointsSecondary,
 };
+
+export default handler;

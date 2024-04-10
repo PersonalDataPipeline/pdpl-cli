@@ -9,6 +9,7 @@ export interface DailyData {
 }
 
 export interface ApiHandler {
+  isReady: () => boolean;
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<{ [key: string]: string }>;

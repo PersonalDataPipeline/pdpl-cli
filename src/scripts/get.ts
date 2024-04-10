@@ -40,7 +40,10 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
 
   logger.setApiName(apiName);
   const runDate = runDateUtc();
-  const apiHandler = (await import(`../apis/${apiName}/index.js`)) as ApiHandler;
+  const { default: apiHandler } = (await import(`../apis/${apiName}/index.js`)) as {
+    default: ApiHandler;
+  };
+
   const handlerDict: { [key: string]: EpHistoric | EpSnapshot } = {};
   for (const endpointHandler of apiHandler.endpointsPrimary) {
     handlerDict[endpointHandler.getEndpoint()] = endpointHandler;

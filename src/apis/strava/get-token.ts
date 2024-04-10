@@ -2,7 +2,7 @@ import * as http from "http";
 import { config } from "dotenv";
 config();
 
-import { authorizeEndpoint, tokenEndpoint } from "./index.js";
+import stravaHandler from "./index.js";
 import { serverPort, serverCallback } from "../../utils/authorize-app.js";
 
 const {
@@ -20,8 +20,8 @@ http
       refreshToken: STRAVA_REFRESH_TOKEN,
       refreshTokenEnvKey: "STRAVA_REFRESH_TOKEN",
       scope: "read_all,profile:read_all,activity:read_all",
-      authorizeEndpoint,
-      tokenEndpoint,
+      authorizeEndpoint: stravaHandler.authorizeEndpoint!,
+      tokenEndpoint: stravaHandler.tokenEndpoint!,
     })
   )
   .listen(serverPort);

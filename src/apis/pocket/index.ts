@@ -5,7 +5,7 @@ import {
   getEpochNow,
   getFormattedDate,
 } from "../../utils/date-time.js";
-import { EpSecondary, EpSnapshot } from "../../utils/types.js";
+import { ApiHandler, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import getConfig from "../../utils/config.js";
 
 const { POCKET_CONSUMER_KEY = "", POCKET_ACCESS_TOKEN = "" } = process.env;
@@ -33,18 +33,12 @@ interface PocketEntity {
 
 const authorizeEndpoint = "https://getpocket.com/auth/authorize";
 const tokenEndpoint = "https://getpocket.com/v3/oauth/authorize";
+const isReady = () => !!POCKET_CONSUMER_KEY && !!POCKET_ACCESS_TOKEN;
 const getApiName = () => "pocket";
 const getApiBaseUrl = () => "https://getpocket.com/v3/";
-const getApiAuthHeaders = (): object => {
-  if (!POCKET_CONSUMER_KEY) {
-    console.log("❌ No Pocket consumer key stored. See README for more information.");
-    process.exit(1);
-  }
-
-  return {
-    "Content-Type": "application/json; charset=UTF-8",
-  };
-};
+const getApiAuthHeaders = async () => ({
+  "Content-Type": "application/json; charset=UTF-8",
+});
 
 const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 const endpointsPrimary: EpSnapshot[] = [
@@ -79,9 +73,10 @@ const endpointsPrimary: EpSnapshot[] = [
 ];
 const endpointsSecondary: EpSecondary[] = [];
 
-export {
+const handler: ApiHandler = {
   authorizeEndpoint,
   tokenEndpoint,
+  isReady,
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
@@ -89,3 +84,5 @@ export {
   endpointsPrimary,
   endpointsSecondary,
 };
+
+export default handler;

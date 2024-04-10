@@ -21,6 +21,7 @@ const outputDir = getConfig().outputDir;
 const queueFilePath = `${outputDir}/API_NAME/_queue.json`;
 
 const mockApiHandler: ApiHandler = {
+  isReady: vi.fn(() => true),
   getApiName: vi.fn(() => "API_NAME"),
   getApiBaseUrl: vi.fn(() => "API_BASE_URL"),
   getApiAuthHeaders: vi.fn(async () => ({})),

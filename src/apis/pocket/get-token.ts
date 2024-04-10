@@ -2,7 +2,7 @@ import * as http from "http";
 import { config } from "dotenv";
 config();
 
-import { authorizeEndpoint, tokenEndpoint } from "./index.js";
+import pocketHandler from "./index.js";
 import { serverPort } from "../../utils/authorize-app.js";
 import axios, { AxiosResponse } from "axios";
 import { envWrite } from "../../utils/fs.js";
@@ -48,7 +48,7 @@ http
 
         requestToken = (requestResponse as { data: { code: string } }).data.code;
 
-        const authorizeUrl = new URL(authorizeEndpoint);
+        const authorizeUrl = new URL(pocketHandler.authorizeEndpoint!);
         authorizeUrl.searchParams.append("request_token", requestToken);
         authorizeUrl.searchParams.append("redirect_uri", baseUrl + "/authorized");
 
@@ -81,7 +81,7 @@ http
 
       try {
         const tokenResponse = await axios.post(
-          tokenEndpoint,
+          pocketHandler.tokenEndpoint!,
           {
             consumer_key: POCKET_CONSUMER_KEY,
             code: requestToken,
