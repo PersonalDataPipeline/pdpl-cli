@@ -27,13 +27,6 @@ export const apiNameArg = {
 export abstract class BaseCommand<T extends typeof Command> extends Command {
   static override baseFlags = {};
 
-  static override args = {
-    apiName: Args.string({
-      required: true,
-      name: "APINAME",
-    }),
-  };
-
   protected flags!: Flags<T>;
   protected args!: Args<T>;
   protected conf!: Config;
@@ -52,13 +45,15 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     this.args = args as Args<T>;
     this.conf = getConfig();
 
-    if (!this.conf.apisSupported.includes(args["apiName"] as string)) {
-      throw new Error(`API "${args["apiName"]}" is not supported`);
-    }
+    if (args["apiName"]) {
+      if (!this.conf.apisSupported.includes(args["apiName"] as string)) {
+        throw new Error(`API "${args["apiName"]}" is not supported`);
+      }
 
-    const configuredApis = Object.keys(this.conf.apis);
-    if (!configuredApis.includes(args["apiName"] as string)) {
-      throw new Error(`API "${args["apiName"]}" is not configured to be run`);
+      const configuredApis = Object.keys(this.conf.apis);
+      if (!configuredApis.includes(args["apiName"] as string)) {
+        throw new Error(`API "${args["apiName"]}" is not configured to be run`);
+      }
     }
   }
 
