@@ -9,7 +9,7 @@ import { RunLogFile } from "../../utils/logger.js";
 import CliTable3 from "cli-table3";
 
 export default class Logs extends BaseCommand<typeof Logs> {
-  static override summary = "Output log stats";
+  static override summary = "List log entries for an API";
 
   static override args = {
     ...apiNameArg,
