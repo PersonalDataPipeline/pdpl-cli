@@ -8,7 +8,7 @@ import { getFormattedDate, getFormattedTime } from "../../utils/date-time.js";
 import { RunLogFile } from "../../utils/logger.js";
 
 export default class Logs extends BaseCommand<typeof Logs> {
-  static override summary = "child class that extends BaseCommand";
+  static override summary = "Output log stats";
 
   static override args = {
     ...apiNameArg,
