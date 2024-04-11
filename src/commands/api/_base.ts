@@ -53,7 +53,9 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
       const configuredApis = Object.keys(this.conf.apis);
       if (!configuredApis.includes(args["apiName"] as string)) {
-        throw new Error(`API "${args["apiName"]}" is not configured to be run`);
+        throw new Error(
+          `API "${args["apiName"]}" is ready but could not be found in local configuration`
+        );
       }
     }
   }
