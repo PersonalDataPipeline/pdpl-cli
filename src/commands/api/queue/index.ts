@@ -1,7 +1,7 @@
 import CliTable3 from "cli-table3";
-import { ApiHandler } from "../../utils/types.js";
-import { BaseCommand, apiNameArg } from "./_base.js";
-import * as queue from "../../utils/queue.js";
+import { ApiHandler } from "../../../utils/types.js";
+import { BaseCommand, apiNameArg } from "../_base.js";
+import * as queue from "../../../utils/queue.js";
 
 export default class Logs extends BaseCommand<typeof Logs> {
   static override summary = "Show the queue for an API";
@@ -18,7 +18,7 @@ export default class Logs extends BaseCommand<typeof Logs> {
     });
 
     const { default: handler } = (await import(
-      `../../apis/${this.args.apiName}/index.js`
+      `../../../apis/${this.args.apiName}/index.js`
     )) as {
       default: ApiHandler;
     };
