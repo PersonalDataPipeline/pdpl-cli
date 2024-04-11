@@ -206,7 +206,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
       continue;
     }
 
-    queue.updateStandardEntryFor(epHandler);
+    queue.updateStandardEntry(epHandler);
   } // END endpointsPrimary
 
   ////

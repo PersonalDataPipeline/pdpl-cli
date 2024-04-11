@@ -165,7 +165,10 @@ export const hasHistoricEntryFor = (endpoint: string) => {
   );
 };
 
-export const updateStandardEntryFor = (epHandler: EpHistoric | EpSnapshot) => {
+export const updateStandardEntry = (
+  epHandler: EpHistoric | EpSnapshot,
+  runAfter?: number
+) => {
   const runDate = runDateUtc();
   const endpoint = epHandler.getEndpoint();
   let seenStandard = false;
@@ -179,8 +182,7 @@ export const updateStandardEntryFor = (epHandler: EpHistoric | EpSnapshot) => {
       continue;
     }
 
-    const runAfter = epHandler.getDelay() + runDate.seconds;
-    queue[index].runAfter = runAfter;
+    queue[index].runAfter = runAfter || epHandler.getDelay() + runDate.seconds;
     seenStandard = true;
   }
   writeQueue();
