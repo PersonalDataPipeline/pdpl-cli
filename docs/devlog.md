@@ -3,7 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Implement [oclif](https://github.com/oclif/core?tab=readme-ov-file) 
 - [ ] Improve date-based tests
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add Hacker News API ([ref](https://github.com/HackerNews/API))
