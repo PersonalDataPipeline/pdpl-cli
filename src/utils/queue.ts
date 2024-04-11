@@ -189,19 +189,28 @@ export const updateStandardEntry = (
 };
 
 export const updateHistoricEntry = ({
-  runAfter,
   endpoint,
+  runAfter,
   params,
 }: {
-  runAfter: number;
   endpoint: string;
-  params: object;
+  runAfter: number;
+  params?: object;
 }) => {
+  let seenHistoric = false;
   for (const [index, entry] of queue.entries()) {
-    if (entry.historic && entry.endpoint === endpoint) {
-      delete queue[index];
+    if (entry.endpoint !== endpoint || !entry.historic) {
+      continue;
     }
+
+    if (seenHistoric) {
+      delete queue[index];
+      continue;
+    }
+
+    queue[index].runAfter = runAfter;
+    queue[index].params = params || queue[index].params;
+    seenHistoric = true;
   }
-  queue.push({ historic: true, runAfter, endpoint, params });
   writeQueue();
 };
