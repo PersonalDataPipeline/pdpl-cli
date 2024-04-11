@@ -8,7 +8,7 @@ import { getFormattedDate, getFormattedTime } from "../../utils/date-time.js";
 import { RunLogFile } from "../../utils/logger.js";
 import CliTable3 from "cli-table3";
 
-export default class Logs extends BaseCommand<typeof Logs> {
+export default class ApiLogs extends BaseCommand<typeof ApiLogs> {
   static override summary = "List log entries for an API";
 
   static override args = {

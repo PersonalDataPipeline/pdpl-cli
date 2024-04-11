@@ -3,7 +3,7 @@ import { ApiHandler } from "../../../utils/types.js";
 import { BaseCommand, apiNameArg } from "../_base.js";
 import * as queue from "../../../utils/queue.js";
 
-export default class Logs extends BaseCommand<typeof Logs> {
+export default class ApiQueue extends BaseCommand<typeof ApiQueue> {
   static override summary = "Show the queue for an API";
 
   static override examples = ["<%= config.bin %> <%= command.id %> API_NAME"];

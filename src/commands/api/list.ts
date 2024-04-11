@@ -2,7 +2,7 @@ import CliTable3 from "cli-table3";
 import { ApiHandler } from "../../utils/types.js";
 import { BaseCommand } from "./_base.js";
 
-export default class Logs extends BaseCommand<typeof Logs> {
+export default class ApiList extends BaseCommand<typeof ApiList> {
   static override summary = "List all APIs available";
 
   static override examples = ["<%= config.bin %> <%= command.id %>"];
