@@ -33,6 +33,7 @@ export interface EpSnapshot {
     response: AxiosResponse,
     existingData?: [] | object
   ) => [] | object;
+  // TODO: Do we ever need this on a snapshot?
   parseDayFromEntity?: (entity: object) => string;
 }
 
@@ -42,11 +43,12 @@ export interface EpHistoric
   parseDayFromEntity: (entity: object) => string;
   getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
   getHistoricDelay: () => number;
+  transformPrimary?: (entity: object | []) => unknown[];
   shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
 }
 
 export interface EpSecondary {
-  getDirName: () => string;
+  getDirName: (entity?: object) => string;
   getEndpoint: (entity: object) => string;
   getPrimary: () => string;
   getIdentifier: (entity: object) => string;
