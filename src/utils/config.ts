@@ -33,6 +33,8 @@ export interface Config {
     [key: string]: string[] | true;
   };
   apisSupported: string[];
+  imports: string[];
+  importsSupported: string[];
   debugUseMocks: boolean;
   debugLogOutput: boolean;
   debugSaveMocks: boolean;
@@ -52,6 +54,8 @@ const config: Config = {
   originDate: "1900-01-01",
   apis: {},
   apisSupported: [],
+  imports: [],
+  importsSupported: [],
   compressJson: true,
   debugUseMocks: false,
   debugLogOutput: false,
@@ -123,13 +127,20 @@ export default (): Config => {
   }
 
   const apisSupported = readdirSync(path.join(__dirname, "..", "apis"));
-  for (const api of Object.keys(processedConfig.apis)) {
-    if (!apisSupported.includes(api)) {
-      throw new Error(`Configured API "${api}" is not supported`);
+  for (const apiName of Object.keys(processedConfig.apis)) {
+    if (!apisSupported.includes(apiName)) {
+      throw new Error(`Configured API "${apiName}" is not supported`);
     }
   }
-
   processedConfig.apisSupported = apisSupported;
+
+  const importsSupported = readdirSync(path.join(__dirname, "..", "imports"));
+  for (const importName of processedConfig.imports) {
+    if (!importsSupported.includes(importName)) {
+      throw new Error(`Configured import "${importName}" is not supported`);
+    }
+  }
+  processedConfig.importsSupported = importsSupported;
 
   process.env.TZ = processedConfig.timezone;
 
