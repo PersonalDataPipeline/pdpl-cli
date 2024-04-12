@@ -1,8 +1,8 @@
 import CliTable3 from "cli-table3";
 import { ApiHandler } from "../../utils/types.js";
-import { BaseCommand } from "./_base.js";
+import { ApiBaseCommand } from "./_base.js";
 
-export default class ApiList extends BaseCommand<typeof ApiList> {
+export default class ApiList extends ApiBaseCommand<typeof ApiList> {
   static override summary = "List all APIs available";
 
   static override examples = ["<%= config.bin %> <%= command.id %>"];

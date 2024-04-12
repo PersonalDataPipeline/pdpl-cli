@@ -8,7 +8,7 @@ import getConfig, { Config } from "../../utils/config.js";
 //
 
 export type Flags<T extends typeof Command> = Interfaces.InferredFlags<
-  (typeof BaseCommand)["baseFlags"] & T["flags"]
+  (typeof ApiBaseCommand)["baseFlags"] & T["flags"]
 >;
 
 export type Args<T extends typeof Command> = Interfaces.InferredArgs<T["args"]>;
@@ -24,7 +24,7 @@ export const apiNameArg = {
   }),
 };
 
-export abstract class BaseCommand<T extends typeof Command> extends Command {
+export abstract class ApiBaseCommand<T extends typeof Command> extends Command {
   static override baseFlags = {};
 
   protected flags!: Flags<T>;
@@ -35,7 +35,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     await super.init();
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
-      baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
+      baseFlags: (super.ctor as typeof ApiBaseCommand).baseFlags,
       enableJsonFlag: this.ctor.enableJsonFlag,
       args: this.ctor.args,
       strict: true,

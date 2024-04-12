@@ -1,10 +1,10 @@
 import { ApiHandler, EpHistoric } from "../../../utils/types.js";
-import { BaseCommand, apiNameArg } from "../_base.js";
+import { ApiBaseCommand, apiNameArg } from "../_base.js";
 import * as queue from "../../../utils/queue.js";
 import { getEpochNow } from "../../../utils/date-time.js";
 import { Flags } from "@oclif/core";
 
-export default class ApiQueueSet extends BaseCommand<typeof ApiQueueSet> {
+export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
   static override summary = "Initialize the queue for an API";
 
   static override examples = [

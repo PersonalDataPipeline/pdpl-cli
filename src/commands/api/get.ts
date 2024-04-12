@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 
-import { BaseCommand, apiNameArg } from "./_base.js";
+import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import logger from "../../utils/logger.js";
 import * as queue from "../../utils/queue.js";
 import { runDateUtc } from "../../utils/date-time.js";
@@ -9,7 +9,7 @@ import { isObjectWithKeys } from "../../utils/object.js";
 import { getApiData } from "../../utils/api-data.js";
 import { makeOutputPath, writeOutputFile } from "../../utils/fs.js";
 
-export default class ApiGet extends BaseCommand<typeof ApiGet> {
+export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
   static override summary = "Get API data based on a queue";
 
   static override args = {

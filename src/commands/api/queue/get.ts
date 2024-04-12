@@ -1,9 +1,9 @@
 import CliTable3 from "cli-table3";
 import { ApiHandler } from "../../../utils/types.js";
-import { BaseCommand, apiNameArg } from "../_base.js";
+import { ApiBaseCommand, apiNameArg } from "../_base.js";
 import * as queue from "../../../utils/queue.js";
 
-export default class ApiQueueGet extends BaseCommand<typeof ApiQueueGet> {
+export default class ApiQueueGet extends ApiBaseCommand<typeof ApiQueueGet> {
   static override summary = "Show the queue for an API";
 
   static override examples = ["<%= config.bin %> <%= command.id %> API_NAME"];

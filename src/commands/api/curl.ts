@@ -1,7 +1,7 @@
 import { ApiHandler } from "../../utils/types.js";
-import { BaseCommand, apiNameArg } from "./_base.js";
+import { ApiBaseCommand, apiNameArg } from "./_base.js";
 
-export default class ApiCurl extends BaseCommand<typeof ApiCurl> {
+export default class ApiCurl extends ApiBaseCommand<typeof ApiCurl> {
   static override summary = "Build cURL commands for all API endpoints";
 
   static override examples = ["<%= config.bin %> <%= command.id %> API_NAME"];

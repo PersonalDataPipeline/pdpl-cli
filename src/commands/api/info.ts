@@ -1,8 +1,8 @@
 import { ApiHandler, EpHistoric } from "../../utils/types.js";
-import { BaseCommand, apiNameArg } from "./_base.js";
+import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import path from "path";
 
-export default class ApiInfo extends BaseCommand<typeof ApiInfo> {
+export default class ApiInfo extends ApiBaseCommand<typeof ApiInfo> {
   static override summary = "Display info for a specific API";
   static override examples = ["<%= config.bin %> <%= command.id %> API_NAME"];
 

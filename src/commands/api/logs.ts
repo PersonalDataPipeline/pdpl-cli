@@ -1,14 +1,14 @@
 import { Flags } from "@oclif/core";
 import path from "path";
 
-import { BaseCommand, apiNameArg } from "./_base.js";
+import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import getConfig from "../../utils/config.js";
 import { readDirectory, readFile } from "../../utils/fs.js";
 import { getFormattedDate, getFormattedTime } from "../../utils/date-time.js";
 import { RunLogFile } from "../../utils/logger.js";
 import CliTable3 from "cli-table3";
 
-export default class ApiLogs extends BaseCommand<typeof ApiLogs> {
+export default class ApiLogs extends ApiBaseCommand<typeof ApiLogs> {
   static override summary = "List log entries for an API";
 
   static override args = {
