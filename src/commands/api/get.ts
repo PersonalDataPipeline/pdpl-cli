@@ -61,6 +61,7 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
           getHistoricDelay: handlerDict[endpoint].getDelay,
           shouldHistoricContinue: (apiData: [] | object) => !!Object.keys(apiData).length,
           transformResponseData: (response: AxiosResponse): unknown => response.data,
+          transformPrimary: (entity: unknown): unknown => entity,
         },
         handlerDict[endpoint]
       );
@@ -100,7 +101,7 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
       } while (Object.keys(nextCallParams).length);
 
       // Store all the entity data for the endpoint for secondary endpoints
-      perEndpointData[endpoint] = apiResponseData as unknown;
+      perEndpointData[endpoint] = epHandler.transformPrimary(apiResponseData);
 
       const savePath = [apiName, epHandler.getDirName()];
       ensureOutputPath(savePath);
@@ -203,8 +204,6 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
         originalEpHandler
       );
       const entities = (perEndpointData[epHandler.getPrimary()] as []) || [];
-      const savePath = [apiName, epHandler.getDirName()];
-      ensureOutputPath(savePath);
 
       for (const entity of entities) {
         const runMetadata = {
@@ -228,9 +227,12 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
 
         const apiResponseData = epHandler.transformResponseData(apiResponse);
 
+        const savePath = [apiName, epHandler.getDirName(apiResponseData as object)];
+        ensureOutputPath(savePath);
+
         const outputPath = makeOutputPath(
           savePath,
-          epHandler.getIdentifier(entity),
+          epHandler.getIdentifier(apiResponseData as object),
           runDate.fileName
         );
 
