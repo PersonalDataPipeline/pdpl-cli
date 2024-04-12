@@ -1,3 +1,5 @@
+import { ImportHandler } from "../../utils/types.js";
+
 ////
 /// Types
 //
@@ -13,22 +15,27 @@ interface AmazonProductEntity {
 /// Exports
 //
 
-export const importTypes = {
-  "Retail.OrderHistory": {
+const importFiles = [
+  {
+    getImportPath: () => "Retail.OrderHistory.1/Retail.OrderHistory.1.csv",
     getDirName: () => "retail--order-history",
-    transformEntity: (entity: AmazonProductEntity) => {
-      if ("Cancelled" === entity["Order Status"]) {
+    parseDayFromEntity: (entity: object) => {
+      return (entity as AmazonProductEntity)["Order Date"].split("T")[0];
+    },
+    transformEntity: (entity: object) => {
+      const { "Order Status": orderStatus } = entity as AmazonProductEntity;
+
+      if ("Cancelled" === orderStatus) {
         return null;
       }
 
-      for (const label in entity) {
-        if (entity[label] === "Not Available" || entity[label] === "Not Applicable") {
-          delete entity[label];
-        }
-      }
-
-      entity.day = entity["Order Date"].split("T")[0] || "";
       return entity;
     },
   },
+];
+
+const importHandler: ImportHandler = {
+  importFiles,
 };
+
+export default importHandler;
