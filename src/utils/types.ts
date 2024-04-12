@@ -65,3 +65,14 @@ export interface EndpointRecord {
   endpoint: string;
   params: object;
 }
+
+export interface ImportHandler {
+  importFiles: ImportFileHandler[];
+}
+
+export interface ImportFileHandler {
+  getImportPath: () => string;
+  getDirName: () => string;
+  transformEntity: (entity: object) => object | null;
+  parseDayFromEntity: (entity: object) => string;
+}

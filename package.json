@@ -19,7 +19,8 @@
     "logs": "./bin/run.js api:logs",
     "curl": "./bin/run.js api:curl",
     "info": "./bin/run.js api:info",
-    "queue": "./bin/run.js api:queue:get"
+    "queue": "./bin/run.js api:queue:get",
+    "import": "./bin/run.js import"
   },
   "author": "",
   "license": "MIT",
