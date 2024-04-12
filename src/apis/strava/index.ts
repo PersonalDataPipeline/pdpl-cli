@@ -6,6 +6,7 @@ import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
   ONE_QUATER_IN_SEC,
+  ONE_WEEK_IN_SEC,
 } from "../../utils/date-time.js";
 import { getEpochNow } from "../../utils/date-time.js";
 
@@ -91,7 +92,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "athlete--activities",
     getParams: (): StravaUrlParams => ({
       before: getEpochNow(),
-      after: getEpochNow() - ONE_DAY_IN_SEC * 2,
+      after: getEpochNow() - ONE_WEEK_IN_SEC,
     }),
     getDelay: () => ONE_DAY_IN_SEC,
     getHistoricParams: (currentParams?: StravaUrlParams): StravaUrlParams => ({
