@@ -1,6 +1,6 @@
 import * as path from "path";
 import getConfig from "./config.js";
-import { ensureOutputPath, pathExists, readFile, writeFile } from "./fs.js";
+import { makeDirectory, pathExists, readFile, writeFile } from "./fs.js";
 import { RunLogger } from "./logger.js";
 import { runDateUtc } from "./date-time.js";
 import { ApiHandler, EpHistoric, EpSnapshot } from "./types.js";
@@ -51,10 +51,11 @@ let queueFile = "";
 
 export const loadQueue = (apiHandler: ApiHandler) => {
   const apiName = apiHandler.getApiName();
-  queueFile = path.join(getConfig().outputDir, apiName, "_queue.json");
+  const dirPath = path.join(getConfig().outputDir, apiName);
+  queueFile = path.join(dirPath, "_queue.json");
 
   if (!pathExists(queueFile)) {
-    ensureOutputPath([apiName]);
+    makeDirectory(dirPath);
     writeFile(queueFile, "[]");
     queue = [];
   } else {

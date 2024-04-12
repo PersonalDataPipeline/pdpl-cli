@@ -8,7 +8,6 @@ import { runDateUtc } from "../utils/date-time.js";
 import {
   makeOutputPath,
   writeOutputFile,
-  ensureOutputPath,
   readDirectory,
   pathExists,
   readFile,
@@ -65,7 +64,6 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   const thisHandler = importHandler.importTypes[importType];
 
   const savePath = [importName, thisHandler.getDirName()];
-  ensureOutputPath(savePath);
 
   const dailyData: DailyData = {};
   const runMetadata = {

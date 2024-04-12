@@ -3,7 +3,7 @@ import type { Mock } from "vitest";
 import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC, ONE_HOUR_IN_SEC } from "./date-time.js";
 import { runDateUtc } from "./date-time.js";
-import { pathExists, readFile, writeFile, ensureOutputPath } from "./fs.js";
+import { makeDirectory, pathExists, readFile, writeFile } from "./fs.js";
 import logger from "./logger.js";
 
 vi.mock("./fs.js", () => ({
@@ -12,6 +12,7 @@ vi.mock("./fs.js", () => ({
   pathExists: vi.fn(() => true),
   readFile: vi.fn(() => "[]"),
   writeFile: vi.fn(),
+  makeDirectory: vi.fn(),
 }));
 
 import * as queue from "./queue.js";
@@ -82,7 +83,7 @@ describe("Class: Queue", () => {
     });
 
     it("checks the write path", () => {
-      expect(ensureOutputPath).toHaveBeenCalledWith(["API_NAME"]);
+      expect(makeDirectory).toHaveBeenCalled();
     });
 
     it("creates the queue file", () => {

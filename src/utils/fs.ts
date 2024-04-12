@@ -10,6 +10,8 @@ export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
 export const pathExists = (filePath: string) => {
+  // TODO: Update this to accessSync
+  // https://nodejs.org/docs/latest-v20.x/api/fs.html#fsaccesssyncpath-mode
   return existsSync(filePath);
 };
 
@@ -21,8 +23,12 @@ export const writeFile = (filePath: string, contents: string) => {
   writeFileSync(filePath, contents);
 };
 
-export const readDirectory = (filePath: string) => {
-  return readdirSync(filePath);
+export const readDirectory = (dirPath: string) => {
+  return readdirSync(dirPath);
+};
+
+export const makeDirectory = (dirPath: string) => {
+  return mkdirSync(dirPath, { recursive: true });
 };
 
 export const envWrite = (key: string, newValue: string, replaceValue: string): void => {
@@ -40,16 +46,6 @@ export const envWrite = (key: string, newValue: string, replaceValue: string): v
   }
 
   writeFileSync(envPath, newContents);
-};
-
-export const ensureOutputPath = (createPath: string[]): void => {
-  let basePath = getConfig().outputDir;
-  createPath.forEach((pathpart) => {
-    basePath = path.join(basePath, pathpart);
-    if (!existsSync(basePath)) {
-      mkdirSync(basePath);
-    }
-  });
 };
 
 export const writeOutputFile = (writePath: string, fileContents: unknown): boolean => {
@@ -93,6 +89,6 @@ export const makeOutputPath = (apiPath: string[], identifier?: string) => {
   const run = runDateUtc().fileName;
   const fileName = (identifier ? `${identifier}--run-${run}` : run) + ".json";
   const outputPath = path.join(...apiPath);
-  mkdirSync(outputPath, { recursive: true });
+  makeDirectory(outputPath);
   return path.join(outputPath, fileName);
 };

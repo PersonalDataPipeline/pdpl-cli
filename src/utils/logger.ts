@@ -1,9 +1,8 @@
-import path from "path";
+import { AxiosError } from "axios";
 
 import { runDateUtc } from "./date-time.js";
-import { ensureOutputPath, writeFile } from "./fs.js";
+import { makeOutputPath, writeFile } from "./fs.js";
 import getConfig from "./config.js";
-import { AxiosError } from "axios";
 
 ////
 /// Types
@@ -130,16 +129,17 @@ const runLogger: RunLogger = {
     } as RunLogErrorEntry);
   },
   shutdown: () => {
+    const savePath = [
+      getConfig().outputDir,
+      ...(apiName ? [apiName, "_runs"] : ["_runs"]),
+    ];
+    const outputPath = makeOutputPath(savePath);
+
     runLog.endTimeMs = Date.now();
     runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
-    const savePath = apiName ? [apiName, "_runs"] : ["_runs"];
-    ensureOutputPath(savePath);
-
     const logContent = JSON.stringify(runLog, null, 2);
-    writeFile(
-      path.join(getConfig().outputDir, ...savePath, runDateUtc().fileName + ".json"),
-      JSON.stringify(runLog, null, 2)
-    );
+
+    writeFile(outputPath, JSON.stringify(runLog, null, 2));
 
     if (getConfig().debugLogOutput) {
       console.log(logContent);

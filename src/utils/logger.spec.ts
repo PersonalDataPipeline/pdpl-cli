@@ -2,7 +2,7 @@ import type { Mock } from "vitest";
 
 import logger, { InfoEntry, SuccessEntry } from "./logger.js";
 import { runDateUtc } from "./date-time.js";
-import { ensureOutputPath, writeFile } from "./fs.js";
+import { writeFile } from "./fs.js";
 
 vi.mock("./config.js", () => ({
   default: () => ({
@@ -11,10 +11,12 @@ vi.mock("./config.js", () => ({
   }),
 }));
 
-vi.mock("./fs.js", () => ({
-  ensureOutputPath: vi.fn(),
+vi.mock("./fs.js", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./fs.js")>()),
   writeFile: vi.fn(),
 }));
+
+vi.mock("fs");
 
 const mockInfoLog: InfoEntry = {
   message: "INFO_MESSAGE",
@@ -42,10 +44,6 @@ describe("Logger", () => {
       writeFileCall = (writeFile as Mock).mock.calls[0] as [];
     });
 
-    it("checks the correct path", () => {
-      expect(ensureOutputPath).toBeCalledWith(["_runs"]);
-    });
-
     it("generates the correct file path", () => {
       expect(writeFileCall[0]).toEqual(`/output/dir/_runs/${runDateUtc().fileName}.json`);
     });
@@ -67,10 +65,6 @@ describe("Logger", () => {
       logger.success(mockSuccessLog);
       logger.shutdown();
       writeFileCall = (writeFile as Mock).mock.calls[0] as [];
-    });
-
-    it("checks the correct path", () => {
-      expect(ensureOutputPath).toBeCalledWith(["API_NAME", "_runs"]);
     });
 
     it("generates the correct file path", () => {
