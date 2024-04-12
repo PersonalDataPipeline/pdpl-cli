@@ -3,6 +3,7 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
 import getConfig from "./config.js";
+import { runDateUtc } from "./date-time.js";
 
 export const __filename = fileURLToPath(import.meta.url);
 
@@ -88,5 +89,10 @@ export const getLatestFileContents = (writePath: string) => {
   return latestDayFile ? readFileSync(path.join(fullPath, latestDayFile), "utf8") : "";
 };
 
-export const makeOutputPath = (apiPath: string[], day: string | null, run: string) =>
-  path.join(...apiPath, (day ? `${day}--run-${run}` : run) + ".json");
+export const makeOutputPath = (apiPath: string[], identifier?: string) => {
+  const run = runDateUtc().fileName;
+  const fileName = (identifier ? `${identifier}--run-${run}` : run) + ".json";
+  const outputPath = path.join(...apiPath);
+  mkdirSync(outputPath, { recursive: true });
+  return path.join(outputPath, fileName);
+};

@@ -93,7 +93,7 @@ export const run = async (cliArgs: string[], logger: RunLogger) => {
   runMetadata.total = entities.length;
   runMetadata.days = Object.keys(dailyData).length;
   for (const day in dailyData) {
-    const outputPath = makeOutputPath(savePath, day, runDateTime);
+    const outputPath = makeOutputPath(savePath, day);
     writeOutputFile(outputPath, dailyData[day])
       ? runMetadata.filesWritten++
       : runMetadata.filesSkipped++;

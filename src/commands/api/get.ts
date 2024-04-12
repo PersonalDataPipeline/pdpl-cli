@@ -7,7 +7,7 @@ import { runDateUtc } from "../../utils/date-time.js";
 import { ApiHandler, DailyData, EpHistoric, EpSnapshot } from "../../utils/types.js";
 import { isObjectWithKeys } from "../../utils/object.js";
 import { getApiData } from "../../utils/api-data.js";
-import { ensureOutputPath, makeOutputPath, writeOutputFile } from "../../utils/fs.js";
+import { makeOutputPath, writeOutputFile } from "../../utils/fs.js";
 
 export default class ApiGet extends BaseCommand<typeof ApiGet> {
   static override summary = "Get API data based on a queue";
@@ -104,7 +104,6 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
       perEndpointData[endpoint] = epHandler.transformPrimary(apiResponseData);
 
       const savePath = [apiName, epHandler.getDirName()];
-      ensureOutputPath(savePath);
 
       if (typeof epHandler.parseDayFromEntity === "function") {
         // Need to parse returned to days if not a snapshot
@@ -141,7 +140,7 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
         runMetadata.days = Object.keys(dailyData).length;
 
         for (const day in dailyData) {
-          const outputPath = makeOutputPath(savePath, day, runDate.fileName);
+          const outputPath = makeOutputPath(savePath, day);
           writeOutputFile(outputPath, dailyData[day])
             ? runMetadata.filesWritten++
             : runMetadata.filesSkipped++;
@@ -149,7 +148,7 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
       } else {
         // Snapshot data, not time-bound
         runMetadata.total = 1;
-        const outputPath = makeOutputPath(savePath, null, runDate.fileName);
+        const outputPath = makeOutputPath(savePath);
         writeOutputFile(outputPath, apiResponseData)
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
@@ -227,13 +226,9 @@ export default class ApiGet extends BaseCommand<typeof ApiGet> {
 
         const apiResponseData = epHandler.transformResponseData(apiResponse);
 
-        const savePath = [apiName, epHandler.getDirName(apiResponseData as object)];
-        ensureOutputPath(savePath);
-
         const outputPath = makeOutputPath(
-          savePath,
-          epHandler.getIdentifier(apiResponseData as object),
-          runDate.fileName
+          [apiName, epHandler.getDirName(apiResponseData as object)],
+          epHandler.getIdentifier(apiResponseData as object)
         );
 
         writeOutputFile(outputPath, apiResponseData)
