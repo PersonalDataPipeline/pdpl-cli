@@ -3,9 +3,9 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
+- [ ] Deal with file path complexities (arrays/strings, mkdir, etc)
 - [ ] Improve date-based tests
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
-- [ ] Add Hacker News API ([ref](https://github.com/HackerNews/API))
 - [ ] Fix: Check headers for GitHub events to see if calls should continue
 - [ ] Fix: Don't process data if HTTP call fails (continue main loop)
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
