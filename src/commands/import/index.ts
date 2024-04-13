@@ -37,6 +37,7 @@ export default class Import extends ImportBaseCommand<typeof Import> {
       const fileHandler = Object.assign(
         {
           transformEntity: (entity: object) => entity,
+          transformFileContents: (content: string) => content,
         },
         originalHandler
       );
@@ -52,7 +53,7 @@ export default class Import extends ImportBaseCommand<typeof Import> {
       };
 
       const filePath = path.join(importPath, fileHandler.getImportPath());
-      const fileContents = readFile(filePath);
+      const fileContents = fileHandler.transformFileContents(readFile(filePath));
       const entities = (await parse(fileContents, { columns: true, bom: true })) as [];
 
       for (const entity of entities) {

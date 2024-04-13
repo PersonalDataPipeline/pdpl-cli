@@ -75,4 +75,5 @@ export interface ImportFileHandler {
   getDirName: () => string;
   parseDayFromEntity: (entity: object) => string;
   transformEntity?: (entity: object) => object | null;
+  transformFileContents?: (content: string) => string;
 }
