@@ -129,10 +129,7 @@ const runLogger: RunLogger = {
     } as RunLogErrorEntry);
   },
   shutdown: () => {
-    const savePath = [
-      getConfig().outputDir,
-      ...(apiName ? [apiName, "_runs"] : ["_runs"]),
-    ];
+    const savePath = [...(apiName ? [apiName, "_runs"] : ["_runs"])];
     const outputPath = makeOutputPath(savePath);
 
     runLog.endTimeMs = Date.now();
