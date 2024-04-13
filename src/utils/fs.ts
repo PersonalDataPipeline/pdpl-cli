@@ -49,8 +49,6 @@ export const envWrite = (key: string, newValue: string, replaceValue: string): v
 };
 
 export const writeOutputFile = (writePath: string, fileContents: unknown): boolean => {
-  const fullSavePath = path.join(getConfig().outputDir, writePath);
-
   const fileContentsString = getConfig().compressJson
     ? JSON.stringify(fileContents)
     : JSON.stringify(fileContents, null, 2);
@@ -60,7 +58,7 @@ export const writeOutputFile = (writePath: string, fileContents: unknown): boole
     return false;
   }
 
-  writeFileSync(fullSavePath, fileContentsString);
+  writeFileSync(writePath, fileContentsString);
   return true;
 };
 
@@ -69,7 +67,7 @@ export const getLatestFileContents = (writePath: string) => {
   const fileName = pathParts.pop() || "";
   const day = fileName.includes("--") ? fileName.split("--")[0] : null;
 
-  const fullPath = path.join(getConfig().outputDir, ...pathParts);
+  const fullPath = path.sep + path.join(...pathParts);
   const latestDayFile = readdirSync(fullPath)
     // Exclude current file
     .filter((file) => file !== fileName)
@@ -88,7 +86,7 @@ export const getLatestFileContents = (writePath: string) => {
 export const makeOutputPath = (apiPath: string[], identifier?: string) => {
   const run = runDateUtc().fileName;
   const fileName = (identifier ? `${identifier}--run-${run}` : run) + ".json";
-  const outputPath = path.join(...apiPath);
+  const outputPath = path.join(getConfig().outputDir, ...apiPath);
   makeDirectory(outputPath);
   return path.join(outputPath, fileName);
 };
