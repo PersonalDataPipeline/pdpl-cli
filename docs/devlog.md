@@ -3,16 +3,26 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Deal with file path complexities (arrays/strings, mkdir, etc)
 - [ ] Improve date-based tests
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
+- [ ] Add Reddit API
+- [ ] Add Twitter API
+- [ ] Add date to secondary endpoint files
+- [ ] Rethink logging ... output to `stdout` vs storing in a file; call stack for errors (ADR)
 - [ ] Fix: Check headers for GitHub events to see if calls should continue
 - [ ] Fix: Don't process data if HTTP call fails (continue main loop)
-- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
-- [ ] Rethink logging ... output to `stdout` vs storing in a file; call stack for errors (need ADR)
 - [ ] Fix: Secondary endpoints fail with no way to re-run
+- [ ] Add another file saving source (maybe ADR)
+- [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
+- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+
+## [[2024-04-12]]
+
+I'm still enjoying the development process here and I'm really happy with where this is at for the most part, besides what's on the TODO list. One thing that's making this a bit harder is that each new API means a change to the foundation. I expected this early on but it's definitely making it slow to add new APIs. I assume that I'll reach a point where I can add several APIs without that but not currently. 
+
+Alright, imports are working again but this one is going to be hard. Need to remember: we're not going to boil the ocean here. Get the most important stuff out and anything extra can be handled later on as I, or others, need it. 
 
 ## [[2024-04-10]]
 
