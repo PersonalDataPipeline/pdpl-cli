@@ -1,3 +1,4 @@
+import path from "path";
 import { ImportHandler } from "../../utils/types.js";
 
 ////
@@ -25,21 +26,21 @@ interface AmazonBorrowedEntity {
 
 const importFiles = [
   {
-    getImportPath: () => "Retail.OrderHistory.1/Retail.OrderHistory.1.csv",
+    getImportPath: () => path.join("Retail.OrderHistory.1", "Retail.OrderHistory.1.csv"),
     getDirName: () => "retail--order-history",
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonProductEntity)["Order Date"].split("T")[0];
     },
   },
   {
-    getImportPath: () => "Digital-Ordering.1/Digital Items.csv",
+    getImportPath: () => path.join("Digital-Ordering.1", "Digital Items.csv"),
     getDirName: () => "digital--ordering-items",
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonDigitalEntity).OrderDate;
     },
   },
   {
-    getImportPath: () => "Digital.Borrows.1/Digital.Borrows.1.csv",
+    getImportPath: () => path.join("Digital.Borrows.1", "Digital.Borrows.1.csv"),
     getDirName: () => "digital--borrows",
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonBorrowedEntity).LoanCreationDate;
