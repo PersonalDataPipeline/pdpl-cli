@@ -1,11 +1,7 @@
 import { AxiosResponse } from "axios";
 
-export interface DailyEntity {
-  day: string;
-}
-
 export interface DailyData {
-  [key: string]: DailyEntity[];
+  [key: string]: object[];
 }
 
 export interface ApiHandler {
@@ -73,6 +69,7 @@ export interface ImportHandler {
 export interface ImportFileHandler {
   getImportPath: () => string;
   getDirName: () => string;
+  parsingStrategy: () => "csv" | "json";
   parseDayFromEntity: (entity: object) => string;
   transformEntity?: (entity: object) => object | null;
   transformFileContents?: (content: string) => string;

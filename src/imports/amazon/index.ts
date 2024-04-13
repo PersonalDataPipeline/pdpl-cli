@@ -31,6 +31,7 @@ const importFiles = [
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonProductEntity)["Order Date"].split("T")[0];
     },
+    parsingStrategy: (): "csv" => "csv",
   },
   {
     getImportPath: () => path.join("Digital-Ordering.1", "Digital Items.csv"),
@@ -38,6 +39,7 @@ const importFiles = [
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonDigitalEntity).OrderDate;
     },
+    parsingStrategy: (): "csv" => "csv",
   },
   {
     getImportPath: () => path.join("Digital.Borrows.1", "Digital.Borrows.1.csv"),
@@ -45,6 +47,7 @@ const importFiles = [
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonBorrowedEntity).LoanCreationDate;
     },
+    parsingStrategy: (): "csv" => "csv",
   },
 ];
 

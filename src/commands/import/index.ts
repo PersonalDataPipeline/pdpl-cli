@@ -54,7 +54,18 @@ export default class Import extends ImportBaseCommand<typeof Import> {
 
       const filePath = path.join(importPath, fileHandler.getImportPath());
       const fileContents = fileHandler.transformFileContents(readFile(filePath));
-      const entities = (await parse(fileContents, { columns: true, bom: true })) as [];
+
+      let entities: [];
+      switch (fileHandler.parsingStrategy()) {
+        case "csv":
+          entities = (await parse(fileContents, { columns: true, bom: true })) as [];
+          break;
+        case "json":
+          entities = JSON.parse(fileContents) as [];
+          break;
+        default:
+          throw new Error("Invalid parsing strategy");
+      }
 
       for (const entity of entities) {
         const transformedEntity: object | null = fileHandler.transformEntity(entity);
@@ -67,7 +78,7 @@ export default class Import extends ImportBaseCommand<typeof Import> {
         if (!dailyData[day]) {
           dailyData[day] = [];
         }
-        dailyData[day].push(entity);
+        dailyData[day].push(transformedEntity);
       }
 
       runMetadata.total = entities.length;
