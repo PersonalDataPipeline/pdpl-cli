@@ -11,6 +11,14 @@ interface AmazonProductEntity {
   [key: string]: string;
 }
 
+interface AmazonDigitalEntity {
+  OrderDate: string;
+}
+
+interface AmazonBorrowedEntity {
+  LoanCreationDate: string;
+}
+
 ////
 /// Exports
 //
@@ -22,14 +30,19 @@ const importFiles = [
     parseDayFromEntity: (entity: object) => {
       return (entity as AmazonProductEntity)["Order Date"].split("T")[0];
     },
-    transformEntity: (entity: object) => {
-      const { "Order Status": orderStatus } = entity as AmazonProductEntity;
-
-      if ("Cancelled" === orderStatus) {
-        return null;
-      }
-
-      return entity;
+  },
+  {
+    getImportPath: () => "Digital-Ordering.1/Digital Items.csv",
+    getDirName: () => "digital--ordering-items",
+    parseDayFromEntity: (entity: object) => {
+      return (entity as AmazonDigitalEntity).OrderDate;
+    },
+  },
+  {
+    getImportPath: () => "Digital.Borrows.1/Digital.Borrows.1.csv",
+    getDirName: () => "digital--borrows",
+    parseDayFromEntity: (entity: object) => {
+      return (entity as AmazonBorrowedEntity).LoanCreationDate;
     },
   },
 ];
