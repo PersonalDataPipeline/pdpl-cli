@@ -33,9 +33,14 @@ export default class Import extends ImportBaseCommand<typeof Import> {
       default: ImportHandler;
     };
 
-    for (const fileHandler of importHandler.importFiles) {
-      const filePath = path.join(importPath, fileHandler.getImportPath());
-      const fileContents = readFile(filePath);
+    for (const originalHandler of importHandler.importFiles) {
+      const fileHandler = Object.assign(
+        {
+          transformEntity: (entity: object) => entity,
+        },
+        originalHandler
+      );
+
       const dailyData: DailyData = {};
       const runMetadata = {
         dateTime: runDateTime,
@@ -46,9 +51,9 @@ export default class Import extends ImportBaseCommand<typeof Import> {
         importFile: fileHandler.getImportPath(),
       };
 
+      const filePath = path.join(importPath, fileHandler.getImportPath());
+      const fileContents = readFile(filePath);
       const entities = (await parse(fileContents, { columns: true, bom: true })) as [];
-
-      const savePath = [importName, fileHandler.getDirName()];
 
       for (const entity of entities) {
         const transformedEntity: object | null = fileHandler.transformEntity(entity);
@@ -66,6 +71,8 @@ export default class Import extends ImportBaseCommand<typeof Import> {
 
       runMetadata.total = entities.length;
       runMetadata.days = Object.keys(dailyData).length;
+
+      const savePath = [importName, fileHandler.getDirName()];
       for (const day in dailyData) {
         const outputPath = makeOutputPath(savePath, day);
         writeOutputFile(outputPath, dailyData[day])
