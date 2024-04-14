@@ -29,7 +29,6 @@ export interface EpSnapshot {
     response: AxiosResponse,
     existingData?: [] | object
   ) => [] | object;
-  // TODO: Do we ever need this on a snapshot?
   parseDayFromEntity?: (entity: object) => string;
 }
 

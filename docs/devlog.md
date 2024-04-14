@@ -3,20 +3,35 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Improve date-based tests
+- [ ] [ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
+- [ ] Add date to secondary endpoint files
+- [ ] Fix: Check headers for GitHub events to see if calls should continue
+- [ ] Fix: Don't process data if HTTP call fails (continue main loop)
+- [ ] Testing strategy for API/import contracts + core functionality (ADR)
+- [ ] Fix: Secondary endpoints fail with no way to re-run
+- [ ] [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
+- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add Reddit API
 - [ ] Add Twitter API
-- [ ] Add date to secondary endpoint files
-- [ ] Rethink logging ... output to `stdout` vs storing in a file; call stack for errors (ADR)
-- [ ] Fix: Check headers for GitHub events to see if calls should continue
-- [ ] Fix: Don't process data if HTTP call fails (continue main loop)
-- [ ] Fix: Secondary endpoints fail with no way to re-run
-- [ ] Add another file saving source (maybe ADR)
+- --- THE LINE ---
 - [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
-- [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] What to do with imported files or ones obtained from an API
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
-- [ ] https://developer.nytimes.com/apis - does not seem to want to load ...
+- [ ] Merging imported data with duplicate API data
+- [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
+
+## [[2024-04-14]]
+
+Doing a little pruning today. The list has gotten a bit overwhelming lately, including several that are large/important enough that they need ADRs. I just want to make sure I'm able to stay focused on the most important things at this stage. I added "THE LINE" above to separate the things that need to happen pre-announcement (above the the) from the things that won't block data gathering right now.
+
+- [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
+- [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
+
+I think I have the priority list in the order that makes the most sense now. Logging/debugging is the top concern right now, making that easier now makes everything easier in the future. Then I have a few minor fixes to handle, then need to tackle how the get command, queue management, storage module, and API/import modules all interact with each other. Then move on to how API and storage contributions are made. That handles all the foundational stuff and allows me to test that as a user/contributor. 
+
+Focusing on logging now ... 
 
 ## [[2024-04-12]]
 
