@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 
-import { runDateUtc } from "./date-time.js";
+import { getFormattedDate, getFormattedTime, runDateUtc } from "./date-time.js";
 import { makeOutputPath, writeFile } from "./fs.js";
 import getConfig from "./config.js";
 
@@ -60,10 +60,12 @@ export interface RunLogSuccessEntry
 export interface RunLogFile {
   dateTime: string;
   startTimeMs: number;
-  entries: (RunLogInfoEntry | RunLogErrorEntry | RunLogSuccessEntry)[];
+  entries: AnyLogEntry[];
   endTimeMs?: number;
   runDurationMs?: number;
 }
+
+type AnyLogEntry = RunLogInfoEntry | RunLogSuccessEntry | RunLogErrorEntry;
 
 ////
 /// Helpers
@@ -75,22 +77,35 @@ const runLog: RunLogFile = {
   entries: [],
 };
 
+const print = (entry: AnyLogEntry) => {
+  console.log(
+    "%s %s [LEVEL: %s] %s%s",
+    getFormattedDate(),
+    getFormattedTime(),
+    entry.type,
+    "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
+    "message" in entry ? entry.message : ""
+  );
+};
+
 ////
 /// Export
 //
 
 const info = ({ message, stage, endpoint }: InfoEntry) => {
-  runLog.entries.push({
+  const entry = {
     type: "info",
     timeMs: Date.now(),
     message,
     stage,
     endpoint,
-  } as RunLogInfoEntry);
+  } as RunLogInfoEntry;
+  runLog.entries.push(entry);
+  print(entry);
 };
 
 const success = ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessEntry) => {
-  runLog.entries.push({
+  const entry = {
     type: "success",
     timeMs: Date.now(),
     endpoint,
@@ -98,7 +113,12 @@ const success = ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessE
     filesSkipped,
     total,
     days,
-  } as RunLogSuccessEntry);
+  } as RunLogSuccessEntry;
+  runLog.entries.push(entry);
+  print({
+    ...entry,
+    message: `Got ${total} total for ${days} days; ${filesWritten} files written and ${filesSkipped} files skipped.`,
+  });
 };
 
 const error = ({ stage, endpoint, error }: ErrorEntry) => {
@@ -112,14 +132,16 @@ const error = ({ stage, endpoint, error }: ErrorEntry) => {
   const data =
     error instanceof AxiosError && error.response ? (error.response.data as object) : {};
 
-  runLog.entries.push({
+  const entry = {
     type: "error",
     timeMs: Date.now(),
     stage,
     endpoint,
     message,
     data,
-  } as RunLogErrorEntry);
+  } as RunLogErrorEntry;
+  runLog.entries.push(entry);
+  print(entry);
 };
 
 const shutdown = (apiName?: string) => {
