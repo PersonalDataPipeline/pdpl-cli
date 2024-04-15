@@ -67,6 +67,6 @@ export abstract class ApiBaseCommand<T extends typeof Command> extends Command {
 
   protected override async finally(_: Error | undefined) {
     await super.finally(_);
-    logger.shutdown(this.args["apiName"] as string);
+    logger.shutdown((this.args && (this.args["apiName"] as string)) || "");
   }
 }
