@@ -4,7 +4,6 @@ import { parse } from "csv-parse/sync";
 
 import { ImportBaseCommand, importNameArg } from "./_base.js";
 import { DailyData, ImportHandler } from "../../utils/types.js";
-import logger from "../../utils/logger.js";
 import { runDateUtc } from "../../utils/date-time.js";
 import { makeOutputPath, readFile, writeOutputFile } from "../../utils/fs.js";
 
@@ -24,8 +23,6 @@ export default class Import extends ImportBaseCommand<typeof Import> {
   public override async run(): Promise<void> {
     const runDateTime = runDateUtc().dateTime;
     const { importName, importPath } = this.args;
-
-    logger.setApiName(importName);
 
     const { default: importHandler } = (await import(
       `../../imports/${importName}/index.js`

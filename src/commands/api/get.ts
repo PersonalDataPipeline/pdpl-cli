@@ -21,7 +21,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
   public override async run(): Promise<void> {
     const { apiName } = this.args;
 
-    logger.setApiName(apiName);
     const runDate = runDateUtc();
     const { default: apiHandler } = (await import(`../../apis/${apiName}/index.js`)) as {
       default: ApiHandler;

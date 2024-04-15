@@ -66,6 +66,6 @@ export abstract class ImportBaseCommand<T extends typeof Command> extends Comman
 
   protected override async finally(_: Error | undefined) {
     await super.finally(_);
-    logger.shutdown();
+    logger.shutdown(this.args["importName"] as string);
   }
 }

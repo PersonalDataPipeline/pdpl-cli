@@ -61,9 +61,8 @@ describe("Logger", () => {
   describe("success log", () => {
     let writeFileCall: string[];
     beforeEach(() => {
-      logger.setApiName("API_NAME");
       logger.success(mockSuccessLog);
-      logger.shutdown();
+      logger.shutdown("API_NAME");
       writeFileCall = (writeFile as Mock).mock.calls[0] as [];
     });
 

@@ -9,11 +9,10 @@ import getConfig from "./config.js";
 //
 
 export interface RunLogger {
-  setApiName: (name: string) => void;
   info: (entry: InfoEntry) => void;
   error: (entry: ErrorEntry) => void;
   success: (entry: SuccessEntry) => void;
-  shutdown: () => void;
+  shutdown: (apiName?: string) => void;
 }
 
 export interface InfoEntry {
@@ -76,74 +75,75 @@ const runLog: RunLogFile = {
   entries: [],
 };
 
-let apiName = "";
-
 ////
 /// Export
 //
 
+const info = ({ message, stage, endpoint }: InfoEntry) => {
+  runLog.entries.push({
+    type: "info",
+    timeMs: Date.now(),
+    message,
+    stage,
+    endpoint,
+  } as RunLogInfoEntry);
+};
+
+const success = ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessEntry) => {
+  runLog.entries.push({
+    type: "success",
+    timeMs: Date.now(),
+    endpoint,
+    filesWritten,
+    filesSkipped,
+    total,
+    days,
+  } as RunLogSuccessEntry);
+};
+
+const error = ({ stage, endpoint, error }: ErrorEntry) => {
+  const message =
+    typeof error === "string"
+      ? error
+      : error instanceof Error
+        ? error.message
+        : "Unknown error";
+
+  const data =
+    error instanceof AxiosError && error.response ? (error.response.data as object) : {};
+
+  runLog.entries.push({
+    type: "error",
+    timeMs: Date.now(),
+    stage,
+    endpoint,
+    message,
+    data,
+  } as RunLogErrorEntry);
+};
+
+const shutdown = (apiName?: string) => {
+  const savePath = [...(apiName ? [apiName, "_runs"] : ["_runs"])];
+  const outputPath = makeOutputPath(savePath);
+
+  runLog.endTimeMs = Date.now();
+  runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
+  const logContent = JSON.stringify(runLog, null, 2);
+
+  writeFile(outputPath, JSON.stringify(runLog, null, 2));
+
+  if (getConfig().debugLogOutput) {
+    console.log(logContent);
+  }
+
+  runLog.entries = [];
+};
+
 const runLogger: RunLogger = {
-  setApiName: (name: string) => {
-    apiName = name;
-  },
-  info: ({ message, stage, endpoint }: InfoEntry) => {
-    runLog.entries.push({
-      type: "info",
-      timeMs: Date.now(),
-      message,
-      stage,
-      endpoint,
-    } as RunLogInfoEntry);
-  },
-  success: ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessEntry) => {
-    runLog.entries.push({
-      type: "success",
-      timeMs: Date.now(),
-      endpoint,
-      filesWritten,
-      filesSkipped,
-      total,
-      days,
-    } as RunLogSuccessEntry);
-  },
-  error: ({ stage, endpoint, error }: ErrorEntry) => {
-    const message =
-      typeof error === "string"
-        ? error
-        : error instanceof Error
-          ? error.message
-          : "Unknown error";
-
-    const data =
-      error instanceof AxiosError && error.response
-        ? (error.response.data as object)
-        : {};
-
-    runLog.entries.push({
-      type: "error",
-      timeMs: Date.now(),
-      stage,
-      endpoint,
-      message,
-      data,
-    } as RunLogErrorEntry);
-  },
-  shutdown: () => {
-    const savePath = [...(apiName ? [apiName, "_runs"] : ["_runs"])];
-    const outputPath = makeOutputPath(savePath);
-
-    runLog.endTimeMs = Date.now();
-    runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
-    const logContent = JSON.stringify(runLog, null, 2);
-
-    writeFile(outputPath, JSON.stringify(runLog, null, 2));
-
-    if (getConfig().debugLogOutput) {
-      console.log(logContent);
-    }
-
-    runLog.entries = [];
-  },
+  info,
+  success,
+  error,
+  shutdown,
 };
 
 export default runLogger;
