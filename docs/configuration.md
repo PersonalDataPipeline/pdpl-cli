@@ -19,7 +19,6 @@ export default {
 - `debugLogOutput`: Output logging in the service to the console.
 - `debugOutputDir`: Direct path to a directory where the data should be output. Run the script with `DEBUG_OUTPUT=true`  in an environment variable (see below for more information) to save data to a different directory when troubleshooting.
 - `debugCompressJson`: Boolean to indicate whether JSON should be compressed when `DEBUG_OUTPUT=true`  is set in an environment variable. 
-- `debugUseMocks`: Use pre-generated mock data to test out data processing. If there are no mocks for a certain call, the processing will fail. This can also be set using the `DEBUG_USE_MOCKS` environment variable, explained below.
 - `debugSaveMocks`: Save raw JSON from the API to a mock file. This can also be set using the `DEBUG_SAVE_MOCKS` environment variable, explained below.
 
 ## Environment variables

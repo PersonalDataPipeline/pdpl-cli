@@ -13,7 +13,6 @@ dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
 
 const {
   DEBUG_OUTPUT = "false",
-  DEBUG_USE_MOCKS = "false",
   DEBUG_LOG_OUTPUT = "false",
   DEBUG_SAVE_MOCKS = "false",
   DEBUG_ALL = "false",
@@ -35,7 +34,6 @@ export interface Config {
   apisSupported: string[];
   imports: string[];
   importsSupported: string[];
-  debugUseMocks: boolean;
   debugLogOutput: boolean;
   debugSaveMocks: boolean;
   debugOutputDir: string;
@@ -57,7 +55,6 @@ const config: Config = {
   imports: [],
   importsSupported: [],
   compressJson: true,
-  debugUseMocks: false,
   debugLogOutput: false,
   debugSaveMocks: false,
   debugOutputDir: path.join(homedir(), "api-data-DEBUG"),
@@ -108,10 +105,6 @@ export default (): Config => {
     processedConfig.outputDir = localConfig.debugOutputDir || config.debugOutputDir;
     processedConfig.compressJson =
       localConfig.debugCompressJson || config.debugCompressJson;
-  }
-
-  if (DEBUG_USE_MOCKS === "true" || DEBUG_ALL === "true") {
-    processedConfig.debugUseMocks = true;
   }
 
   if (DEBUG_LOG_OUTPUT === "true" || DEBUG_ALL === "true") {
