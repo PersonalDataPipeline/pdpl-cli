@@ -7,7 +7,6 @@ import { writeFile } from "./fs.js";
 vi.mock("./config.js", () => ({
   default: () => ({
     outputDir: "/output/dir",
-    debugLogOutput: false,
   }),
 }));
 

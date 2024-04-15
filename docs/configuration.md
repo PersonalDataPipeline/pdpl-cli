@@ -16,7 +16,6 @@ export default {
 - `outputDir`: A direct path to where gathered data should be saved. If this is not valid, the script will exit with an error.
 - `originDate`: The date used as the earliest date for gathered data. Data received that is older than this date will be ignored.
 - `compressJson`: Boolean to save the gathered data as compressed (`true`) or pretty-printed (`false`). Default is `true`.
-- `debugLogOutput`: Output logging in the service to the console.
 - `debugOutputDir`: Direct path to a directory where the data should be output. Run the script with `DEBUG_OUTPUT=true`  in an environment variable (see below for more information) to save data to a different directory when troubleshooting.
 - `debugCompressJson`: Boolean to indicate whether JSON should be compressed when `DEBUG_OUTPUT=true`  is set in an environment variable. 
 - `debugSaveMocks`: Save raw JSON from the API to a mock file. This can also be set using the `DEBUG_SAVE_MOCKS` environment variable, explained below.
@@ -26,8 +25,6 @@ export default {
 There are a few environment variables that can be used when running the script or in a `.env` file in the root of the project. 
 
 - `DEBUG_OUTPUT`: Output data to the `debugOutputDir` path explained above and use `debugCompressJson` to determine JSON compression.
-- `DEBUG_LOG_OUTPUT` = Output logging in the service to the console.
-- `DEBUG_USE_MOCKS`: Use pre-generated mock data to test out data processing. If there are no mocks for a certain call, the processing will fail.
 - `DEBUG_SAVE_MOCKS`: Save raw JSON from the API to a mock file.
 - `DEBUG_ALL`: Run the script with all the options above.
 - `PATH_TO_CONFIG`: Direct path to a configuration file to use (see above for options and format)

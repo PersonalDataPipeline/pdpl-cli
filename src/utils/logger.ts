@@ -2,7 +2,6 @@ import { AxiosError } from "axios";
 
 import { getFormattedDate, getFormattedTime, runDateUtc } from "./date-time.js";
 import { makeOutputPath, writeFile } from "./fs.js";
-import getConfig from "./config.js";
 
 ////
 /// Types
@@ -145,18 +144,11 @@ const error = ({ stage, endpoint, error }: ErrorEntry) => {
 };
 
 const shutdown = (apiName?: string) => {
-  const savePath = [...(apiName ? [apiName, "_runs"] : ["_runs"])];
-  const outputPath = makeOutputPath(savePath);
-
   runLog.endTimeMs = Date.now();
   runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
-  const logContent = JSON.stringify(runLog, null, 2);
 
-  writeFile(outputPath, JSON.stringify(runLog, null, 2));
-
-  if (getConfig().debugLogOutput) {
-    console.log(logContent);
-  }
+  const savePath = [...(apiName ? [apiName, "_runs"] : ["_runs"])];
+  writeFile(makeOutputPath(savePath), JSON.stringify(runLog, null, 2));
 
   runLog.entries = [];
 };
