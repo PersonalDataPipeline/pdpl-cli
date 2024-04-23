@@ -17,12 +17,10 @@ export interface RunLogger {
 
 export interface InfoEntry {
   message: string;
-  stage: string;
   endpoint?: string;
 }
 
 export interface ErrorEntry {
-  stage: string;
   error: unknown;
   endpoint?: string;
 }
@@ -36,7 +34,6 @@ export interface SuccessEntry {
 }
 
 export interface RunLogInfoEntry {
-  stage: "startup" | "http" | "parsing_response" | "queue_management" | "other";
   type: "info" | "error" | "success";
   timeMs: number;
   message: string;
@@ -48,7 +45,7 @@ export interface RunLogErrorEntry extends RunLogInfoEntry {
 }
 
 export interface RunLogSuccessEntry
-  extends Omit<RunLogInfoEntry, "endpoint" | "message" | "stage"> {
+  extends Omit<RunLogInfoEntry, "endpoint" | "message"> {
   endpoint: string;
   filesWritten?: number;
   filesSkipped?: number;
@@ -100,12 +97,11 @@ const print = (entry: PrintLogEntry) => {
   );
 };
 
-const info = ({ message, stage, endpoint }: InfoEntry) => {
+const info = ({ message, endpoint }: InfoEntry) => {
   const entry = {
     type: "info",
     timeMs: Date.now(),
     message,
-    stage,
     endpoint,
   } as RunLogInfoEntry;
   runLog.entries.push(entry);
@@ -131,7 +127,7 @@ const success = ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessE
   });
 };
 
-const error = ({ stage, endpoint, error }: ErrorEntry) => {
+const error = ({ endpoint, error }: ErrorEntry) => {
   const message =
     typeof error === "string"
       ? error
@@ -145,7 +141,6 @@ const error = ({ stage, endpoint, error }: ErrorEntry) => {
   const entry = {
     type: "error",
     timeMs: Date.now(),
-    stage,
     endpoint,
     message,
     data,

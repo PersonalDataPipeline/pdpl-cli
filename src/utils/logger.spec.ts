@@ -19,7 +19,6 @@ vi.mock("fs");
 
 const mockInfoLog: InfoEntry = {
   message: "INFO_MESSAGE",
-  stage: "other",
 };
 
 const mockSuccessLog: SuccessEntry = {
@@ -50,7 +49,6 @@ describe("Logger", () => {
     it("generates the correct log content", () => {
       const logObject = JSON.parse(writeFileCall[1]) as { entries: object[] };
       expect(logObject.entries[0]).toMatchObject({
-        stage: "other",
         message: "INFO_MESSAGE",
         type: "info",
       });

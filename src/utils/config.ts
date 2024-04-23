@@ -91,7 +91,6 @@ export default (): Config => {
   if (configImport !== null) {
     localConfig = (configImport as { default: object }).default as ConfigFile;
     runLogger.info({
-      stage: "startup",
       message: `Using local config file ${configPath}`,
     });
   }

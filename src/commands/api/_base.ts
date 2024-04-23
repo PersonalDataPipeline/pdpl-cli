@@ -62,7 +62,7 @@ export abstract class ApiBaseCommand<T extends typeof Command> extends Command {
 
   protected override async catch(err: Error & { exitCode?: number }) {
     await super.catch(err);
-    logger.error({ stage: "startup", error: err.message });
+    logger.error({ error: err.message });
   }
 
   protected override async finally(_: Error | undefined) {

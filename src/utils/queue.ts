@@ -111,7 +111,6 @@ export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntr
     // If an endpoint was removed from the handler, remove from the queue
     if (!handledEndpoints.includes(endpoint)) {
       logger.info({
-        stage: "queue_management",
         message: "Removing unknown endpoint",
         endpoint,
       });
@@ -123,7 +122,6 @@ export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntr
     if (entry.runAfter > runDate.seconds) {
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
       logger.info({
-        stage: "queue_management",
         message: `Skipping for ${waitMinutes} minutes`,
         endpoint,
       });
@@ -142,7 +140,6 @@ export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntr
   for (const endpoint of handledEndpoints) {
     if (!hasStandardEntryFor(endpoint)) {
       logger.info({
-        stage: "queue_management",
         message: `Adding standard entry for unhandled endpoint`,
         endpoint,
       });

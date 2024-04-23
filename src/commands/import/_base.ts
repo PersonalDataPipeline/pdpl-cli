@@ -61,7 +61,7 @@ export abstract class ImportBaseCommand<T extends typeof Command> extends Comman
 
   protected override async catch(err: Error & { exitCode?: number }) {
     await super.catch(err);
-    logger.error({ stage: "startup", error: err.message });
+    logger.error({ error: err.message });
   }
 
   protected override async finally(_: Error | undefined) {

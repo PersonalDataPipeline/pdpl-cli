@@ -38,7 +38,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
     const runQueue = queue.processQueue(apiHandler, logger);
     if (!runQueue.length) {
       logger.info({
-        stage: "queue_management",
         message: "Empty run queue ... stopping",
       });
       return;
@@ -85,7 +84,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           apiResponse = await getApiData(apiHandler, epHandler);
         } catch (error) {
           logger.error({
-            stage: "http",
             endpoint,
             error,
           });
@@ -111,7 +109,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
 
         if (!Array.isArray(entities)) {
           logger.error({
-            stage: "parsing_response",
             endpoint: endpoint,
             error: "Cannot iterate through data",
           });
@@ -128,7 +125,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           }
         } catch (error) {
           logger.error({
-            stage: "parsing_response",
             endpoint: endpoint,
             error,
           });
@@ -216,7 +212,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           apiResponse = await getApiData(apiHandler, epHandler, entity);
         } catch (error) {
           logger.error({
-            stage: "http",
             endpoint: epHandler.getEndpoint(entity),
             error,
           });
