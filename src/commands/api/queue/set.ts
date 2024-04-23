@@ -1,8 +1,10 @@
+import { Flags } from "@oclif/core";
+
 import { ApiHandler, EpHistoric } from "../../../utils/types.js";
 import { ApiBaseCommand, apiNameArg } from "../_base.js";
-import * as queue from "../../../utils/queue.js";
 import { getEpochNow } from "../../../utils/date-time.js";
-import { Flags } from "@oclif/core";
+import * as queue from "../../../utils/queue.js";
+import logger from "../../../utils/logger.js";
 
 export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
   static override summary = "Initialize the queue for an API";
@@ -58,34 +60,46 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
     queue.loadQueue(handler);
 
     const allEndpoints = handler.endpointsPrimary.map((ep) => ep.getEndpoint());
-    
+
     if (endpointFlag && !allEndpoints.includes(endpointFlag)) {
       throw new Error(`Unsupported API endpoint "${endpointFlag}"`);
     }
-    
+
     for (const endpointHandler of handler.endpointsPrimary) {
       const endpointName = endpointHandler.getEndpoint();
-      
+
       if (endpointFlag && endpointFlag !== endpointName) {
         continue;
       }
-      
+
       if (!historicOnly) {
         const hasStandard = queue.hasStandardEntryFor(endpointName);
         if (hasStandard) {
           if (runNow) {
             queue.updateStandardEntry(endpointHandler, getEpochNow());
-            console.log(`Updated existing standard entry for ${endpointName} to run now`);
+            logger.print({
+              type: "success",
+              endpoint: endpointName,
+              message: `Updated existing standard entry to run now`,
+            });
           } else {
-            console.log(`Standard entry for ${endpointName} already exists`);
+            logger.print({
+              type: "info",
+              endpoint: endpointName,
+              message: `Standard entry already exists`,
+            });
           }
         } else {
-          console.log(`Adding initial standard entry for ${endpointName}`);
           queue.addEntry({
             endpoint: endpointName,
             runAfter: getEpochNow(),
             historic: false,
             params: endpointHandler.getParams ? endpointHandler.getParams() : {},
+          });
+          logger.print({
+            type: "success",
+            endpoint: endpointName,
+            message: `Added standard entry`,
           });
         }
       }
@@ -98,17 +112,29 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
               endpoint: endpointName,
               runAfter: getEpochNow(),
             });
-            console.log(`Updated existing historic entry for ${endpointName} to run now`);
+            logger.print({
+              type: "success",
+              endpoint: endpointName,
+              message: `Updated existing historic entry to run now`,
+            });
           } else {
-            console.log(`Historic entry for ${endpointName} already exists`);
+            logger.print({
+              type: "info",
+              endpoint: endpointName,
+              message: `Historic entry already exists`,
+            });
           }
         } else if (endpointHandler.isHistoric()) {
-          console.log(`Adding initial historic entry for ${endpointName}`);
           queue.addEntry({
             endpoint: endpointName,
             runAfter: getEpochNow(),
             historic: true,
             params: (endpointHandler as EpHistoric).getHistoricParams(),
+          });
+          logger.print({
+            type: "success",
+            endpoint: endpointName,
+            message: `Added historic entry`,
           });
         }
       }
