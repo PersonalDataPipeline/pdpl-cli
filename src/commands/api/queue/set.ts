@@ -44,8 +44,8 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
   public override async run(): Promise<void> {
     const {
       "endpoint": endpointFlag,
-      "historic-only": standardOnly,
       "historic-only": historicOnly,
+      "standard-only": standardOnly,
       "run-now": runNow,
     } = this.flags;
 
@@ -58,17 +58,18 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
     queue.loadQueue(handler);
 
     const allEndpoints = handler.endpointsPrimary.map((ep) => ep.getEndpoint());
+    
     if (endpointFlag && !allEndpoints.includes(endpointFlag)) {
       throw new Error(`Unsupported API endpoint "${endpointFlag}"`);
     }
-
+    
     for (const endpointHandler of handler.endpointsPrimary) {
       const endpointName = endpointHandler.getEndpoint();
-
+      
       if (endpointFlag && endpointFlag !== endpointName) {
         continue;
       }
-
+      
       if (!historicOnly) {
         const hasStandard = queue.hasStandardEntryFor(endpointName);
         if (hasStandard) {
