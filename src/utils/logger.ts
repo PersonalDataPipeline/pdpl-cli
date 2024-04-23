@@ -12,7 +12,7 @@ export interface RunLogger {
   error: (entry: ErrorEntry) => void;
   success: (entry: SuccessEntry) => void;
   shutdown: (apiName?: string) => void;
-  print: (entry: AnyLogEntry) => void;
+  print: (entry: PrintLogEntry) => void;
 }
 
 export interface InfoEntry {
@@ -65,6 +65,12 @@ export interface RunLogFile {
   runDurationMs?: number;
 }
 
+interface PrintLogEntry {
+  type: string;
+  endpoint?: string;
+  message?: string;
+}
+
 type AnyLogEntry = RunLogInfoEntry | RunLogSuccessEntry | RunLogErrorEntry;
 
 ////
@@ -81,7 +87,7 @@ const runLog: RunLogFile = {
 /// Export
 //
 
-const print = (entry: AnyLogEntry) => {
+const print = (entry: PrintLogEntry) => {
   console.log(
     "%s %s [LEVEL: %s] %s%s",
     getFormattedDate(),
