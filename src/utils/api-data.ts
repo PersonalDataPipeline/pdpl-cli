@@ -2,10 +2,11 @@ import path from "path";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import axiosRetry, { exponentialDelay } from "axios-retry";
 
+import { existsSync, mkdirSync } from "fs";
 import getConfig from "./config.js";
 import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "./types.js";
 import { __dirname, writeFile } from "./fs.js";
-import { existsSync, mkdirSync } from "fs";
+import logger from "./logger.js";
 
 ////
 /// Helpers
@@ -56,6 +57,7 @@ export const getApiData = async (
     axiosConfig.data = handler.getRequestData();
   }
 
+  logger.printDebug(axiosConfig, apiHandler);
   const response = await axios(axiosConfig);
 
   if (getConfig().debugSaveMocks) {

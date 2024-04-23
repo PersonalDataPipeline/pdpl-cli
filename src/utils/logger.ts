@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 
 import { getFormattedDate, getFormattedTime, runDateUtc } from "./date-time.js";
 import { makeOutputPath, writeFile } from "./fs.js";
+import { ApiHandler } from "./types.js";
 
 ////
 /// Types
@@ -13,6 +14,7 @@ export interface RunLogger {
   success: (entry: SuccessEntry) => void;
   shutdown: (apiName?: string) => void;
   print: (entry: PrintLogEntry) => void;
+  printDebug: (data: object, apiHandler?: ApiHandler) => void;
 }
 
 export interface InfoEntry {
@@ -97,6 +99,10 @@ const print = (entry: PrintLogEntry) => {
   );
 };
 
+const printDebug = (data: object) => {
+  console.log(data);
+};
+
 const info = ({ message, endpoint }: InfoEntry) => {
   const entry = {
     type: "info",
@@ -160,6 +166,7 @@ const shutdown = (apiName?: string) => {
 };
 
 const runLogger: RunLogger = {
+  printDebug,
   info,
   success,
   error,
