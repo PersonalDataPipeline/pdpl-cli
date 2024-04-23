@@ -12,6 +12,7 @@ export interface RunLogger {
   error: (entry: ErrorEntry) => void;
   success: (entry: SuccessEntry) => void;
   shutdown: (apiName?: string) => void;
+  print: (entry: AnyLogEntry) => void;
 }
 
 export interface InfoEntry {
@@ -76,6 +77,10 @@ const runLog: RunLogFile = {
   entries: [],
 };
 
+////
+/// Export
+//
+
 const print = (entry: AnyLogEntry) => {
   console.log(
     "%s %s [LEVEL: %s] %s%s",
@@ -86,10 +91,6 @@ const print = (entry: AnyLogEntry) => {
     "message" in entry ? entry.message : ""
   );
 };
-
-////
-/// Export
-//
 
 const info = ({ message, stage, endpoint }: InfoEntry) => {
   const entry = {
@@ -158,6 +159,7 @@ const runLogger: RunLogger = {
   success,
   error,
   shutdown,
+  print,
 };
 
 export default runLogger;
