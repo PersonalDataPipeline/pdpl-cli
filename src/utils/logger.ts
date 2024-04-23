@@ -67,6 +67,7 @@ export interface RunLogFile {
 
 interface PrintLogEntry {
   type: string;
+  apiName?: string;
   endpoint?: string;
   message?: string;
 }
@@ -93,6 +94,7 @@ const print = (entry: PrintLogEntry) => {
     getFormattedDate(),
     getFormattedTime(),
     entry.type,
+    "apiName" in entry && entry.apiName ? `[API: ${entry.apiName}] ` : "",
     "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
     "message" in entry ? entry.message : ""
   );

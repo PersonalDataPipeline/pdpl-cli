@@ -67,6 +67,10 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
 
     for (const endpointHandler of handler.endpointsPrimary) {
       const endpointName = endpointHandler.getEndpoint();
+      const logEntry = {
+        apiName: this.args.apiName,
+        endpoint: endpointName,
+      };
 
       if (endpointFlag && endpointFlag !== endpointName) {
         continue;
@@ -78,14 +82,14 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
           if (runNow) {
             queue.updateStandardEntry(endpointHandler, getEpochNow());
             logger.print({
+              ...logEntry,
               type: "success",
-              endpoint: endpointName,
               message: `Updated existing standard entry to run now`,
             });
           } else {
             logger.print({
+              ...logEntry,
               type: "info",
-              endpoint: endpointName,
               message: `Standard entry already exists`,
             });
           }
@@ -97,8 +101,8 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             params: endpointHandler.getParams ? endpointHandler.getParams() : {},
           });
           logger.print({
+            ...logEntry,
             type: "success",
-            endpoint: endpointName,
             message: `Added standard entry`,
           });
         }
@@ -113,14 +117,14 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
               runAfter: getEpochNow(),
             });
             logger.print({
+              ...logEntry,
               type: "success",
-              endpoint: endpointName,
               message: `Updated existing historic entry to run now`,
             });
           } else {
             logger.print({
+              ...logEntry,
               type: "info",
-              endpoint: endpointName,
               message: `Historic entry already exists`,
             });
           }
@@ -132,8 +136,8 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             params: (endpointHandler as EpHistoric).getHistoricParams(),
           });
           logger.print({
+            ...logEntry,
             type: "success",
-            endpoint: endpointName,
             message: `Added historic entry`,
           });
         }
