@@ -123,7 +123,9 @@ const success = ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessE
   runLog.entries.push(entry);
   print({
     ...entry,
-    message: `Got ${total} total ${typeof days === "number" ? `for ${days} days` : ""}; ${filesWritten} files written and ${filesSkipped} files skipped.`,
+    message: `Got ${total} total${
+      typeof days === "number" ? ` for ${days} days` : ""
+    }; ${filesWritten} files written and ${filesSkipped} files skipped.`,
   });
 };
 

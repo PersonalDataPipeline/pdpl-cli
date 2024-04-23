@@ -117,9 +117,7 @@ const endpointsSecondary: EpSecondary[] = [
     getParams: () => ({
       keys: "latlng,time,altitude,distance",
     }),
-    getEndpoint: (entity: object) => {
-      return `activities/${getIdentifier(entity)}/streams`;
-    },
+    getEndpoint: (entity: object) => `activities/${getIdentifier(entity)}/streams`,
     getPrimary: () => "athlete/activities",
     getIdentifier,
   },
