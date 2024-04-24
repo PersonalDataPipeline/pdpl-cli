@@ -19,9 +19,6 @@ Outputting to stdout will help with development and is the way that users will b
 
 This is one that I've been thinking about for a while. I think this needs to be a config option, so it can be set to a certain level for a while, as well as an env option so it can be turned on for single calls. I don't think it needs to be in the command flags, though, but easy enough to add later if needed. 
 
----
-
-
 ## Consequences
 
 See [ADR 006: Logging](./006-logging.md)

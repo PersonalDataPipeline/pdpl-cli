@@ -8,6 +8,8 @@ Notes taken during development, newest to oldest.
 - [ ] Fix: Check headers for GitHub events to see if calls should continue
 - [ ] Fix: Don't process data if HTTP call fails (continue main loop)
 - [ ] Testing strategy for API/import contracts + core functionality (ADR)
+	- https://mswjs.io
+- [ ] Switch auth to CLI only
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
@@ -15,11 +17,24 @@ Notes taken during development, newest to oldest.
 - [ ] Add Reddit API
 - [ ] Add Twitter API
 - --- THE LINE ---
+- [ ] https://nutjs.dev for data export
 - [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
 - [ ] What to do with imported files or ones obtained from an API
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
-- [ ] Merging imported data with duplicate API data
+- [ ] Merging imported data with duplicate API data; reconciling/augmenting API data (ADR)
 - [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
+
+## [[2024-04-24]]
+
+[ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
+
+## [[2024-04-23]]
+
+Back to working on logging as well as working through a few bugs that cropped up while this was running in the background.
+
+[ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
+
+I'm also working on a post to explain the system that I'm building here and how this piece fits into a whole. It's helpful to keep reminding myself of the larger goal here so I don't get too stuck in the details!
 
 ## [[2024-04-14]]
 
