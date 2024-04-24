@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { config as dotenvConfig } from "dotenv";
 
 import { pathExists } from "./fs.js";
-import runLogger from "./logger.js";
+import { ValidLogLevels } from "./logger.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
@@ -15,6 +15,7 @@ const {
   DEBUG_OUTPUT = "false",
   DEBUG_SAVE_MOCKS = "false",
   DEBUG_ALL = "false",
+  LOG_LEVEL,
   PATH_TO_CONFIG,
 } = process.env;
 
@@ -33,6 +34,7 @@ export interface Config {
   apisSupported: string[];
   imports: string[];
   importsSupported: string[];
+  logLevel: ValidLogLevels;
   debugSaveMocks: boolean;
   debugOutputDir: string;
   debugCompressJson: boolean;
@@ -44,6 +46,8 @@ interface ConfigFile extends Partial<Config> {}
 /// Helpers
 //
 
+const validLogLevels: ValidLogLevels[] = ["debug", "info", "warn", "success", "error"];
+
 const config: Config = {
   timezone: "GMT",
   outputDir: path.join(homedir(), "api-data"),
@@ -53,6 +57,7 @@ const config: Config = {
   imports: [],
   importsSupported: [],
   compressJson: true,
+  logLevel: "info",
   debugSaveMocks: false,
   debugOutputDir: path.join(homedir(), "api-data-DEBUG"),
   debugCompressJson: false,
@@ -90,9 +95,6 @@ export default (): Config => {
   let localConfig: ConfigFile = {};
   if (configImport !== null) {
     localConfig = (configImport as { default: object }).default as ConfigFile;
-    runLogger.info({
-      message: `Using local config file ${configPath}`,
-    });
   }
 
   processedConfig = Object.assign({}, config, localConfig);
@@ -105,6 +107,14 @@ export default (): Config => {
 
   if (DEBUG_SAVE_MOCKS === "true" || DEBUG_ALL === "true") {
     processedConfig.debugSaveMocks = true;
+  }
+
+  if (LOG_LEVEL && validLogLevels.includes(LOG_LEVEL as ValidLogLevels)) {
+    processedConfig.logLevel = LOG_LEVEL as ValidLogLevels;
+  }
+
+  if (DEBUG_ALL === "true") {
+    processedConfig.logLevel = "debug";
   }
 
   if (!pathExists(processedConfig.outputDir)) {

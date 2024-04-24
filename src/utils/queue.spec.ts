@@ -71,6 +71,10 @@ const mockOtherEntry = {
 };
 
 describe("Class: Queue", () => {
+  beforeEach(() => {
+    global.console.log = vi.fn();
+  });
+
   it("looks for a queue file when a new instance is created", () => {
     queue.loadQueue(mockApiHandler);
     expect(pathExists).toHaveBeenCalledWith(queueFilePath);

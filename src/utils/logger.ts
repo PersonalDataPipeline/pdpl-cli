@@ -3,10 +3,13 @@ import { AxiosError } from "axios";
 import { getFormattedDate, getFormattedTime, runDateUtc } from "./date-time.js";
 import { makeOutputPath, writeFile } from "./fs.js";
 import { ApiHandler } from "./types.js";
+import getConfig from "./config.js";
 
 ////
 /// Types
 //
+
+export type ValidLogLevels = "debug" | "info" | "warn" | "success" | "error" | "none";
 
 export interface RunLogger {
   info: (entry: InfoEntry) => void;
@@ -15,6 +18,7 @@ export interface RunLogger {
   shutdown: (apiName?: string) => void;
   print: (entry: PrintLogEntry) => void;
   printDebug: (data: object, apiHandler?: ApiHandler) => void;
+  LOG_LEVELS: { [Level in ValidLogLevels]: number };
 }
 
 export interface InfoEntry {
@@ -36,7 +40,7 @@ export interface SuccessEntry {
 }
 
 export interface RunLogInfoEntry {
-  type: "info" | "error" | "success";
+  type: ValidLogLevels;
   timeMs: number;
   message: string;
   endpoint?: string;
@@ -65,7 +69,7 @@ export interface RunLogFile {
 }
 
 interface PrintLogEntry {
-  type: string;
+  type: ValidLogLevels;
   apiName?: string;
   endpoint?: string;
   message?: string;
@@ -77,6 +81,8 @@ type AnyLogEntry = RunLogInfoEntry | RunLogSuccessEntry | RunLogErrorEntry;
 /// Helpers
 //
 
+const logLevel = getConfig().logLevel;
+
 const runLog: RunLogFile = {
   dateTime: runDateUtc().dateTime,
   startTimeMs: Date.now(),
@@ -87,23 +93,39 @@ const runLog: RunLogFile = {
 /// Export
 //
 
+const LOG_LEVELS = {
+  debug: 0,
+  info: 10,
+  warn: 20,
+  success: 30,
+  error: 40,
+  none: 100,
+};
+
 const print = (entry: PrintLogEntry) => {
-  console.log(
-    "%s %s [LEVEL: %s] %s%s",
-    getFormattedDate(),
-    getFormattedTime(),
-    entry.type,
-    "apiName" in entry && entry.apiName ? `[API: ${entry.apiName}] ` : "",
-    "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
-    "message" in entry ? entry.message : ""
-  );
+  if (LOG_LEVELS[entry.type] >= LOG_LEVELS[logLevel]) {
+    console.log(
+      "%s %s [LEVEL: %s] %s%s",
+      getFormattedDate(),
+      getFormattedTime(),
+      entry.type,
+      "apiName" in entry && entry.apiName ? `[API: ${entry.apiName}] ` : "",
+      "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
+      "message" in entry ? entry.message : ""
+    );
+  }
 };
 
 const printDebug = (data: object) => {
-  console.log(data);
+  if (LOG_LEVELS[logLevel] === LOG_LEVELS["debug"]) {
+    console.log(data);
+  }
 };
 
 const info = ({ message, endpoint }: InfoEntry) => {
+  if (LOG_LEVELS["info"] < LOG_LEVELS[logLevel]) {
+    return;
+  }
   const entry = {
     type: "info",
     timeMs: Date.now(),
@@ -115,6 +137,9 @@ const info = ({ message, endpoint }: InfoEntry) => {
 };
 
 const success = ({ endpoint, filesWritten, filesSkipped, total, days }: SuccessEntry) => {
+  if (LOG_LEVELS[logLevel] > LOG_LEVELS["success"]) {
+    return;
+  }
   const entry = {
     type: "success",
     timeMs: Date.now(),
@@ -172,6 +197,7 @@ const runLogger: RunLogger = {
   error,
   shutdown,
   print,
+  LOG_LEVELS,
 };
 
 export default runLogger;

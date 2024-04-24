@@ -4,9 +4,14 @@ import logger, { InfoEntry, SuccessEntry } from "./logger.js";
 import { runDateUtc } from "./date-time.js";
 import { writeFile } from "./fs.js";
 
-vi.mock("./config.js", () => ({
+////
+/// Mocks
+//
+
+vi.mock("./config.js", async () => ({
   default: () => ({
     outputDir: "/output/dir",
+    logLevel: "info",
   }),
 }));
 
@@ -16,6 +21,10 @@ vi.mock("./fs.js", async (importOriginal) => ({
 }));
 
 vi.mock("fs");
+
+////
+/// Helpers
+//
 
 const mockInfoLog: InfoEntry = {
   message: "INFO_MESSAGE",
@@ -29,9 +38,32 @@ const mockSuccessLog: SuccessEntry = {
   days: 10,
 };
 
+////
+/// Tests
+//
+
 describe("Logger", () => {
   beforeEach(() => {
     (writeFile as Mock).mockReset();
+    global.console.log = vi.fn();
+  });
+
+  describe("shutdown", () => {
+    let writeFileCall: string[];
+
+    it("generates the correct file path without an API name", () => {
+      logger.shutdown();
+      writeFileCall = (writeFile as Mock).mock.calls[0] as [];
+      expect(writeFileCall[0]).toEqual(`/output/dir/_runs/${runDateUtc().fileName}.json`);
+    });
+
+    it("generates the correct file path with an API name", () => {
+      logger.shutdown("API_NAME");
+      writeFileCall = (writeFile as Mock).mock.calls[0] as [];
+      expect(writeFileCall[0]).toEqual(
+        `/output/dir/API_NAME/_runs/${runDateUtc().fileName}.json`
+      );
+    });
   });
 
   describe("info log", () => {
@@ -42,8 +74,8 @@ describe("Logger", () => {
       writeFileCall = (writeFile as Mock).mock.calls[0] as [];
     });
 
-    it("generates the correct file path", () => {
-      expect(writeFileCall[0]).toEqual(`/output/dir/_runs/${runDateUtc().fileName}.json`);
+    it("generates the correct log content", () => {
+      expect(global.console.log).toBeCalledTimes(1);
     });
 
     it("generates the correct log content", () => {
@@ -59,14 +91,12 @@ describe("Logger", () => {
     let writeFileCall: string[];
     beforeEach(() => {
       logger.success(mockSuccessLog);
-      logger.shutdown("API_NAME");
+      logger.shutdown();
       writeFileCall = (writeFile as Mock).mock.calls[0] as [];
     });
 
-    it("generates the correct file path", () => {
-      expect(writeFileCall[0]).toEqual(
-        `/output/dir/API_NAME/_runs/${runDateUtc().fileName}.json`
-      );
+    it("generates the correct log content", () => {
+      expect(global.console.log).toBeCalledTimes(1);
     });
 
     it("generates the correct log content", () => {
