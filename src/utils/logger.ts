@@ -16,7 +16,6 @@ export interface RunLogger {
   error: (entry: ErrorEntry) => void;
   success: (entry: SuccessEntry) => void;
   shutdown: (apiName?: string) => void;
-  print: (entry: PrintLogEntry) => void;
   printDebug: (data: object, apiHandler?: ApiHandler) => void;
   LOG_LEVELS: { [Level in ValidLogLevels]: number };
 }
@@ -89,6 +88,18 @@ const runLog: RunLogFile = {
   entries: [],
 };
 
+const print = (entry: PrintLogEntry) => {
+  console.log(
+    "%s %s [LEVEL: %s] %s%s",
+    getFormattedDate(),
+    getFormattedTime(),
+    entry.type,
+    "apiName" in entry && entry.apiName ? `[API: ${entry.apiName}] ` : "",
+    "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
+    "message" in entry ? entry.message : ""
+  );
+};
+
 ////
 /// Export
 //
@@ -100,20 +111,6 @@ const LOG_LEVELS = {
   success: 30,
   error: 40,
   none: 100,
-};
-
-const print = (entry: PrintLogEntry) => {
-  if (LOG_LEVELS[entry.type] >= LOG_LEVELS[logLevel]) {
-    console.log(
-      "%s %s [LEVEL: %s] %s%s",
-      getFormattedDate(),
-      getFormattedTime(),
-      entry.type,
-      "apiName" in entry && entry.apiName ? `[API: ${entry.apiName}] ` : "",
-      "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
-      "message" in entry ? entry.message : ""
-    );
-  }
 };
 
 const printDebug = (data: object) => {
@@ -196,7 +193,6 @@ const runLogger: RunLogger = {
   success,
   error,
   shutdown,
-  print,
   LOG_LEVELS,
 };
 

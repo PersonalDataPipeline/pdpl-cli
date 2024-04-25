@@ -81,15 +81,13 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
         if (hasStandard) {
           if (runNow) {
             queue.updateStandardEntry(endpointHandler, getEpochNow());
-            logger.print({
+            logger.info({
               ...logEntry,
-              type: "success",
               message: `Updated existing standard entry to run now`,
             });
           } else {
-            logger.print({
+            logger.info({
               ...logEntry,
-              type: "info",
               message: `Standard entry already exists`,
             });
           }
@@ -100,9 +98,8 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             historic: false,
             params: endpointHandler.getParams ? endpointHandler.getParams() : {},
           });
-          logger.print({
+          logger.info({
             ...logEntry,
-            type: "success",
             message: `Added standard entry`,
           });
         }
@@ -116,15 +113,13 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
               endpoint: endpointName,
               runAfter: getEpochNow(),
             });
-            logger.print({
+            logger.info({
               ...logEntry,
-              type: "success",
               message: `Updated existing historic entry to run now`,
             });
           } else {
-            logger.print({
+            logger.info({
               ...logEntry,
-              type: "info",
               message: `Historic entry already exists`,
             });
           }
@@ -135,9 +130,8 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             historic: true,
             params: (endpointHandler as EpHistoric).getHistoricParams(),
           });
-          logger.print({
+          logger.info({
             ...logEntry,
-            type: "success",
             message: `Added historic entry`,
           });
         }
