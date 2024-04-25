@@ -178,6 +178,9 @@ const error = ({ endpoint, error }: ErrorEntry) => {
 };
 
 const shutdown = (apiName?: string) => {
+  if (!getConfig().saveEmptyLogs && !runLog.entries.length) {
+    return;
+  }
   runLog.endTimeMs = Date.now();
   runLog.runDurationMs = Math.floor(runLog.endTimeMs - runLog.startTimeMs);
 

@@ -32,6 +32,7 @@ export interface Config {
     [key: string]: string[] | true;
   };
   apisSupported: string[];
+  saveEmptyLogs: boolean;
   imports: string[];
   importsSupported: string[];
   logLevel: ValidLogLevels;
@@ -59,6 +60,7 @@ const config: Config = {
   compressJson: true,
   logLevel: "info",
   debugSaveMocks: false,
+  saveEmptyLogs: true,
   debugOutputDir: path.join(homedir(), "api-data-DEBUG"),
   debugCompressJson: false,
 };

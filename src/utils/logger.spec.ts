@@ -51,6 +51,10 @@ describe("Logger", () => {
   describe("shutdown", () => {
     let writeFileCall: string[];
 
+    beforeEach(() => {
+      logger.info(mockInfoLog);
+    });
+
     it("generates the correct file path without an API name", () => {
       logger.shutdown();
       writeFileCall = (writeFile as Mock).mock.calls[0] as [];
