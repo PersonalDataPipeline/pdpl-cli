@@ -90,13 +90,13 @@ const runLog: RunLogFile = {
 
 const print = (entry: PrintLogEntry) => {
   console.log(
-    "%s %s [LEVEL: %s] %s%s",
+    "%s %s [LEVEL: %s]%s%s%s",
     getFormattedDate(),
     getFormattedTime(),
     entry.type,
-    "apiName" in entry && entry.apiName ? `[API: ${entry.apiName}] ` : "",
-    "endpoint" in entry && entry.endpoint ? `[ENDPOINT: ${entry.endpoint}] ` : "",
-    "message" in entry ? entry.message : ""
+    "apiName" in entry && entry.apiName ? ` [API: ${entry.apiName}]` : "",
+    "endpoint" in entry && entry.endpoint ? ` [ENDPOINT: ${entry.endpoint}]` : "",
+    "message" in entry && entry.message ? ` ${entry.message}` : ""
   );
 };
 
