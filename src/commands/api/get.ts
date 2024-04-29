@@ -18,6 +18,11 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
 
   static override examples = ["<%= config.bin %> <%= command.id %> API_NAME"];
 
+  protected override async finally(_: Error | undefined) {
+    await super.finally(_);
+    logger.shutdown((this.args && this.args.apiName) || "");
+  }
+
   public override async run(): Promise<void> {
     const { apiName } = this.args;
 
