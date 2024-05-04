@@ -98,7 +98,8 @@ const getApiBaseUrl = () => "https://api.ouraring.com/v2/";
 const getApiAuthHeaders = async () => ({
   Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
 });
-const getHistoricDelay = () => ONE_QUATER_IN_SEC;
+const getHistoricDelay = (continuation?: boolean) =>
+  continuation ? HALF_HOUR_IN_SEC : ONE_QUATER_IN_SEC;
 
 const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
@@ -107,7 +108,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
@@ -129,7 +130,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
@@ -140,7 +141,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
@@ -151,7 +152,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
@@ -162,7 +163,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
@@ -173,7 +174,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
     parseDayFromEntity,
     transformResponseData,
@@ -184,11 +185,11 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--heartrate",
     getParams: getHeartrateParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
     getHistoricParams: getHeartrateParams,
     parseDayFromEntity: (entity: object) => {
       return getFormattedDate(0, new Date((entity as OuraEntity).timestamp));
     },
+    getHistoricDelay,
     transformResponseData,
     getNextCallParams,
   },
@@ -201,7 +202,6 @@ const handler: ApiHandler = {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

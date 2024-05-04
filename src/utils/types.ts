@@ -9,7 +9,6 @@ export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<{ [key: string]: string }>;
-  getHistoricDelay: () => number;
   endpointsPrimary: (EpHistoric | EpSnapshot)[];
   endpointsSecondary: EpSecondary[];
   authorizeEndpoint?: string;
@@ -37,7 +36,7 @@ export interface EpHistoric
   isHistoric: () => true;
   parseDayFromEntity: (entity: object) => string;
   getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
-  getHistoricDelay: () => number;
+  getHistoricDelay: (continuation?: boolean) => number;
   transformPrimary?: (entity: object | []) => unknown[];
   shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
 }

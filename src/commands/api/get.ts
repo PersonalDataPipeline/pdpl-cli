@@ -169,9 +169,9 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           runEntry.params
         );
 
-        const runAfterDelay = continueHistoric
-          ? (epHandler as EpHistoric).getHistoricDelay()
-          : apiHandler.getHistoricDelay();
+        const runAfterDelay = (epHandler as EpHistoric).getHistoricDelay(
+          continueHistoric
+        );
 
         const params = continueHistoric
           ? (epHandler as EpHistoric).getHistoricParams(runEntry.params, didReturnData)

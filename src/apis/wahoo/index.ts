@@ -36,7 +36,6 @@ const isReady = () =>
   !!WAHOO_AUTHORIZE_CLIENT_ID && !!WAHOO_AUTHORIZE_CLIENT_SECRET && !!WAHOO_REFRESH_TOKEN;
 const getApiName = () => "wahoo";
 const getApiBaseUrl = () => "https://api.wahooligan.com/v1/";
-const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 let accessToken = "";
 const getApiAuthHeaders = async () => {
@@ -83,7 +82,8 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
       page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
       per_page: 30,
     }),
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay: (continuation?: boolean) =>
+      continuation ? HALF_HOUR_IN_SEC : ONE_QUATER_IN_SEC,
     parseDayFromEntity: (entity: object) =>
       (entity as WahooWorkoutEntity).created_at.split("T")[0],
     transformResponseData: (response: AxiosResponse, existingData?: object | []) => {
@@ -101,7 +101,6 @@ const handler: ApiHandler = {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

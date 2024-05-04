@@ -57,7 +57,6 @@ const tokenEndpoint = "https://www.strava.com/oauth/token";
 const isReady = () => !!STRAVA_REFRESH_TOKEN;
 const getApiName = () => "strava";
 const getApiBaseUrl = () => "https://www.strava.com/api/v3/";
-const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 
 let accessToken = "";
 const getApiAuthHeaders = async () => {
@@ -99,7 +98,8 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
       page: currentParams && currentParams.page ? currentParams.page + 1 : 1,
       per_page: 30,
     }),
-    getHistoricDelay: () => HALF_HOUR_IN_SEC,
+    getHistoricDelay: (continuation?: boolean) =>
+      continuation ? HALF_HOUR_IN_SEC : ONE_QUATER_IN_SEC,
     parseDayFromEntity: (entity: object) =>
       (entity as StravaActivityEntity).start_date_local.split("T")[0] || "",
   },
@@ -130,7 +130,6 @@ const handler: ApiHandler = {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

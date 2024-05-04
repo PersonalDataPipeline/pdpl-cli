@@ -52,7 +52,6 @@ const getApiBaseUrl = () => "https://api.api-ninjas.com/v1/";
 const getApiAuthHeaders = async () => ({
   "X-Api-Key": API_NINJAS_KEY,
 });
-const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 
 const endpointsPrimary: EpHistoric[] = [
   {
@@ -61,7 +60,7 @@ const endpointsPrimary: EpHistoric[] = [
     getDirName: () => "historicalevents",
     getParams: () => defaultParams,
     getDelay: () => ONE_DAY_IN_SEC,
-    getHistoricDelay: () => 0,
+    getHistoricDelay: (continuation?) => (continuation ? 0 : ONE_YEAR_IN_SEC),
     getHistoricParams: (
       params?: ApiNinjasHistoricParams,
       didReturnData?: boolean
@@ -104,7 +103,6 @@ const handler: ApiHandler = {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

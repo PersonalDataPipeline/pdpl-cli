@@ -53,6 +53,9 @@ const getHistoricParams = (currentParams?: GitHubUrlParams): GitHubUrlParams => 
   per_page: 100,
 });
 
+const getHistoricDelay = (continuation?: boolean) =>
+  continuation ? QUARTER_HOUR_IN_SEC : ONE_QUATER_IN_SEC;
+
 ////
 /// Exports
 //
@@ -60,7 +63,6 @@ const getHistoricParams = (currentParams?: GitHubUrlParams): GitHubUrlParams => 
 const isReady = () => !!GITHUB_PERSONAL_ACCESS_TOKEN && !!GITHUB_USERNAME;
 const getApiName = () => "github";
 const getApiBaseUrl = () => "https://api.github.com/";
-const getHistoricDelay = () => ONE_QUATER_IN_SEC;
 const getApiAuthHeaders = async () => ({
   "Authorization": `Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`,
   "Accept": "application/vnd.github+json",
@@ -100,7 +102,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
       since: `${getFormattedDate(-7)}T00:00:00Z`,
     }),
     parseDayFromEntity,
-    getHistoricDelay: () => QUARTER_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
   },
   {
@@ -110,7 +112,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDelay: () => ONE_DAY_IN_SEC,
     getParams: getDefaultParams,
     parseDayFromEntity,
-    getHistoricDelay: () => QUARTER_HOUR_IN_SEC,
+    getHistoricDelay,
     getHistoricParams,
   },
 ];
@@ -121,7 +123,6 @@ const handler: ApiHandler = {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };

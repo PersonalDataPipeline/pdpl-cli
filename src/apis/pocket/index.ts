@@ -1,10 +1,5 @@
 import { AxiosResponse } from "axios";
-import {
-  ONE_DAY_IN_SEC,
-  ONE_YEAR_IN_SEC,
-  getEpochNow,
-  getFormattedDate,
-} from "../../utils/date-time.js";
+import { ONE_DAY_IN_SEC, getEpochNow, getFormattedDate } from "../../utils/date-time.js";
 import { ApiHandler, EpSecondary, EpSnapshot } from "../../utils/types.js";
 import getConfig from "../../utils/config.js";
 
@@ -40,7 +35,6 @@ const getApiAuthHeaders = async () => ({
   "Content-Type": "application/json; charset=UTF-8",
 });
 
-const getHistoricDelay = () => ONE_YEAR_IN_SEC;
 const endpointsPrimary: EpSnapshot[] = [
   {
     isHistoric: () => false,
@@ -80,7 +74,6 @@ const handler: ApiHandler = {
   getApiName,
   getApiBaseUrl,
   getApiAuthHeaders,
-  getHistoricDelay,
   endpointsPrimary,
   endpointsSecondary,
 };
