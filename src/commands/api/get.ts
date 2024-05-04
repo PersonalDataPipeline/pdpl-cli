@@ -110,10 +110,8 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         continue;
       }
 
-      // Store all the entity data for the endpoint for secondary endpoints
+      // Store all the entity data for the primary endpoint to process secondary endpoints
       perEndpointData[endpoint] = epHandler.transformPrimary(apiResponseData);
-
-      const savePath = [apiName, epHandler.getDirName()];
 
       if (typeof epHandler.parseDayFromEntity === "function") {
         ////
@@ -143,7 +141,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         runMetadata.days = Object.keys(dailyData).length;
 
         for (const day in dailyData) {
-          const outputPath = makeOutputPath(savePath, day);
+          const outputPath = makeOutputPath([apiName, epHandler.getDirName()], day);
           writeOutputFile(outputPath, dailyData[day])
             ? runMetadata.filesWritten++
             : runMetadata.filesSkipped++;
@@ -154,7 +152,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         //
 
         runMetadata.total = 1;
-        const outputPath = makeOutputPath(savePath);
+        const outputPath = makeOutputPath([apiName, epHandler.getDirName()]);
         writeOutputFile(outputPath, apiResponseData)
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
