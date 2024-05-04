@@ -104,7 +104,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         if (isObjectWithKeys(nextCallParams)) {
           epHandler.getParams = () => nextCallParams;
         }
-      } while (Object.keys(nextCallParams).length);
+      } while (isObjectWithKeys(nextCallParams));
 
       if (typeof apiResponseData === "undefined") {
         continue;
