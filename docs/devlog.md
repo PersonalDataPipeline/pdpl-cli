@@ -3,16 +3,17 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] [ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
-- [ ] Add date to secondary endpoint files
+- [ ] Append import or api to output directory
+- [ ] Fix: Next historic run should get params when it runs + tests
 - [ ] Fix: Check headers for GitHub events to see if calls should continue
 - [ ] Fix: Don't process data if HTTP call fails (continue main loop)
+- [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Testing strategy for API/import contracts + core functionality (ADR)
 	- https://mswjs.io
-- [ ] Switch auth to CLI only
-- [ ] Fix: Secondary endpoints fail with no way to re-run
+- [ ] [ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
 - [ ] [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
+- [ ] Switch auth to CLI only
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add Reddit API
 - [ ] Add Twitter API
@@ -23,6 +24,10 @@ Notes taken during development, newest to oldest.
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] Merging imported data with duplicate API data; reconciling/augmenting API data (ADR)
 - [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
+
+## [[2024-05-04]]
+
+Had to take a bit of a break from this project to handle some IRL stuff. I'm still very motivated to get this to a usable point and share it with the world. In order for this to be ready, everything above **THE LINE** above needs to be complete. I think a couple of weeks of focus on these tasks and I'll be in good shape to start making connections with the data. 
 
 ## [[2024-04-24]]
 
