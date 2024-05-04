@@ -120,14 +120,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         const dailyData: DailyData = {};
         const entities = apiResponseData as [];
 
-        if (!Array.isArray(entities)) {
-          logger.error({
-            endpoint: endpoint,
-            error: "Cannot iterate through data",
-          });
-          continue;
-        }
-
         try {
           for (const entity of entities) {
             const day = epHandler.parseDayFromEntity(entity);
