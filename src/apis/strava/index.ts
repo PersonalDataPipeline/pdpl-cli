@@ -5,7 +5,7 @@ import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/typ
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
-  ONE_QUATER_IN_SEC,
+  QUARTER_YEAR_IN_SEC,
   ONE_WEEK_IN_SEC,
 } from "../../utils/date-time.js";
 import { getEpochNow } from "../../utils/date-time.js";
@@ -99,7 +99,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
       per_page: 30,
     }),
     getHistoricDelay: (continuation?: boolean) =>
-      continuation ? HALF_HOUR_IN_SEC : ONE_QUATER_IN_SEC,
+      continuation ? HALF_HOUR_IN_SEC : QUARTER_YEAR_IN_SEC,
     parseDayFromEntity: (entity: object) =>
       (entity as StravaActivityEntity).start_date_local.split("T")[0] || "",
   },

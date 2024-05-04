@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import {
   ONE_DAY_IN_SEC,
-  ONE_QUATER_IN_SEC,
+  QUARTER_YEAR_IN_SEC,
   QUARTER_HOUR_IN_SEC,
   getFormattedDate,
 } from "../../utils/date-time.js";
@@ -54,7 +54,7 @@ const getHistoricParams = (currentParams?: GitHubUrlParams): GitHubUrlParams => 
 });
 
 const getHistoricDelay = (continuation?: boolean) =>
-  continuation ? QUARTER_HOUR_IN_SEC : ONE_QUATER_IN_SEC;
+  continuation ? QUARTER_HOUR_IN_SEC : QUARTER_YEAR_IN_SEC;
 
 ////
 /// Exports

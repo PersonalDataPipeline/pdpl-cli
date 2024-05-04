@@ -5,7 +5,7 @@ import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/typ
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
-  ONE_QUATER_IN_SEC,
+  QUARTER_YEAR_IN_SEC,
 } from "../../utils/date-time.js";
 
 const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
@@ -83,7 +83,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
       per_page: 30,
     }),
     getHistoricDelay: (continuation?: boolean) =>
-      continuation ? HALF_HOUR_IN_SEC : ONE_QUATER_IN_SEC,
+      continuation ? HALF_HOUR_IN_SEC : QUARTER_YEAR_IN_SEC,
     parseDayFromEntity: (entity: object) =>
       (entity as WahooWorkoutEntity).created_at.split("T")[0],
     transformResponseData: (response: AxiosResponse, existingData?: object | []) => {

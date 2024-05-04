@@ -5,7 +5,7 @@ import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/typ
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
-  ONE_QUATER_IN_SEC,
+  QUARTER_YEAR_IN_SEC,
 } from "../../utils/date-time.js";
 
 const { OURA_AUTH_TOKEN = "" } = process.env;
@@ -99,7 +99,7 @@ const getApiAuthHeaders = async () => ({
   Authorization: `Bearer ${OURA_AUTH_TOKEN}`,
 });
 const getHistoricDelay = (continuation?: boolean) =>
-  continuation ? HALF_HOUR_IN_SEC : ONE_QUATER_IN_SEC;
+  continuation ? HALF_HOUR_IN_SEC : QUARTER_YEAR_IN_SEC;
 
 const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
