@@ -1,6 +1,6 @@
 import { Flags } from "@oclif/core";
 
-import { ApiHandler, EpHistoric } from "../../../utils/types.js";
+import { ApiHandler } from "../../../utils/types.js";
 import { ApiBaseCommand, apiNameArg } from "../_base.js";
 import { getEpochNow } from "../../../utils/date-time.js";
 import * as queue from "../../../utils/queue.js";
@@ -109,7 +109,7 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
         if (hasHistoric) {
           if (runNow) {
             queue.updateHistoricEntry({
-              epHandler: endpointHandler as EpHistoric,
+              endpoint: endpointName,
               runAfter: getEpochNow(),
             });
             logger.info({

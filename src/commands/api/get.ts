@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 
 import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import logger from "../../utils/logger.js";
@@ -65,6 +65,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           shouldHistoricContinue: (apiData: [] | object) => !!Object.keys(apiData).length,
           transformResponseData: (response: AxiosResponse): unknown => response.data,
           transformPrimary: (entity: unknown): unknown => entity,
+          handleApiError: (): void => {},
         },
         handlerDict[endpoint]
       );
@@ -92,12 +93,12 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         try {
           apiResponse = await getApiData(apiHandler, epHandler);
         } catch (error) {
+          epHandler.handleApiError(error as AxiosError);
           logger.error({
             endpoint,
             error,
           });
-          nextCallParams = {};
-          continue;
+          break;
         }
         apiResponseData = epHandler.transformResponseData(apiResponse, apiResponseData);
         nextCallParams = epHandler.getNextCallParams(apiResponse, epHandler.getParams());
@@ -181,7 +182,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           : {};
 
         queue.updateHistoricEntry({
-          epHandler: epHandler as EpHistoric,
+          endpoint: epHandler.getEndpoint(),
           runAfter: runDate.seconds + runAfterDelay,
           params,
         });

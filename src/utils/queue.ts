@@ -193,17 +193,17 @@ export const updateStandardEntry = (
 };
 
 export const updateHistoricEntry = ({
-  epHandler,
+  endpoint,
   runAfter,
   params,
 }: {
-  epHandler: EpHistoric;
+  endpoint: string;
   runAfter: number;
   params?: object;
 }) => {
   let seenHistoric = false;
   for (const [index, entry] of queue.entries()) {
-    if (entry.endpoint !== epHandler.getEndpoint() || !entry.historic) {
+    if (entry.endpoint !== endpoint || !entry.historic) {
       continue;
     }
 

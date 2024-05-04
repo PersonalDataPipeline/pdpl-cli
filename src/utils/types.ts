@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 
 export interface DailyData {
   [key: string]: object[];
@@ -29,6 +29,7 @@ export interface EpSnapshot {
     existingData?: [] | object
   ) => [] | object;
   parseDayFromEntity?: (entity: object) => string;
+  handleApiError?: (response: AxiosError) => void;
 }
 
 export interface EpHistoric

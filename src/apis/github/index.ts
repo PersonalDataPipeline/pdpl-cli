@@ -1,11 +1,13 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import {
   ONE_DAY_IN_SEC,
   QUARTER_YEAR_IN_SEC,
   QUARTER_HOUR_IN_SEC,
   getFormattedDate,
+  runDateUtc,
 } from "../../utils/date-time.js";
 import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import * as queue from "../../utils/queue.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
 
@@ -111,6 +113,15 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getDirName: () => "user--events",
     getDelay: () => ONE_DAY_IN_SEC,
     getParams: getDefaultParams,
+    handleApiError: (apiError: AxiosError) => {
+      if (apiError.response?.status === 422) {
+        queue.updateHistoricEntry({
+          endpoint: `users/${GITHUB_USERNAME}/events`,
+          runAfter: runDateUtc().seconds + QUARTER_YEAR_IN_SEC,
+          params: {},
+        });
+      }
+    },
     parseDayFromEntity,
     getHistoricDelay,
     getHistoricParams,
