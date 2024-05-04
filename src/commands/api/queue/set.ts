@@ -96,7 +96,6 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             endpoint: endpointName,
             runAfter: getEpochNow(),
             historic: false,
-            params: endpointHandler.getParams ? endpointHandler.getParams() : {},
           });
           logger.info({
             ...logEntry,
@@ -110,7 +109,7 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
         if (hasHistoric) {
           if (runNow) {
             queue.updateHistoricEntry({
-              endpoint: endpointName,
+              epHandler: endpointHandler as EpHistoric,
               runAfter: getEpochNow(),
             });
             logger.info({
@@ -128,7 +127,6 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             endpoint: endpointName,
             runAfter: getEpochNow(),
             historic: true,
-            params: (endpointHandler as EpHistoric).getHistoricParams(),
           });
           logger.info({
             ...logEntry,

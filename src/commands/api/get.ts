@@ -69,6 +69,10 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         handlerDict[endpoint]
       );
 
+      if (runEntry.historic && !isObjectWithKeys(runEntry.params)) {
+        runEntry.params = (epHandler as EpHistoric).getHistoricParams();
+      }
+
       if (isObjectWithKeys(runEntry.params)) {
         epHandler.getParams = () => runEntry.params;
       }
@@ -159,37 +163,28 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       });
 
       if (runEntry.historic && epHandler.isHistoric()) {
-        const newQueueEntry: queue.QueueEntry = {
-          endpoint: endpoint,
-          historic: true,
-          runAfter: runDate.seconds,
-          params: {},
-        };
-
         const didReturnData = !!Object.keys(apiResponseData as []).length;
         const continueHistoric = epHandler.shouldHistoricContinue(
           apiResponseData as [],
           runEntry.params
         );
 
-        if (continueHistoric) {
-          // Potentially more historic entries to get
-          newQueueEntry.params = (epHandler as EpHistoric).getHistoricParams(
-            runEntry.params,
-            didReturnData
-          );
-          newQueueEntry.runAfter =
-            runDate.seconds + (epHandler as EpHistoric).getHistoricDelay();
-        } else {
-          // Schedule next historic run for this endpoint
-          newQueueEntry.runAfter = runDate.seconds + apiHandler.getHistoricDelay();
-          newQueueEntry.params = (epHandler as EpHistoric).getHistoricParams();
-        }
-        queue.updateHistoricEntry(newQueueEntry);
-        continue;
-      }
+        const runAfterDelay = continueHistoric
+          ? (epHandler as EpHistoric).getHistoricDelay()
+          : apiHandler.getHistoricDelay();
 
-      queue.updateStandardEntry(epHandler);
+        const params = continueHistoric
+          ? (epHandler as EpHistoric).getHistoricParams(runEntry.params, didReturnData)
+          : {};
+
+        queue.updateHistoricEntry({
+          epHandler: epHandler as EpHistoric,
+          runAfter: runDate.seconds + runAfterDelay,
+          params,
+        });
+      } else {
+        queue.updateStandardEntry(epHandler);
+      }
     } // END endpointsPrimary
 
     ////

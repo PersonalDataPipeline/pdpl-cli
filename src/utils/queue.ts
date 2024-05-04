@@ -122,16 +122,22 @@ export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntr
     if (entry.runAfter > runDate.seconds) {
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
       logger.info({
-        message: `Skipping for ${waitMinutes} minutes`,
+        message: `Skipping ${entry.historic ? "historic" : "standard"} for ${waitMinutes} minutes`,
         endpoint,
       });
       continue;
     }
 
     const hasParams = entryHasParams(entry);
+
+    logger.info({
+      message: `Running ${entry.historic ? "historic" : "standard"} now ...`,
+      endpoint,
+    });
+
     runQueue.push({
       endpoint,
-      historic: !hasParams ? false : !!entry.historic,
+      historic: !!entry.historic,
       params: hasParams ? entry.params : {},
     });
   }
@@ -187,17 +193,17 @@ export const updateStandardEntry = (
 };
 
 export const updateHistoricEntry = ({
-  endpoint,
+  epHandler,
   runAfter,
   params,
 }: {
-  endpoint: string;
+  epHandler: EpHistoric;
   runAfter: number;
   params?: object;
 }) => {
   let seenHistoric = false;
   for (const [index, entry] of queue.entries()) {
-    if (entry.endpoint !== endpoint || !entry.historic) {
+    if (entry.endpoint !== epHandler.getEndpoint() || !entry.historic) {
       continue;
     }
 
