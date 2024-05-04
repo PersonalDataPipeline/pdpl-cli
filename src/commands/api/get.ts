@@ -116,7 +116,10 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       const savePath = [apiName, epHandler.getDirName()];
 
       if (typeof epHandler.parseDayFromEntity === "function") {
-        // Need to parse returned to days if not a snapshot
+        ////
+        /// Historic endpoints
+        //
+
         const dailyData: DailyData = {};
         const entities = apiResponseData as [];
 
@@ -146,7 +149,10 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
             : runMetadata.filesSkipped++;
         }
       } else {
-        // Snapshot data, not time-bound
+        ////
+        /// Snapshot endpoints
+        //
+
         runMetadata.total = 1;
         const outputPath = makeOutputPath(savePath);
         writeOutputFile(outputPath, apiResponseData)
@@ -158,6 +164,9 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         ...runMetadata,
       });
 
+      ////
+      /// Historic queue management
+      //
       if (runEntry.historic && epHandler.isHistoric()) {
         const didReturnData = !!Object.keys(apiResponseData as []).length;
         const continueHistoric = epHandler.shouldHistoricContinue(
