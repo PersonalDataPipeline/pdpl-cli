@@ -106,6 +106,10 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         }
       } while (Object.keys(nextCallParams).length);
 
+      if (typeof apiResponseData === "undefined") {
+        continue;
+      }
+
       // Store all the entity data for the endpoint for secondary endpoints
       perEndpointData[endpoint] = epHandler.transformPrimary(apiResponseData);
 
