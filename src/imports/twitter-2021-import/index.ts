@@ -31,8 +31,9 @@ const importFiles = [
       return getFormattedDate(0, cratedDate);
     },
     transformEntity: (entity: object): object => (entity as { tweet: object }).tweet,
-    transformFileContents: (content: string) =>
-      content.replace("window.YTD.tweet.part0 =", ""),
+    transformFileContents: (content: string) => {
+      return content.replace("window.YTD.tweet.part0 =", "");
+    },
   },
 ];
 
