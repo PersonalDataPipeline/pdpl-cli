@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 
 import { config as dotenvConfig } from "dotenv";
 
-import { pathExists } from "./fs.js";
+import { makeDirectory, pathExists } from "./fs.js";
 import { ValidLogLevels } from "./logger.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -25,6 +25,7 @@ const {
 
 export interface Config {
   outputDir: string;
+  filesOutputDir: string;
   compressJson: boolean;
   timezone: string;
   originDate: string;
@@ -52,6 +53,7 @@ const validLogLevels: ValidLogLevels[] = ["debug", "info", "warn", "success", "e
 const config: Config = {
   timezone: "GMT",
   outputDir: path.join(homedir(), "api-data"),
+  filesOutputDir: path.join(homedir(), "api-data", "_files"),
   originDate: "1900-01-01",
   apis: {},
   apisSupported: [],
@@ -103,6 +105,8 @@ export default (): Config => {
 
   if (DEBUG_OUTPUT === "true" || DEBUG_ALL === "true") {
     processedConfig.outputDir = localConfig.debugOutputDir || config.debugOutputDir;
+    processedConfig.filesOutputDir =
+      localConfig.filesOutputDir || path.join(processedConfig.outputDir, "_files");
     processedConfig.compressJson =
       localConfig.debugCompressJson || config.debugCompressJson;
   }
@@ -120,7 +124,11 @@ export default (): Config => {
   }
 
   if (!pathExists(processedConfig.outputDir)) {
-    throw new Error(`Output dir ${processedConfig.outputDir} does not exist`);
+    makeDirectory(processedConfig.outputDir);
+  }
+
+  if (!pathExists(processedConfig.filesOutputDir)) {
+    makeDirectory(processedConfig.filesOutputDir);
   }
 
   const apisSupported = readdirSync(path.join(__dirname, "..", "apis"));
