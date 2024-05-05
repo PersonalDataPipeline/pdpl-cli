@@ -3,10 +3,6 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Append import or api to output directory
-- [ ] Fix: Next historic run should get params when it runs + tests
-- [ ] Fix: Check headers for GitHub events to see if calls should continue
-- [ ] Fix: Don't process data if HTTP call fails (continue main loop)
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Testing strategy for API/import contracts + core functionality (ADR)
 	- https://mswjs.io
@@ -17,6 +13,7 @@ Notes taken during development, newest to oldest.
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add Reddit API
 - [ ] Add Twitter API
+- [ ] Add Instagram import
 - --- THE LINE ---
 - [ ] https://nutjs.dev for data export
 - [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
@@ -27,7 +24,9 @@ Notes taken during development, newest to oldest.
 
 ## [[2024-05-04]]
 
-Had to take a bit of a break from this project to handle some IRL stuff. I'm still very motivated to get this to a usable point and share it with the world. In order for this to be ready, everything above **THE LINE** above needs to be complete. I think a couple of weeks of focus on these tasks and I'll be in good shape to start making connections with the data. 
+Had to take a bit of a break from this project to handle some IRL stuff. I'm still very motivated to get this to a usable point and share it with the world. In order for this to be ready, everything above **THE LINE** above needs to be complete. I think a couple of weeks of focus on these tasks and I'll be in good shape to start making connections with the data.
+
+Historic parameter juggling is challenging to debug. This last commit should help a bit but it's still hard to get at problems when they arise. 
 
 ## [[2024-04-24]]
 
