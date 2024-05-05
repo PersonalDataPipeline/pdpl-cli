@@ -13,7 +13,6 @@ Notes taken during development, newest to oldest.
 - [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add Reddit API
 - [ ] Add Twitter API
-- [ ] Add Instagram import
 - --- THE LINE ---
 - [ ] https://nutjs.dev for data export
 - [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
