@@ -17,10 +17,21 @@ interface InstagramMedia {
   caption?: string;
 }
 
-interface InstagramImportData {
+interface InstagramMediaImportData {
   photos: InstagramMedia[];
   videos: InstagramMedia[];
   direct: InstagramMedia[];
+}
+
+interface InstagramCommentImportData {
+  media_comments: string[][];
+  live_comments: string[][];
+}
+
+interface InstagramCommentTransformed {
+  created: string;
+  comment: string;
+  user: string;
 }
 
 ////
@@ -31,21 +42,21 @@ const importFiles = [
   {
     getImportPath: () => "media.json",
     getDirName: () => "media",
-    parseDayFromEntity: (entity: object) => {
+    parseDayFromEntity: (entity: object | []) => {
       return (entity as InstagramMedia).taken_at.split("T")[0];
     },
     parsingStrategy: (): "json" => "json",
     transformParsedData: (data: object): object[] => {
       return [
-        ...(data as InstagramImportData).photos.map((entity) => ({
+        ...(data as InstagramMediaImportData).photos.map((entity) => ({
           type: "photo",
           ...entity,
         })),
-        ...(data as InstagramImportData).videos.map((entity) => ({
+        ...(data as InstagramMediaImportData).videos.map((entity) => ({
           type: "video",
           ...entity,
         })),
-        ...(data as InstagramImportData).direct.map((entity) => ({
+        ...(data as InstagramMediaImportData).direct.map((entity) => ({
           type: "direct",
           ...entity,
         })),
@@ -73,6 +84,25 @@ const importFiles = [
 
       copyFile(source, destination);
     },
+  },
+  {
+    getImportPath: () => "comments.json",
+    getDirName: () => "comments",
+    parseDayFromEntity: (entity: object | []) => {
+      return (entity as InstagramCommentTransformed).created.split("T")[0];
+    },
+    parsingStrategy: (): "json" => "json",
+    transformParsedData: (data: object): string[][] => {
+      return [
+        ...(data as InstagramCommentImportData).media_comments,
+        ...(data as InstagramCommentImportData).live_comments,
+      ];
+    },
+    transformEntity: (entity: object | []): InstagramCommentTransformed => ({
+      created: (entity as string[])[0],
+      comment: (entity as string[])[1],
+      user: (entity as string[])[2],
+    }),
   },
 ];
 
