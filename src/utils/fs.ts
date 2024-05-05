@@ -1,4 +1,11 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "fs";
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  cpSync,
+} from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -21,6 +28,10 @@ export const readFile = (filePath: string) => {
 
 export const writeFile = (filePath: string, contents: string) => {
   writeFileSync(filePath, contents);
+};
+
+export const copyFile = (source: string, destination: string) => {
+  cpSync(source, destination, { recursive: true, preserveTimestamps: true });
 };
 
 export const readDirectory = (dirPath: string) => {
