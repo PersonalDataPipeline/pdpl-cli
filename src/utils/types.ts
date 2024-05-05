@@ -72,4 +72,6 @@ export interface ImportFileHandler {
   parseDayFromEntity: (entity: object) => string;
   transformEntity?: (entity: object) => object | null;
   transformFileContents?: (content: string) => string;
+  transformParsedData?: (data: object | []) => object[];
+  handleEntityFiles?: (entity: object, importPath: string) => void;
 }

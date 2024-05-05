@@ -35,6 +35,8 @@ export default class Import extends ImportBaseCommand<typeof Import> {
         {
           transformEntity: (entity: object) => entity,
           transformFileContents: (content: string) => content,
+          transformParsedData: (data: object | []) => data as [],
+          handleEntityFiles: () => {},
         },
         originalHandler
       );
@@ -64,6 +66,8 @@ export default class Import extends ImportBaseCommand<typeof Import> {
           throw new Error("Invalid parsing strategy");
       }
 
+      entities = fileHandler.transformParsedData(entities);
+
       for (const entity of entities) {
         const transformedEntity: object | null = fileHandler.transformEntity(entity);
 
@@ -76,6 +80,8 @@ export default class Import extends ImportBaseCommand<typeof Import> {
           dailyData[day] = [];
         }
         dailyData[day].push(transformedEntity);
+
+        fileHandler.handleEntityFiles(entity, importPath);
       }
 
       runMetadata.total = entities.length;
