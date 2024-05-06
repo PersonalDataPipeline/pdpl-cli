@@ -3,23 +3,25 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Testing strategy for API/import contracts + core functionality (ADR)
 	- https://mswjs.io
 - [ ] [ADR 010: Logging (part 2)](./decisions/010-logging-part-2)
 - [ ] [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Switch auth to CLI only
-- [ ] Add Pinboard API ([ref](https://pinboard.in/api/))
 - [ ] Add Reddit API
 - [ ] Add Twitter API
+- [ ] Fix: Secondary endpoints fail with no way to re-run
 - --- THE LINE ---
 - [ ] https://nutjs.dev for data export
 - [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
-- [ ] What to do with imported files or ones obtained from an API
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] Merging imported data with duplicate API data; reconciling/augmenting API data (ADR)
 - [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
+
+## [[2024-05-05]]
+
+Noticed today that, in certain cases when an error is throw, oclif will fail with a "command not found" output. I'm not entirely sure what's happening but it would be good to put through an issue on GitHub. 
 
 ## [[2024-05-04]]
 
