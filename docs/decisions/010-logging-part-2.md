@@ -2,7 +2,7 @@
 
 ## Status
 
-`DRAFT`
+`ACCEPTED`
 ## Context
 
 [ADR 006: Logging](./006-logging.md)
@@ -18,6 +18,8 @@ Two big improvements we can make right now are below. I'm going to implement tho
 
 These changes are working really well for both reporting and debugging. The main problem now is errors getting converted to nice text output by oclif, hiding the call stack. [Error handling docs](https://oclif.io/docs/error_handling) have a few things to try out. Ideally, errors are handled the way they are currently with an option you can add to the command that will display the call stack when needed. 
 
+Learned that seeing the call stack is shown if you run the command with `./bin/dev.js`. I don't know if it's possible to run that once the command is packaged or not. Maybe that's something I can work into the command at some point. 
+
 ## Consequences
 
 See [ADR 006: Logging](./006-logging.md)
@@ -25,7 +27,4 @@ See [ADR 006: Logging](./006-logging.md)
 ## Decision
 
 - Implement logging levels and stdout before moving forward on fixes and features
-
-## Implementation
-
-TBD
+- Use `dev.js` for development
