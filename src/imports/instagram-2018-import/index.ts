@@ -25,7 +25,7 @@ interface InstagramMediaImportData {
 
 interface InstagramCommentImportData {
   media_comments: string[][];
-  live_comments: string[][];
+  live_comments?: string[][];
 }
 
 interface InstagramCommentTransformed {
@@ -93,10 +93,12 @@ const importFiles = [
     },
     parsingStrategy: (): "json" => "json",
     transformParsedData: (data: object): string[][] => {
-      return [
-        ...(data as InstagramCommentImportData).media_comments,
-        ...(data as InstagramCommentImportData).live_comments,
-      ];
+      let transformed = [...(data as InstagramCommentImportData).media_comments];
+
+      if ("live_comments" in data && data.live_comments) {
+        transformed = [...transformed, ...(data.live_comments as string[][])];
+      }
+      return transformed;
     },
     transformEntity: (entity: object | []): InstagramCommentTransformed => ({
       created: (entity as string[])[0],
