@@ -5,13 +5,13 @@ import { config } from "dotenv";
 config();
 
 import { envWrite } from "./fs.js";
+import { isObjectWithKeys } from "./object.js";
 
 ////
 /// Helpers
 //
 
 export interface AuthorizeServerConfig {
-  checkState?: boolean;
   clientId: string;
   clientSecret: string;
   refreshToken: string;
@@ -19,6 +19,11 @@ export interface AuthorizeServerConfig {
   scope: string;
   authorizeEndpoint: string;
   tokenEndpoint: string;
+  checkState?: boolean;
+  basicAuth?: boolean;
+  authorizeParams?: {
+    [key: string]: string;
+  };
 }
 
 ////
@@ -74,13 +79,29 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
       authorizeState = "";
 
       try {
-        const tokenResponse = await axios.post(options.tokenEndpoint, {
-          client_id: options.clientId,
-          client_secret: options.clientSecret,
+        const tokenData: { [key: string]: string } = {
           grant_type: "authorization_code",
           redirect_uri: baseUrl,
           code: codeParam,
-        });
+        };
+
+        const tokenHeaders: { [key: string]: string } = {};
+
+        if (options.basicAuth) {
+          const authString = `${options.clientId}:${options.clientSecret}`;
+          tokenHeaders["Authorization"] =
+            `Basic ${Buffer.from(authString).toString("base64")}`;
+        } else {
+          tokenData["client_id"] = options.clientId;
+          tokenData["client_secret"] = options.clientSecret;
+        }
+
+        const tokenResponse = await axios.post(
+          options.tokenEndpoint,
+          tokenData,
+          tokenHeaders
+        );
+
         envWrite(
           options.refreshTokenEnvKey,
           tokenResponse.data.refresh_token,
@@ -109,6 +130,12 @@ export const serverCallback = (options: AuthorizeServerConfig) => {
     authorizeUrl.searchParams.append("approval_prompt", "auto");
     authorizeUrl.searchParams.append("response_type", "code");
     authorizeUrl.searchParams.append("scope", options.scope);
+
+    if (isObjectWithKeys(options.authorizeParams)) {
+      for (const param in options.authorizeParams) {
+        authorizeUrl.searchParams.append(param, options.authorizeParams[param]);
+      }
+    }
 
     authorizeState = crypto.randomBytes(16).toString("hex");
     authorizeUrl.searchParams.append("state", authorizeState);
