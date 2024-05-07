@@ -6,6 +6,7 @@ import { ImportBaseCommand, importNameArg } from "./_base.js";
 import { DailyData, ImportHandler } from "../../utils/types.js";
 import { runDateUtc } from "../../utils/date-time.js";
 import { makeOutputPath, readFile, writeOutputFile } from "../../utils/fs.js";
+import logger from "../../utils/logger.js";
 
 export default class Import extends ImportBaseCommand<typeof Import> {
   static override summary = "Import a file or directory";
@@ -48,7 +49,7 @@ export default class Import extends ImportBaseCommand<typeof Import> {
         filesSkipped: 0,
         total: 0,
         days: 0,
-        importFile: fileHandler.getImportPath(),
+        endpoint: fileHandler.getImportPath(),
       };
 
       const filePath = path.join(importPath, fileHandler.getImportPath());
@@ -94,6 +95,10 @@ export default class Import extends ImportBaseCommand<typeof Import> {
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
       }
+
+      logger.success({
+        ...runMetadata,
+      });
     }
   }
 }
