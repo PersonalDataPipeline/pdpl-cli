@@ -7,9 +7,13 @@ import {
   ONE_DAY_IN_SEC,
   QUARTER_YEAR_IN_SEC,
 } from "../../utils/date-time.js";
+import { AuthorizeServerConfig } from "../../commands/api/authorize.js";
 
-const { WAHOO_AUTHORIZE_CLIENT_ID, WAHOO_AUTHORIZE_CLIENT_SECRET, WAHOO_REFRESH_TOKEN } =
-  process.env;
+const {
+  WAHOO_AUTHORIZE_CLIENT_ID = "",
+  WAHOO_AUTHORIZE_CLIENT_SECRET = "",
+  WAHOO_REFRESH_TOKEN = "",
+} = process.env;
 
 ////
 /// Types
@@ -29,7 +33,6 @@ interface WahooWorkoutEntity {
 /// Exports
 //
 
-const authorizeEndpoint = "https://api.wahooligan.com/oauth/authorize";
 const tokenEndpoint = "https://api.wahooligan.com/oauth/token";
 
 const isReady = () =>
@@ -61,6 +64,17 @@ const getApiAuthHeaders = async () => {
     Authorization: `Bearer ${accessToken}`,
   };
 };
+
+const getAuthorizeConfig = (): AuthorizeServerConfig => ({
+  checkState: true,
+  clientId: WAHOO_AUTHORIZE_CLIENT_ID,
+  clientSecret: WAHOO_AUTHORIZE_CLIENT_SECRET,
+  refreshToken: WAHOO_REFRESH_TOKEN,
+  refreshTokenEnvKey: "WAHOO_REFRESH_TOKEN",
+  scope: "workouts_read plans_read power_zones_read offline_data user_read",
+  authorizeEndpoint: "https://api.wahooligan.com/oauth/authorize",
+  tokenEndpoint: tokenEndpoint,
+});
 
 const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
@@ -95,8 +109,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
 const endpointsSecondary: EpSecondary[] = [];
 
 const handler: ApiHandler = {
-  authorizeEndpoint,
-  tokenEndpoint,
+  getAuthorizeConfig,
   isReady,
   getApiName,
   getApiBaseUrl,

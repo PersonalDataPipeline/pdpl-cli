@@ -20,14 +20,6 @@ export default class ApiInfo extends ApiBaseCommand<typeof ApiInfo> {
     console.log(`API handler for ${apiHandler.getApiName()}`);
     console.log(`Base URL: ${apiHandler.getApiBaseUrl()}`);
 
-    if (apiHandler.authorizeEndpoint) {
-      console.log(`Authorize endpoint: ${apiHandler.authorizeEndpoint}`);
-    }
-
-    if (apiHandler.tokenEndpoint) {
-      console.log(`Token endpoint: ${apiHandler.tokenEndpoint}`);
-    }
-
     console.log(`Primary endpoints:`);
     for (const endpoint of apiHandler.endpointsPrimary) {
       const params = typeof endpoint.getParams === "function" ? endpoint.getParams() : {};

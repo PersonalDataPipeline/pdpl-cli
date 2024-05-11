@@ -2,10 +2,9 @@ import * as http from "http";
 import { config } from "dotenv";
 config();
 
-import pocketHandler from "./index.js";
-import { serverPort } from "../../utils/authorize-app.js";
 import axios, { AxiosResponse } from "axios";
 import { envWrite } from "../../utils/fs.js";
+import { serverPort } from "../../commands/api/authorize.js";
 
 const { POCKET_CONSUMER_KEY = "", POCKET_ACCESS_TOKEN = "" } = process.env;
 
@@ -25,6 +24,9 @@ const requestConfig = {
     "X-Accept": "application/json",
   },
 };
+
+const authorizeEndpoint = "https://getpocket.com/auth/authorize";
+const tokenEndpoint = "https://getpocket.com/v3/oauth/authorize";
 
 let requestToken = "";
 
@@ -48,7 +50,7 @@ http
 
         requestToken = (requestResponse as { data: { code: string } }).data.code;
 
-        const authorizeUrl = new URL(pocketHandler.authorizeEndpoint!);
+        const authorizeUrl = new URL(authorizeEndpoint);
         authorizeUrl.searchParams.append("request_token", requestToken);
         authorizeUrl.searchParams.append("redirect_uri", baseUrl + "/authorized");
 
@@ -81,7 +83,7 @@ http
 
       try {
         const tokenResponse = await axios.post(
-          pocketHandler.tokenEndpoint!,
+          tokenEndpoint,
           {
             consumer_key: POCKET_CONSUMER_KEY,
             code: requestToken,

@@ -51,7 +51,6 @@ const getIdentifier = (entity: object) => (entity as StravaActivityEntity).id;
 /// Exports
 //
 
-const authorizeEndpoint = "https://www.strava.com/oauth/authorize";
 const tokenEndpoint = "https://www.strava.com/oauth/token";
 
 const isReady = () => !!STRAVA_REFRESH_TOKEN;
@@ -77,6 +76,17 @@ const getApiAuthHeaders = async () => {
     Authorization: `Bearer ${accessToken}`,
   };
 };
+
+const getAuthorizeConfig = () => ({
+  checkState: true,
+  clientId: STRAVA_AUTHORIZE_CLIENT_ID,
+  clientSecret: STRAVA_AUTHORIZE_CLIENT_SECRET,
+  refreshToken: STRAVA_REFRESH_TOKEN,
+  refreshTokenEnvKey: "STRAVA_REFRESH_TOKEN",
+  scope: "read_all,profile:read_all,activity:read_all",
+  authorizeEndpoint: "https://www.strava.com/oauth/authorize",
+  tokenEndpoint: tokenEndpoint,
+});
 
 const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
   {
@@ -124,8 +134,7 @@ const endpointsSecondary: EpSecondary[] = [
 ];
 
 const handler: ApiHandler = {
-  authorizeEndpoint,
-  tokenEndpoint,
+  getAuthorizeConfig,
   isReady,
   getApiName,
   getApiBaseUrl,

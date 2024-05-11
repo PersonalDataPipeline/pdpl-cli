@@ -26,8 +26,6 @@ interface PocketEntity {
 /// Exports
 //
 
-const authorizeEndpoint = "https://getpocket.com/auth/authorize";
-const tokenEndpoint = "https://getpocket.com/v3/oauth/authorize";
 const isReady = () => !!POCKET_CONSUMER_KEY && !!POCKET_ACCESS_TOKEN;
 const getApiName = () => "pocket";
 const getApiBaseUrl = () => "https://getpocket.com/v3/";
@@ -68,8 +66,6 @@ const endpointsPrimary: EpSnapshot[] = [
 const endpointsSecondary: EpSecondary[] = [];
 
 const handler: ApiHandler = {
-  authorizeEndpoint,
-  tokenEndpoint,
   isReady,
   getApiName,
   getApiBaseUrl,

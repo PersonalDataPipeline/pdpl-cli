@@ -1,4 +1,5 @@
 import { AxiosError, AxiosResponse } from "axios";
+import { AuthorizeServerConfig } from "../commands/api/authorize.js";
 
 export interface DailyData {
   [key: string]: object[];
@@ -11,8 +12,7 @@ export interface ApiHandler {
   getApiAuthHeaders: () => Promise<{ [key: string]: string }>;
   endpointsPrimary: (EpHistoric | EpSnapshot)[];
   endpointsSecondary: EpSecondary[];
-  authorizeEndpoint?: string;
-  tokenEndpoint?: string;
+  getAuthorizeConfig?: () => AuthorizeServerConfig;
 }
 
 export interface EpSnapshot {
