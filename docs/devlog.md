@@ -116,9 +116,9 @@ Now that I'm running these from a different directory, it looks like the paths a
 ```bash
 #!/bin/bash
 
-export $(egrep -v '^#' ./api-getter/.env | xargs)
+export $(egrep -v '^#' ./data-getter/.env | xargs)
 /Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/node \
-	/Users/joshcanhelp/Code/api-getter/dist/scripts/get.js oura
+	/Users/joshcanhelp/Code/data-getter/dist/scripts/get.js oura
 
 # Repeated for all other APIs
 ```
@@ -156,7 +156,7 @@ Glad I walked through that manually first! Walking through [Automator](https://s
 - Enter the command ... had to use the full `node` path, probably because this isn't running as a specific user?
 ```
 /Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/node \
-/Users/joshcanhelp/Code/tapestry/api-getter/dist/scripts/get.js oura
+/Users/joshcanhelp/Code/tapestry/data-getter/dist/scripts/get.js oura
 ```
 
 That runs well manually, now looking into scheduling ... and I'm surprised to find that Automator doesn't have a native "cron" functionality. I found [this](https://support.apple.com/guide/automator/loop-action-repeat-parts-workflow-atmtr27899/mac) which says you can use a loop. Add a delay in there and I guess that would work? But it wants an ending condition (time or quantity) so that's not going to work. There is a **Calendar Alarm** workflow type but that responds to Calendar events. There's a [long tutorial for doing this with Applescript](https://forums.macrumors.com/threads/running-shell-script-every-30min-with-automator.2281446/?post=29533611#post-29533611) that I need to try. 
@@ -566,7 +566,7 @@ Side note: We always need to decide if the error we encounter is something we ca
 
 Started this on the commit below, moving boilerplate out of the API handler and more explicitly defining if an endpoint returns a list of entities or a single one (what I'm calling a snapshot).
 
-https://github.com/joshcanhelp/api-getter/commit/d4821d4149bde134794ba8b9e8641c1c172237e4
+https://github.com/PersonalDataPipeline/data-getter/commit/d4821d4149bde134794ba8b9e8641c1c172237e4
 
 This is feeling like a much better way to handle this. Much less boilerplate in the API handler but enough control to do what we want. I'm considering putting the entire Axios config in the API handler but that might make it too "Axios-y" (there are definitely worse problems). I'm already kind of re-creating that programming API. Not going to worry about that yet.
 

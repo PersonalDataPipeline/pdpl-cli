@@ -1,6 +1,6 @@
 # Configuration
 
-This service has a number of non-secret configuration values that are used to change its behavior. [Defaults are listed here](https://github.com/joshcanhelp/api-getter/blob/main/src/utils/config.ts#L40) and can be overridden with a `.config.js` file in the project root. It should follow the ESM export pattern and look something like this:
+This service has a number of non-secret configuration values that are used to change its behavior. [Defaults are listed here](https://github.com/PersonalDataPipeline/data-getter/blob/main/src/utils/config.ts#L40) and can be overridden with a `.config.js` file in the project root. It should follow the ESM export pattern and look something like this:
 
 ```js
 export default {
