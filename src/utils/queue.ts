@@ -91,7 +91,11 @@ export const addEntry = ({
   writeQueue();
 };
 
-export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntry[] => {
+export const processQueue = (
+  apiHandler: ApiHandler,
+  logger: RunLogger,
+  forceRun: boolean = false
+): RunEntry[] => {
   if (!queueFile) {
     loadQueue(apiHandler);
   }
@@ -119,7 +123,7 @@ export const processQueue = (apiHandler: ApiHandler, logger: RunLogger): RunEntr
     }
 
     // If we're too early for an entry to run, add back as-is
-    if (entry.runAfter > runDate.seconds) {
+    if (!forceRun && entry.runAfter > runDate.seconds) {
       const waitMinutes = Math.ceil((entry.runAfter - runDate.seconds) / 60);
       logger.info({
         message: `Skipping ${entry.historic ? "historic" : "standard"} for ${waitMinutes} minutes`,

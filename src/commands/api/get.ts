@@ -8,12 +8,20 @@ import { ApiHandler, DailyData, EpHistoric, EpSnapshot } from "../../utils/types
 import { isObjectWithKeys } from "../../utils/object.js";
 import { getApiData } from "../../utils/api-data.js";
 import { makeOutputPath, writeOutputFile } from "../../utils/fs.js";
+import { Flags } from "@oclif/core";
 
 export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
   static override summary = "Get API data based on a queue";
 
   static override args = {
     ...apiNameArg,
+  };
+
+  static override flags = {
+    force: Flags.boolean({
+      summary: "Force API calls to run even if delay has not passed",
+      default: false,
+    }),
   };
 
   static override examples = ["<%= config.bin %> <%= command.id %> API_NAME"];
@@ -25,6 +33,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
 
   public override async run(): Promise<void> {
     const { apiName } = this.args;
+    const { force: forceRun } = this.flags;
 
     const runDate = runDateUtc();
     const { default: apiHandler } = (await import(`../../apis/${apiName}/index.js`)) as {
@@ -40,7 +49,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
     /// Queue management
     //
 
-    const runQueue = queue.processQueue(apiHandler, logger);
+    const runQueue = queue.processQueue(apiHandler, logger, forceRun);
     if (!runQueue.length) {
       logger.info({
         message: "Empty run queue ... stopping",
