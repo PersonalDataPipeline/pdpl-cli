@@ -32,7 +32,8 @@
     "cli-table3": "^0.6.4",
     "csv": "^6.3.6",
     "dotenv": "^16.3.1",
-    "jose": "^5.4.0"
+    "jose": "^5.4.0",
+    "vcf": "^2.1.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.8",
