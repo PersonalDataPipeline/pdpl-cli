@@ -3,19 +3,42 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Testing strategy for API/import contracts + core functionality (ADR)
+- [ ] ADR++: Testing strategy for API/import contracts + core functionality
 	- https://mswjs.io
-- [ ] Add Reddit API
+- [ ] Add Reddit API (getting an authorization error when trying to get an access token)
 - [ ] Add Twitter API
 - [ ] [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - --- THE LINE ---
 - [ ] https://nutjs.dev for data export
-- [ ] How to handle multiple accounts so data can be checked against previous or added to previous (ADR)
+- [ ] ADR++: How to handle multiple accounts so data can be checked against previous or added to previous
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
-- [ ] Merging imported data with duplicate API data; reconciling/augmenting API data (ADR)
+- [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
 - [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
+
+## [[2024-06-06]]
+
+Back working on this project to get it in shape for the launch post I'm writing. I got Google import working without too much trouble and not taking on iCloud, which will be harder because there is no defined API, just work arounds.
+
+I think it's a good place to acknowledge ... the endgame for this system definitely includes native applications so you can have direct access to contacts, photos, and others via [CloudKit on Mac](https://developer.apple.com/icloud/). Not sure what the corollary is for Windows.
+
+There is no great way to access iCloud data from a non-native app. A few things I'm looking at:
+
+- [`icloud.js`](https://github.com/foxt/icloud.js) - npm package, commits this year
+- [`apple-icloud`](https://github.com/MauriceConrad/iCloud-API) - npm package, no real movement on this in the last 3 years
+- [CloudKit JS](https://developer.apple.com/documentation/cloudkitjs) but it looks like you need a native app to back this up
+- [Export](https://support.apple.com/guide/contacts/export-or-archive-contacts-adrbdcfd32e6/mac) as VCF and parse
+
+In general, I greatly prefer API access when it's possible so updates can come through automatically. In this case, though, the iCloud API is not documented and could go away at any time. I don't know if the effort to add these endpoints to one of the libraries is worth it. Also, for the time being, this is just a PoC so whatever gets the data in to work with should be fine. I think that settles it for now.
+
+Side note ... importing contacts makes me think about data models (thanks to Jp). The incoming data is just data but represents a higher order entity, a person. Imported contact data from various sources can just sit there as data but need to be connected somehow. How they connect is not quite universal (email is a close approximation but, as we know, not nearly perfect) so it would need to happen after import but before that data is used in output, hence the "level 1 -> 2 transformation" concept (going from raw raw data to normalized/standardized per source but unlinked).
+
+Alright, back to importing ... this data is not chronological so it's more like a snapshot of records, like `[{Record1}, {Record2}]`. Importing like this would give us the import date in the file and new imports would be matched to the previous one. Separate files per person would make this challenging and be a whole new paradigm I would have to add.
+
+Went with the [vcf package](https://www.npmjs.com/package/vcf) to parse VCF data. Output is quite ugly, nested arrays of nested arrays. Would have been nice to have a nicer format but whatever. It looks like everything is a pretty consistent format and outputting the data as a count looks fine.
+
+Got kind of lost in data transformation for a minute there ... back on track.
 
 ## [[2024-05-07]]
 
