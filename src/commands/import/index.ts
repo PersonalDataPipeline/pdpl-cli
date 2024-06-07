@@ -1,6 +1,7 @@
 import { Args } from "@oclif/core";
 import path from "path";
 import { parse } from "csv-parse/sync";
+import vCard from "vcf";
 
 import { ImportBaseCommand, importNameArg } from "./_base.js";
 import { DailyData, ImportHandler } from "../../utils/types.js";
@@ -34,6 +35,7 @@ export default class Import extends ImportBaseCommand<typeof Import> {
     for (const originalHandler of importHandler.importFiles) {
       const fileHandler = Object.assign(
         {
+          getImportPath: () => importPath,
           transformEntity: (entity: object) => entity,
           transformFileContents: (content: string) => content,
           transformParsedData: (data: object | []) => data as [],
@@ -52,10 +54,13 @@ export default class Import extends ImportBaseCommand<typeof Import> {
         endpoint: fileHandler.getImportPath(),
       };
 
-      const filePath = path.join(importPath, fileHandler.getImportPath());
+      const filePath =
+        typeof originalHandler.getImportPath === "function"
+          ? path.join(importPath, fileHandler.getImportPath())
+          : importPath;
       const fileContents = fileHandler.transformFileContents(readFile(filePath));
 
-      let entities: [];
+      let entities: object[] = [];
       switch (fileHandler.parsingStrategy()) {
         case "csv":
           entities = (await parse(fileContents, { columns: true, bom: true })) as [];
@@ -63,37 +68,68 @@ export default class Import extends ImportBaseCommand<typeof Import> {
         case "json":
           entities = JSON.parse(fileContents) as [];
           break;
+        case "vcf":
+          for (const card of vCard.parse(fileContents)) {
+            const contactObject: { [key: string]: any } = {};
+            for (const item of card.toJSON()[1]) {
+              const [key, meta, , value] = item as string[];
+
+              if (typeof contactObject[key] === "undefined") {
+                contactObject[key] = [];
+              }
+
+              contactObject[key].push({ meta, value });
+            }
+            entities.push(contactObject);
+          }
+          break;
         default:
           throw new Error("Invalid parsing strategy");
       }
 
       entities = fileHandler.transformParsedData(entities);
 
-      for (const entity of entities) {
-        const transformedEntity: object | null = fileHandler.transformEntity(entity);
+      if (typeof fileHandler.parseDayFromEntity === "function") {
+        ////
+        /// Historic data
+        //
 
-        if (transformedEntity === null) {
-          continue;
+        for (const entity of entities) {
+          const transformedEntity: object | null = fileHandler.transformEntity(entity);
+
+          if (transformedEntity === null) {
+            continue;
+          }
+
+          const day = fileHandler.parseDayFromEntity(transformedEntity);
+          if (!dailyData[day]) {
+            dailyData[day] = [];
+          }
+          dailyData[day].push(transformedEntity);
+
+          fileHandler.handleEntityFiles(entity, importPath);
         }
 
-        const day = fileHandler.parseDayFromEntity(transformedEntity);
-        if (!dailyData[day]) {
-          dailyData[day] = [];
+        runMetadata.total = entities.length;
+        runMetadata.days = Object.keys(dailyData).length;
+
+        const savePath = [importName, fileHandler.getDirName()];
+        for (const day in dailyData) {
+          const outputPath = makeOutputPath(savePath, day);
+          writeOutputFile(outputPath, dailyData[day])
+            ? runMetadata.filesWritten++
+            : runMetadata.filesSkipped++;
         }
-        dailyData[day].push(transformedEntity);
+      } else {
+        ////
+        /// Snapshot data
+        //
 
-        fileHandler.handleEntityFiles(entity, importPath);
-      }
-
-      runMetadata.total = entities.length;
-      runMetadata.days = Object.keys(dailyData).length;
-
-      const savePath = [importName, fileHandler.getDirName()];
-      for (const day in dailyData) {
-        const outputPath = makeOutputPath(savePath, day);
-        writeOutputFile(outputPath, dailyData[day])
+        const outputPath = makeOutputPath([importName, fileHandler.getDirName()]);
+        writeOutputFile(outputPath, entities)
           ? runMetadata.filesWritten++
           : runMetadata.filesSkipped++;
+        runMetadata.total = entities.length ? entities.length : 1;
       }
 
       logger.success({
