@@ -40,7 +40,7 @@ describe("Module: Twitter 2021 import handler", () => {
     let fileHandler: ImportFileHandler;
     beforeEach(() => {
       fileHandler = importHandler.importFiles
-        .filter((handler) => handler.getImportPath() === "data/tweet.js")
+        .filter((handler) => handler.getImportPath!() === "data/tweet.js")
         .at(0)!;
     });
 
@@ -49,7 +49,7 @@ describe("Module: Twitter 2021 import handler", () => {
     });
 
     it("gets the date from the tweet", () => {
-      expect(fileHandler.parseDayFromEntity(mockTweet)).toEqual("2008-03-19");
+      expect(fileHandler.parseDayFromEntity!(mockTweet)).toEqual("2008-03-19");
     });
 
     it("transforms the tweet", () => {

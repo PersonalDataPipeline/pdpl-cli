@@ -66,10 +66,10 @@ export interface ImportHandler {
 }
 
 export interface ImportFileHandler {
-  getImportPath: () => string;
   getDirName: () => string;
-  parsingStrategy: () => "csv" | "json";
-  parseDayFromEntity: (entity: object | []) => string;
+  parsingStrategy: () => "csv" | "json" | "vcf";
+  getImportPath?: () => string;
+  parseDayFromEntity?: (entity: object | []) => string;
   transformEntity?: (entity: object | []) => object | null;
   transformFileContents?: (content: string) => string;
   transformParsedData?: (data: object | []) => (object | string[])[];
