@@ -17,6 +17,12 @@ Notes taken during development, newest to oldest.
 - [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
 - [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
 
+## [[2024-07-05]]
+
+Trying to get this command released and not having much luck. Following the oclif [releasing docs](https://oclif.io/docs/releasing/), I got it published to npm and installed locally but it's not executable (like it's not in `$PATH`) and when you try `npx`, there are no commands listed. 
+
+Trying an upgrade to the latest version, 4.x, now.
+
 ## [[2024-06-06]]
 
 Back working on this project to get it in shape for the launch post I'm writing. I got Google import working without too much trouble and not taking on iCloud, which will be harder because there is no defined API, just work arounds.
