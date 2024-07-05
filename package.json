@@ -1,6 +1,6 @@
 {
   "name": "api-getter",
-  "version": "0.1.0",
+  "version": "0.7.0",
   "description": "",
   "scripts": {
     "test": "vitest run",
@@ -51,8 +51,8 @@
     "xtrct": "./bin/run.js"
   },
   "oclif": {
-    "bin": "xtrct",
-    "dirname": "xtrct",
+    "bin": "pdpl-get",
+    "dirname": "pdpl-get",
     "commands": {
       "strategy": "pattern",
       "target": "./dist/commands",
