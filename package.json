@@ -48,7 +48,7 @@
     "vitest": "^1.4.0"
   },
   "bin": {
-    "xtrct": "./bin/run.js"
+    "pdpl-get": "./bin/run.js"
   },
   "oclif": {
     "bin": "pdpl-get",
