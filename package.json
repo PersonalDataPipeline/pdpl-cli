@@ -1,6 +1,6 @@
 {
-  "name": "api-getter",
-  "version": "0.8.0",
+  "name": "pdpl-get",
+  "version": "0.8.1",
   "description": "",
   "scripts": {
     "test": "vitest run",
@@ -53,13 +53,6 @@
   "oclif": {
     "bin": "pdpl-get",
     "dirname": "pdpl-get",
-    "commands": {
-      "strategy": "pattern",
-      "target": "./dist/commands",
-      "globPatterns": [
-        "**/*.+(js)",
-        "!**/_*"
-      ]
-    }
+    "commands": "./dist/commands"
   }
 }

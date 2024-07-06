@@ -50,7 +50,7 @@ export default class ApiLogs extends ApiBaseCommand<typeof ApiLogs> {
     const table = new CliTable3({
       head: ["Date", "Time", "Errors", !errOnly ? "Success" : null, "Filename"].filter(
         (head) => head !== null
-      ) as string[],
+      ),
     });
 
     for (const logFile of logFiles) {
