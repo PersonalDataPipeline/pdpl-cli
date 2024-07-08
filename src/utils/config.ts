@@ -1,5 +1,5 @@
 import { homedir } from "os";
-import { existsSync, readdirSync } from "fs";
+import { existsSync, mkdirSync, readdirSync } from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -24,6 +24,7 @@ const {
 //
 
 export interface Config {
+  configFile: string;
   outputDir: string;
   filesOutputDir: string;
   compressJson: boolean;
@@ -51,6 +52,7 @@ interface ConfigFile extends Partial<Config> {}
 const validLogLevels: ValidLogLevels[] = ["debug", "info", "warn", "success", "error"];
 
 const config: Config = {
+  configFile: "GMT",
   timezone: "GMT",
   outputDir: path.join(homedir(), "api-data"),
   filesOutputDir: path.join(homedir(), "api-data", "_files"),
@@ -67,21 +69,28 @@ const config: Config = {
   debugCompressJson: false,
 };
 
+const defaultConfigDir = path.join(homedir(), ".pdpl");
 const configPath = PATH_TO_CONFIG
   ? PATH_TO_CONFIG
-  : path.join(__dirname, "..", "..", ".config.js");
+  : path.join(defaultConfigDir, "get.config.mjs");
 
 let configImport: null | ConfigFile = null;
 let attemptedImport = false;
-if (!attemptedImport && existsSync(configPath)) {
-  try {
-    configImport = (await import(configPath)) as object;
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "<unknown error>";
-    console.log(
-      `❌ Config file ${configPath} exists but could not be loaded: ${errorMessage}`
-    );
-    process.exit(1);
+if (!attemptedImport) {
+  if (!existsSync(defaultConfigDir)) {
+    mkdirSync(defaultConfigDir);
+  }
+
+  if (existsSync(configPath)) {
+    try {
+      configImport = (await import(configPath)) as object;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "<unknown error>";
+      console.log(
+        `❌ Config file ${configPath} exists but could not be loaded: ${errorMessage}`
+      );
+      process.exit(1);
+    }
   }
   attemptedImport = true;
 }
@@ -102,6 +111,7 @@ export default (): Config => {
   }
 
   processedConfig = Object.assign({}, config, localConfig);
+  processedConfig.configFile = configPath;
 
   if (DEBUG_OUTPUT === "true" || DEBUG_ALL === "true") {
     processedConfig.outputDir = localConfig.debugOutputDir || config.debugOutputDir;
