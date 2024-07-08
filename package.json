@@ -5,6 +5,7 @@
   "scripts": {
     "check-updates": "npx npm-check-updates",
     "pre-commit": "npm run build && npm test && npm run eslint-ci && npm run prettier-ci",
+    "publish": "npm run pre-commit && npm publish",
     "test": "vitest run",
     "test-watch": "vitest",
     "dev": "rm -rf ./dist && tsc -w",
@@ -27,6 +28,7 @@
   "author": "",
   "license": "MIT",
   "type": "module",
+  "types": "index.d.ts",
   "dependencies": {
     "@oclif/core": "^4.0.8",
     "axios": "^1.7.2",

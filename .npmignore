@@ -1,0 +1,6 @@
+.env
+.config.js
+
+__mocks__/api-data
+src/scripts/test.ts
+node_modules
