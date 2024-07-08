@@ -1,6 +1,11 @@
 .env
-.config.js
+.eslintrc.cjs
+.prettierrc.json
+pre-commit.sh
+tsconfig.json
+vitest.config.js
 
 __mocks__/api-data
 src/scripts/test.ts
 node_modules
+bin
