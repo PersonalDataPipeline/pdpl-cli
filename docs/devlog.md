@@ -22,6 +22,8 @@ Notes taken during development, newest to oldest.
 
 Working on the lost commands and seeing that the in-CLI help needs some updating so adding that to the list above. 
 
+Looks like the main problem was that npm was following the `.gitignore` so adding an explicit `.npmignore` is the likely fix. 
+
 ## [[2024-07-07]]
 
 Trying to get this command released and not having much luck. Following the oclif [releasing docs](https://oclif.io/docs/releasing/), I got it published to npm and installed locally but it's not executable (like it's not in `$PATH`) and when you try `npx`, there are no commands listed. 
