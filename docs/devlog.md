@@ -4,6 +4,7 @@ Notes taken during development, newest to oldest.
 
 ## TODO:
 - [ ] Update `--help` commands
+- [ ] Test against all LTS Node versions
 - [ ] ADR++: Combine with pdpl-run?
 - [ ] ADR++: Testing strategy for API/import contracts + core functionality
 	- https://mswjs.io
@@ -27,7 +28,9 @@ Looks like the main problem was that npm was following the `.gitignore` so addin
 
 With the command published and installed locally, the configuration file in the repo is not found (to be expected) so I need to come up with a location for that and have the script reference it. We probably want an option to pass the path to the config into the script as well as a good default location, like in the home directory. Added [configuration docs](./configuration).
 
-Had a thought around keeping this and the processor as separate services ... I'm not sure much is gained from them being separate. They do completely different things but they need a lot of shared context around the APIs themselves so maybe it makes sense to combine them? Some shared config values, running locally is much easier, more likely that everything will run on the same machine ... not a lot of value separating them, especially this early in the process. Maintenance overhead on 3 repos (get, run, and shared) is going to suck. Going to sit on this 
+Had a thought around keeping this and the processor as separate services ... I'm not sure much is gained from them being separate. They do completely different things but they need a lot of shared context around the APIs themselves so maybe it makes sense to combine them? Some shared config values, running locally is much easier, more likely that everything will run on the same machine ... not a lot of value separating them, especially this early in the process. Maintenance overhead on 3 repos (get, run, and shared) is going to suck. Going to sit on this but it feels like the right move to combine ...
+
+
 
 ## [[2024-07-07]]
 
