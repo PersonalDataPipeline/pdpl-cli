@@ -24,26 +24,28 @@ const {
 //
 
 export interface Config {
-  configFile: string;
   outputDir: string;
   filesOutputDir: string;
-  compressJson: boolean;
   timezone: string;
   originDate: string;
   apis: {
     [key: string]: string[] | true;
   };
-  apisSupported: string[];
-  saveEmptyLogs: boolean;
   imports: string[];
-  importsSupported: string[];
   logLevel: ValidLogLevels;
+  compressJson: boolean;
+  saveEmptyLogs: boolean;
   debugSaveMocks: boolean;
   debugOutputDir: string;
   debugCompressJson: boolean;
+  // System set
+  configFile: string | null;
+  apisSupported: string[];
+  importsSupported: string[];
 }
 
-interface ConfigFile extends Partial<Config> {}
+interface ConfigFile
+  extends Partial<Omit<Config, "configFile" | "apisSupported" | "importsSupported">> {}
 
 ////
 /// Helpers
@@ -111,7 +113,7 @@ export default (): Config => {
   }
 
   processedConfig = Object.assign({}, config, localConfig);
-  processedConfig.configFile = configPath;
+  processedConfig.configFile = configImport ? configPath : null;
 
   if (DEBUG_OUTPUT === "true" || DEBUG_ALL === "true") {
     processedConfig.outputDir = localConfig.debugOutputDir || config.debugOutputDir;
