@@ -3,6 +3,7 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
+- [ ] Update `--help` commands
 - [ ] ADR++: Testing strategy for API/import contracts + core functionality
 	- https://mswjs.io
 - [ ] Add Reddit API (getting an authorization error when trying to get an access token)
@@ -17,7 +18,11 @@ Notes taken during development, newest to oldest.
 - [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
 - [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
 
-## [[2024-07-06]]
+## [[2024-07-08]]
+
+Working on the lost commands and seeing that the in-CLI help needs some updating so adding that to the list above. 
+
+## [[2024-07-07]]
 
 Trying to get this command released and not having much luck. Following the oclif [releasing docs](https://oclif.io/docs/releasing/), I got it published to npm and installed locally but it's not executable (like it's not in `$PATH`) and when you try `npx`, there are no commands listed. 
 
@@ -25,6 +30,14 @@ Trying to get this command released and not having much luck. Following the ocli
 - Match package name to command name
 - Adjust oclif config in package.json
 - Reinstall dependencies
+
+After trying to install again, I saw this error:
+
+> npm ERR! code EEXIST
+> npm ERR! path /Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/xtrct
+> npm ERR! EEXIST: file already exists
+
+Turns out the `bin` property in package.json was still set to `xtract` so I updated that and re-published. Tried to install again and the command worked but was still not showing commands. I realized that this was because generated JS files were not being published.
 
 ## [[2024-06-06]]
 
