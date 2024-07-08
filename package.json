@@ -1,6 +1,6 @@
 {
   "name": "pdpl-get",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "",
   "scripts": {
     "check-updates": "npx npm-check-updates",
