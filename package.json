@@ -5,7 +5,6 @@
   "scripts": {
     "check-updates": "npx npm-check-updates",
     "pre-commit": "npm run build && npm test && npm run eslint-ci && npm run prettier-ci",
-    "publish": "npm run pre-commit && npm publish",
     "test": "vitest run",
     "test-watch": "vitest",
     "dev": "rm -rf ./dist && tsc -w",
