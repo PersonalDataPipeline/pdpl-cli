@@ -1,4 +1,4 @@
-# Strava API handler
+# GitHub API handler
 
 **Version:** 3
 
