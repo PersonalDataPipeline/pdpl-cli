@@ -53,7 +53,7 @@ interface ConfigFile
 
 const validLogLevels: ValidLogLevels[] = ["debug", "info", "warn", "success", "error"];
 
-const config: Config = {
+const defaultConfig: Config = {
   configFile: "GMT",
   timezone: "GMT",
   outputDir: path.join(homedir(), "api-data"),
@@ -108,15 +108,14 @@ export default (): Config => {
     localConfig = (configImport as { default: object }).default as ConfigFile;
   }
 
-  processedConfig = Object.assign({}, config, localConfig);
+  processedConfig = Object.assign({}, defaultConfig, localConfig);
   processedConfig.configFile = configImport ? configPath : null;
 
   if (DEBUG_OUTPUT === "true" || DEBUG_ALL === "true") {
-    processedConfig.outputDir = localConfig.debugOutputDir || config.debugOutputDir;
-    processedConfig.filesOutputDir =
-      localConfig.filesOutputDir || path.join(processedConfig.outputDir, "_files");
+    processedConfig.outputDir =
+      localConfig.debugOutputDir || defaultConfig.debugOutputDir;
     processedConfig.compressJson =
-      localConfig.debugCompressJson || config.debugCompressJson;
+      localConfig.debugCompressJson || defaultConfig.debugCompressJson;
   }
 
   if (DEBUG_SAVE_MOCKS === "true" || DEBUG_ALL === "true") {
@@ -130,6 +129,10 @@ export default (): Config => {
   if (DEBUG_ALL === "true") {
     processedConfig.logLevel = "debug";
   }
+
+  // If the ouput dir is defined locally, the files dir should follow
+  processedConfig.filesOutputDir =
+    localConfig.filesOutputDir || path.join(processedConfig.outputDir, "_files");
 
   if (!pathExists(processedConfig.outputDir)) {
     makeDirectory(processedConfig.outputDir);
