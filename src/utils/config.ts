@@ -1,15 +1,18 @@
 import { homedir } from "os";
 import { existsSync, readdirSync } from "fs";
 import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 
 import { config as dotenvConfig } from "dotenv";
 
 import { makeDirectory, pathExists } from "./fs.js";
 import { ValidLogLevels } from "./logger.js";
+import { DEFAULT_CONFIG_DIR, DEFAULT_CONFIG_PATH } from "./constants.js";
+import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-dotenvConfig({ path: path.join(__dirname, "..", "..", ".env") });
+const { PATH_TO_ENV } = process.env;
+
+dotenvConfig({ path: PATH_TO_ENV || path.join(DEFAULT_CONFIG_DIR, ".env") });
 
 const {
   DEBUG_OUTPUT = "false",
@@ -71,10 +74,7 @@ const defaultConfig: Config = {
   debugCompressJson: false,
 };
 
-export const defaultConfigDir = path.join(homedir(), ".pdpl");
-export const defaultConfigPath = path.join(defaultConfigDir, "get.config.mjs");
-
-const configPath = PATH_TO_CONFIG ? PATH_TO_CONFIG : defaultConfigPath;
+const configPath = PATH_TO_CONFIG ? PATH_TO_CONFIG : DEFAULT_CONFIG_PATH;
 
 let configImport: null | ConfigFile = null;
 let attemptedImport = false;
