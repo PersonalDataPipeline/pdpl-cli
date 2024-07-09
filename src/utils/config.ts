@@ -1,5 +1,5 @@
 import { homedir } from "os";
-import { existsSync, mkdirSync, readdirSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -71,18 +71,14 @@ const config: Config = {
   debugCompressJson: false,
 };
 
-const defaultConfigDir = path.join(homedir(), ".pdpl");
-const configPath = PATH_TO_CONFIG
-  ? PATH_TO_CONFIG
-  : path.join(defaultConfigDir, "get.config.mjs");
+export const defaultConfigDir = path.join(homedir(), ".pdpl");
+export const defaultConfigPath = path.join(defaultConfigDir, "get.config.mjs");
+
+const configPath = PATH_TO_CONFIG ? PATH_TO_CONFIG : defaultConfigPath;
 
 let configImport: null | ConfigFile = null;
 let attemptedImport = false;
 if (!attemptedImport) {
-  if (!existsSync(defaultConfigDir)) {
-    mkdirSync(defaultConfigDir);
-  }
-
   if (existsSync(configPath)) {
     try {
       configImport = (await import(configPath)) as object;
