@@ -34,3 +34,71 @@ VERSION
 # ...
 ```
 
+We need to do three things before we're able to start pulling down data:
+
+1. Configure the service
+2. Add credentials for the APIs we want to call
+3. Call the service on a regular interval
+
+This service configures itself with a number of defaults. You can see the configuration it's using with the `config:get` command:
+
+```sh
+~ pdpl-get config:get
+{
+  timezone: 'GMT',
+  outputDir: '/Users/home/api-data',
+  filesOutputDir: '/Users/home/api-data/_files',
+  originDate: '1900-01-01',
+  apis: {},
+  imports: [],
+  compressJson: true,
+  logLevel: 'info',
+  debugSaveMocks: false,
+  saveEmptyLogs: true,
+  debugOutputDir: '/Users/home/api-data-DEBUG',
+  debugCompressJson: false
+}
+```
+
+We're going to provide definitions for a few important configuration properties in a file on your machine. Create this file with the `config:init` command, then edit the resulting file:
+
+```sh
+~ pdpl-get config:init
+Created config file /Users/joshcanhelp/.pdpl/get.config.mjs
+
+~ vim /Users/home/.pdpl/get.config.mjs
+# ... or
+~ code /Users/home/.pdpl/get.config.mjs
+# ... or
+~ open /Users/home/.pdpl/get.config.mjs
+```
+
+Edit the file to add values for the following properties in the exported object:
+
+- `timezone` - your local timezone
+- `outputDir` - direct path to where you want the raw JSON to be saved
+- `originDate` - the earliest date for data in `YYYY-MM-DD` format
+
+See the [configuration option documentation](./configuration) for specifics on content and format. Your final file should look something like this:
+
+```js
+export default {
+  timezone: "America/Los_Angeles",
+  outputDir: "/Users/home/Documents/cortex",
+  originDate: "1985-10-04",
+}
+```
+
+Run the `config:get` command to see your configuration changes:
+
+```sh
+~ pdpl-get config:get
+
+Config file: /Users/home/.pdpl/get.config.mjs
+
+{
+  timezone: 'America/Los_Angeles',
+  outputDir: '/Users/joshcanhelp/Documents/cortex',
+  originDate: '1985-10-04',
+  # ...
+```
