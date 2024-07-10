@@ -45,6 +45,8 @@ export interface Config {
   configFile: string | null;
   apisSupported: string[];
   importsSupported: string[];
+  inputsSupported: string[];
+  outputsSupported: string[];
 }
 
 interface ConfigFile
@@ -66,6 +68,8 @@ const defaultConfig: Config = {
   apisSupported: [],
   imports: [],
   importsSupported: [],
+  inputsSupported: [],
+  outputsSupported: [],
   compressJson: true,
   logLevel: "info",
   debugSaveMocks: false,
@@ -157,6 +161,13 @@ export default (): Config => {
     }
   }
   processedConfig.importsSupported = importsSupported;
+
+  // TODO: This should be based on getter config file, not just what happens to be there
+  processedConfig.inputsSupported = readdirSync(processedConfig.outputDir);
+
+  // TODO: I don't love this ...
+  const outputFiles = readdirSync(path.join(__dirname, "..", "outputs"));
+  processedConfig.outputsSupported = [...new Set(outputFiles)];
 
   process.env.TZ = processedConfig.timezone;
 

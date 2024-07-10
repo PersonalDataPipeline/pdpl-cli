@@ -1,5 +1,8 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { AuthorizeServerConfig } from "../commands/api/authorize.js";
+import { Database } from "duckdb-async";
+
+export type KeyVal = { [key: string]: string };
 
 export interface DailyData {
   [key: string]: object[];
@@ -74,4 +77,21 @@ export interface ImportFileHandler {
   transformFileContents?: (content: string) => string;
   transformParsedData?: (data: object | []) => (object | string[])[];
   handleEntityFiles?: (entity: object, importPath: string) => void;
+}
+
+export interface OutputHandler {
+  handlers: OutputStrategy[];
+  isReady: () => boolean;
+}
+
+export type OutputStrategyHandler = (
+  db: Database,
+  fields: KeyVal,
+  data?: KeyVal
+) => Promise<void>;
+
+export interface OutputStrategy {
+  name: () => string;
+  isReady: (fields: KeyVal, data?: KeyVal) => string[];
+  handle: OutputStrategyHandler;
 }
