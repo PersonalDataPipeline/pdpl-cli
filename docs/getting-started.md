@@ -84,12 +84,12 @@ See the [configuration option documentation](./configuration) for specifics on c
 ```js
 export default {
   timezone: "America/Los_Angeles",
-  outputDir: "/Users/home/Documents/cortex",
-  originDate: "1985-10-04",
+  outputDir: "/Users/home/Documents/pdpl",
+  originDate: "1985-10-11",
 }
 ```
 
-Run the `config:get` command to see your configuration changes:
+Run the `config:get` command to see your configuration changes and confirm that the file is being read and used:
 
 ```sh
 ~ pdpl-get config:get
@@ -98,7 +98,22 @@ Config file: /Users/home/.pdpl/get.config.mjs
 
 {
   timezone: 'America/Los_Angeles',
-  outputDir: '/Users/joshcanhelp/Documents/cortex',
-  originDate: '1985-10-04',
+  outputDir: '/Users/home/Documents/pdpl',
+  originDate: '1985-10-11',
   # ...
 ```
+
+Next, we're going to configure an API so we can start downloading data. To show all the APIs that are available for use, run the `api:list` command. This will display a table of all the APIs that can pull data. 
+
+- The **Ready?** column indicates whether the correct credentials are present. This should say "no" for all rows.
+- The **Conf?** column indicates whether the API has been added to the configuration file. This should also say "no" for all rows.
+
+Choose one of the available APIs, [find it in this list](https://github.com/PersonalDataPipeline/pdpl-get/tree/main/src/apis), and click on the name to see the configuration instructions. This will typically involve saving credentials to environment variables, which can be done one of a few ways:
+
+- This service will look for and read the file `~/.pdpl/.env` on the machine that's running the command.
+- You can prepend commands with `PATH_TO_ENV="/path.to/.env"` and the service will look in that path instead.
+- You can define them system-wide [using these instructions](https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html)
+
+Once you have these variables defined, run the `api:list` command and you should see the **Conf?** column for the API you're configuring show "yes." You are now ready to get data!
+
+Before we wire up the 
