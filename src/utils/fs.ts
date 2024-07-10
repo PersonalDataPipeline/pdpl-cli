@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 
 import getConfig from "./config.js";
 import { runDateUtc } from "./date-time.js";
+import { DEFAULT_CONFIG_DIR } from "./constants.js";
 
 export const __filename = fileURLToPath(import.meta.url);
 
@@ -43,7 +44,7 @@ export const makeDirectory = (dirPath: string) => {
 };
 
 export const envWrite = (key: string, newValue: string, replaceValue: string): void => {
-  const envPath = path.join(__dirname, "../../.env");
+  const envPath = path.join(DEFAULT_CONFIG_DIR, ".env");
   const currentContents = readFileSync(envPath, "utf8");
 
   let newContents;
