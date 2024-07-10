@@ -60,6 +60,8 @@ This service configures itself with a number of defaults. You can see the config
 }
 ```
 
+For more information about this and the other commands used in this tutorial, see the [commands documentation](./commands).
+
 We're going to provide definitions for a few important configuration properties in a file on your machine. Create this file with the `config:init` command, then edit the resulting file:
 
 ```sh
@@ -111,9 +113,58 @@ Next, we're going to configure an API so we can start downloading data. To show 
 Choose one of the available APIs, [find it in this list](https://github.com/PersonalDataPipeline/pdpl-get/tree/main/src/apis), and click on the name to see the configuration instructions. This will typically involve saving credentials to environment variables, which can be done one of a few ways:
 
 - This service will look for and read the file `~/.pdpl/.env` on the machine that's running the command.
-- You can prepend commands with `PATH_TO_ENV="/path.to/.env"` and the service will look in that path instead.
+- You can prepend commands with `PATH_TO_ENV="/path/to/.env"` and the service will look in that path instead.
 - You can define them system-wide [using these instructions](https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html)
 
 Once you have these variables defined, run the `api:list` command and you should see the **Conf?** column for the API you're configuring show "yes." You are now ready to get data!
 
-Before we wire up the 
+Before we wire up the automation, we want to make sure that our API is configured properly and is pulling down data. We'll do that by enabling the API in the config file and running the command once. In the configuration file we created above, add an `apis` property set to an object. Add a property set to the name of the API you want to use (`github` is used as an example below but could be any of the provided APIs) set to `true`:
+
+```js
+// get.config.mjs
+
+export default {
+  // ... other configuration options
+  apis: {
+	  github: true,
+  }
+}
+```
+
+Now run the `api:get` command for your API:
+
+```sh
+~ pdpl-get api:get github
+2024-07-10 08:38:37 [LEVEL: success] [ENDPOINT: user/followers] Got 1 total for 0 days; 0 files written and 1 files skipped.
+# ... more
+```
+
+The output should only be `info` and `success` level logs with information about the run. If there is any `error` log entries, read the message and double-check your credentials. If you're having any trouble at this point, [submit a new issue](https://github.com/PersonalDataPipeline/pdpl-get/issues/new) and we can help troubleshoot.
+
+So, what just happened? Assuming the run succeeded, this service:
+
+1. Looked for a queue file for this API in the configured output directory and, because one was not found, created one at `/path/to/output/API_NAME/_queue.json`.
+2. Walked through all the endpoints for the specific API, calling each one with the provided credentials. 
+3. Saved the resulting JSON files in endpoint-specific directories adjacent to the queue file.
+
+We can see that the first occurred using the `api:queue:get` command:
+
+```sh
+~ pdpl-get api:queue:get github
+┌──────────────────────────┬───────────────────────┬──────────┬────────────────┐
+│ Endpoint                 │ Next run (your time)  │ Historic │ Params         │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ user/followers           │ 7/11/2024, 8:37:37 AM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ users/joshcanhelp/events │ 7/11/2024, 8:37:37 AM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ users/joshcanhelp        │ 7/11/2024, 8:37:37 AM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ user/starred             │ 7/11/2024, 8:37:37 AM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ gists                    │ 7/11/2024, 8:37:37 AM │ no       │ None           │
+└──────────────────────────┴───────────────────────┴──────────┴────────────────┘
+# ... more
+```
+
+This shows us the endpoints that run and the earlier the name API pull can happen. If you run the `api:get` command again, you should see no output because the service was called earlier than the next runs are allowed. 
