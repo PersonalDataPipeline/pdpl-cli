@@ -1,5 +1,5 @@
 {
-  "name": "pdpl-get",
+  "name": "pdpl-cli",
   "version": "0.8.8",
   "description": "",
   "scripts": {
@@ -55,11 +55,11 @@
     "vitest": "^2.0.1"
   },
   "bin": {
-    "pdpl-get": "./bin/run.js"
+    "pdpl": "./bin/run.js"
   },
   "oclif": {
-    "bin": "pdpl-get",
-    "dirname": "pdpl-get",
+    "bin": "pdpl",
+    "dirname": "pdpl",
     "commands": {
       "strategy": "pattern",
       "target": "./dist/commands",

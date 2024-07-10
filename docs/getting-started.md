@@ -15,22 +15,22 @@ First, we need to make sure our system has the correct version of Node.js and np
 v20.11.1
 ```
 
-Next, we'll install the `pdpl-get` command using npm:
+Next, we'll install the `pdpl` command using npm:
 
 ```bash
-~ npm install -g pdpl-get
+~ npm install -g pdpl
 added X packages in Xms
   
-~ which pdpl-get         
-/Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/pdpl-get
+~ which pdpl         
+/Users/joshcanhelp/.nvm/versions/node/v20.11.1/bin/pdpl
 ```
 
 Make sure it was installed correctly and can be called directly:
 
 ```sh
- ~ pdpl-get --help
+ ~ pdpl --help
 VERSION
-  pdpl-get/0.8.8 darwin-arm64 node-v20.11.1
+  pdpl/X.X.X darwin-arm64 node-v20.11.1
 # ...
 ```
 
@@ -65,7 +65,7 @@ For more information about this and the other commands used in this tutorial, se
 We're going to provide definitions for a few important configuration properties in a file on your machine. Create this file with the `config:init` command, then edit the resulting file:
 
 ```sh
-~ pdpl-get config:init
+~ pdpl config:init
 Created config file /Users/joshcanhelp/.pdpl/get.config.mjs
 
 ~ vim /Users/home/.pdpl/get.config.mjs
@@ -150,7 +150,7 @@ So, what just happened? Assuming the run succeeded, this service:
 We can see that the first occurred using the `api:queue:get` command:
 
 ```sh
-~ pdpl-get api:queue:get github
+~ pdpl api:queue:get github
 ┌──────────────────────────┬───────────────────────┬──────────┬────────────────┐
 │ Endpoint                 │ Next run (your time)  │ Historic │ Params         │
 ├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
