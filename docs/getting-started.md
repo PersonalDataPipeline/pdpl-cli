@@ -167,4 +167,49 @@ We can see that the first occurred using the `api:queue:get` command:
 # ... more
 ```
 
-This shows us the endpoints that run and the earlier the name API pull can happen. If you run the `api:get` command again, you should see no output because the service was called earlier than the next runs are allowed. 
+This shows us the endpoints that run and the earliest that the API pull can happen. If you run the `api:get` command again, you should see no output because the service was called earlier than the next runs are allowed.
+
+We can verify the second and third occurred by listing out the files in the API folder in the output directory:
+
+```sh
+~ find /path/to/output/github -type f
+/path/to/output/github/user--gists/2019-09-27--run-2024-04-03T04-15-10-298Z.json
+/path/to/output/github/user--gists/2020-06-01--run-2024-04-03T04-15-10-298Z.json
+/path/to/output/github/user--gists/2013-07-29--run-2024-04-03T04-44-14-350Z.json
+# ... more
+```
+
+We can also see that this run occurred and a summary of the errors and successful calls by using the `api:logs` command:
+
+```sh
+~ pdpl api:logs github
+┌────────────┬──────────┬────────┬─────────┬───────────────────────────────┐
+│ Date       │ Time     │ Errors │ Success │ Filename                      │
+├────────────┼──────────┼────────┼─────────┼───────────────────────────────┤
+│ 2024-07-10 │ 09:51:37 │ 0      │ 7       │ 2024-07-10T16-50-37-860Z.json │
+└────────────┴──────────┴────────┴─────────┴───────────────────────────────┘
+```
+
+At this point, we can be pretty sure that this run was successful and that files can be saved in the proper place.
+
+The last step before we automate these calls is to add queue entries for runs to start pulling data from all time. These historic runs will run more often than the daily ones and use changing URL parameters to gather all data for all time. Run the `api:queue:set` command with a `--historic-only` flag to generate these entries then trigger another run:
+
+```sh
+~ pdpl api:queue:set github --historic-only
+
+~ pdpl api:queue:get github
+# ... note Historic = yes on 2 new rows
+
+~ pdpl api:queue:get github
+2024-07-10 09:60:17 [LEVEL: success] [ENDPOINT: gists] ...
+2024-07-10 09:60:17 [LEVEL: success] [ENDPOINT: users/joshcanhelp/events] ...
+
+~ pdpl api:queue:get github
+# ... note new Param values for the historic runs
+```
+
+We're now ready to setup automation so this API pull happens regularly. We'll do this using cron as that's the most cross-platform way to handle it but macOS users can also look into [launchd](https://launchd.info). How this service is triggered should not make any difference to the output.
+
+First, we'll create a 
+
+To add a cron job running every 15 minutes, edit the 
