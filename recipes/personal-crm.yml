@@ -1,0 +1,45 @@
+version: 0.1
+input:
+  google:
+    calendar--events:
+      summary: 'event_summary'
+      location: 'location'
+      start.dateTime: 'start_date_time'
+      start.date: 'start_date'
+      'attendees[].email': 'event_emails'
+  apple-import:
+    contacts:
+      'fn[].value': 'name'
+      'email[].value': 'contact_emails'
+output:
+  file:
+    - strategy: 'csv'
+      data:
+        path: '/Users/joshcanhelp/Downloads/'
+        fields:
+          - date
+          - start_time
+          - event_summary
+          - location
+          - event_emails
+  obsidian:
+    - strategy: 'daily_notes_append'
+      data:
+        date: 'date'
+        template: "- {{event_summary}}{{#name__LINKED}} [[People/{{.}}|{{.}}]]{{/name__LINKED}}{{#start_time}} at {{start_time}}{{/start_time}}"
+pipeline:
+  - field: 'start_date'
+    toField: 'date'
+  - field: 'start_date_time'
+    transform:
+      - 'toStandardDate'
+    toFieldUpdateIfEmpty: 'date'
+  - field: 'start_date_time'
+    transform:
+      - 'toStandardTime'
+    toField: 'start_time'
+  - field: 'event_summary'
+    transform:
+      - 'trim'
+  - field: 'event_emails'
+    linkTo: 'contact_emails'
