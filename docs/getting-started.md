@@ -210,6 +210,43 @@ The last step before we automate these calls is to add queue entries for runs to
 
 We're now ready to setup automation so this API pull happens regularly. We'll do this using cron as that's the most cross-platform way to handle it but macOS users can also look into [launchd](https://launchd.info). How this service is triggered should not make any difference to the output.
 
-First, we'll create a 
+First, we'll create a script that will load our service-specific environment variables and trigger the API run. Create and open a file `run_pdpl.sh` in your home directory:
 
-To add a cron job running every 15 minutes, edit the 
+```sh
+~ touch ~/run_pdpl.sh
+
+~ vim ~/run_pdpl.sh
+# ... or
+~ code ~/run_pdpl.sh
+# ... or
+~ open ~/run_pdpl.sh
+```
+
+Add the following lines:
+
+```sh
+#!/bin/bash
+export $(egrep -v '^#' $HOME/.pdpl/.env | xargs)
+pdpl api:get github
+```
+
+This script file will allow us to add and remove APIs easily without adjusting the cron schedule.
+
+Add a cron job running every 15 minutes by editing the crontab file and add the line below:
+
+```sh
+~ crontab -e
+# ... add the following then type :wq
+*/15 * * * * $HOME/Code/tapestry/run_api_get.sh
+# ... editor closes with the message:
+crontab: installing new crontab
+```
+
+Leave your computer on and wait for about an hour. Once the time has passed, check the logs for the API you configured to make sure that runs are happening:
+
+```sh
+~ pdpl api:logs github
+# ... you should see a few new runs depending on how long you waited
+```
+
+Great work! If you're having any trouble with errors in the service or getting this setup, [submit a new issue](https://github.com/PersonalDataPipeline/pdpl-get/issues/new) with reproduction steps and we'll take a look!
