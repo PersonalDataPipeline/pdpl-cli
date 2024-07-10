@@ -45,7 +45,7 @@ interface StravaActivityEntity {
 /// Helpers
 //
 
-const getIdentifier = (entity: object) => (entity as StravaActivityEntity).id;
+const getIdentifier = (entity1: object | number) => (entity1 as StravaActivityEntity).id;
 
 ////
 /// Exports

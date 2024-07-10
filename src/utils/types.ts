@@ -46,7 +46,7 @@ export interface EpSecondary {
   getDirName: (entity?: object) => string;
   getEndpoint: (entity: object) => string;
   getPrimary: () => string;
-  getIdentifier: (entity: object) => string;
+  getIdentifier: (entity1: object | number, entity2: object) => string;
   getParams?: () => object;
   getMethod?: () => string;
   getRequestData?: () => object;

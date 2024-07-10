@@ -18,12 +18,6 @@ interface HNUserEntity {
 }
 
 ////
-/// Helpers
-//
-
-const getIdentifier = (entity: object) => (entity as HNItemEntity).id;
-
-////
 /// Exports
 //
 
@@ -49,7 +43,10 @@ const endpointsSecondary: EpSecondary[] = [
     },
     getEndpoint: (entity: unknown) => `item/${entity as number}.json`,
     getPrimary: () => `user/${HACKER_NEWS_USERNAME}.json`,
-    getIdentifier,
+    // TODO: There's got to be a better way here
+    // @ts-expect-error: first param not used
+    getIdentifier: (entity1: object | number, entity2: object) =>
+      (entity2 as HNItemEntity).id,
   },
 ];
 
