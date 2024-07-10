@@ -8,7 +8,7 @@ This service was also built to be able to save the resulting JSON files to the f
 
 Once we've completed this tutorial, we'll have this service running on a Unix-like machine saving raw json to the same machine. 
 
-First, we need to make sure our system has the correct version of Node.js and npm installed. This service was built using Node 20.x and is restricted to that version using the `engines` property in package.json. We'll expand that when we're able to automate tests against other versions. Use [# Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) or [the instructions on nodejs.org](https://nodejs.org/en/download/package-manager) to install Node 20. If you think you might already have Node installed, check the version to make sure:
+First, we need to make sure our system has the correct version of Node.js and npm installed. This service was built using Node 20.x and is restricted to that version using the `engines` property in package.json. We'll expand that when we're able to automate tests against other versions. Use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) or [the instructions on nodejs.org](https://nodejs.org/en/download/package-manager) to install Node 20. If you think you might already have Node installed, check the version to make sure:
 
 ```sh
 ~ node --version
@@ -18,7 +18,7 @@ v20.11.1
 Next, we'll install the `pdpl` command using npm:
 
 ```bash
-~ npm install -g pdpl
+~ npm install -g pdpl-cli
 added X packages in Xms
   
 ~ which pdpl         

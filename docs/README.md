@@ -2,8 +2,8 @@
 
 I store documentation files here so I can write and edit them in [Obsidian](https://www.joshcanhelp.com/tag/obsidian/). Links below are what you can find here:
 
-- [Getting started](./getting-started.md) - How to configure the service.
-- [Configuration](./configuration.md) - How to configure the service.
+- [Getting started](./getting-started.md) - How to setup the service initially.
+- [Configuration](./configuration.md) - Details on service configuration.
 
 The following docs are more geared towards maintainance and development:
 
