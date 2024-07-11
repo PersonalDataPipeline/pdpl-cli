@@ -4,6 +4,10 @@
 
 `DRAFT`
 
+## Discussion
+
+https://github.com/PersonalDataPipeline/pdpl-cli/discussions/2
+
 ## Context
 
 API Getter is built parse raw data from API or files into structured JSON, then store them somewhere. This is the job of the `fs` util and, currently, it only saves to the local file system. This works fine in many cases but will need to expand to include cloud services like S3, Google Drive, Dropbox, and others. In addition to supporting specific services, we'll also need to allow for contributed modules as well. The DX and contribution process needs to be clear and idiomatic so we don't create unnecessary difficulty.

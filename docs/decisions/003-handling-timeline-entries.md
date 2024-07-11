@@ -4,6 +4,10 @@
 
 `DRAFT`
 
+## Discussion
+
+https://github.com/PersonalDataPipeline/pdpl-cli/discussions/4
+
 ## Context
 
 Moment-in-time/on-this-day functionality requires some manual entry for specific life events that fall outside of your imported data. Things like:

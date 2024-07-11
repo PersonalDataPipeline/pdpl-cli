@@ -4,6 +4,10 @@
 
 `DRAFT`
 
+## Discussion
+
+https://github.com/PersonalDataPipeline/pdpl-cli/discussions/3
+
 ## Context
 
 - API contracts should be easy to add with as little boilerplate as possible. 
