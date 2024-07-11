@@ -14,13 +14,19 @@ Template inspiration from [here](https://cognitect.com/blog/2011/11/15/documenti
 
 > What becomes easier or more difficult to do because of this change?
 
+## Options
+
+**Option 1**
+
+> Description
+
+**Option 2**
+
+> Description
+
 ## Decision
 
 > What is the change that we're proposing and/or doing?
-
-## Implementation
-
-> How did the implementation of this decision go? What lessons were learned?
 
 ## Follow-up
 

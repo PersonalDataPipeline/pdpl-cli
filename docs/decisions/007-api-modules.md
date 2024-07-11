@@ -19,13 +19,19 @@
 - PR CI processes running TS, eslint, and tests should give us a high degree of confidence that the contract being added will work as expected.
 - Arduous review processes risk contributors losing interest in contributing and/or using the library. 
 
+## Options
+
+**Option 1**
+
+> Description
+
+**Option 2**
+
+> Description
+
 ## Decision
 
 - Use [Hygen](https://www.hygen.io) to generate initial files (README, `index.ts`, and tests)
-
-## Implementation
-
-> How did the implementation of this decision go? What lessons were learned?
 
 ## Follow-up
 

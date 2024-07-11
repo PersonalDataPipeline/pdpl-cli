@@ -14,13 +14,19 @@ Currently, all file operations that need to be replicated to cloud services are 
 
 > What becomes easier or more difficult to do because of this change?
 
+## Options
+
+**Option 1**
+
+> Description
+
+**Option 2**
+
+> Description
+
 ## Decision
 
 - Use [Hygen](https://www.hygen.io) to generate initial file
-
-## Implementation
-
-> How did the implementation of this decision go? What lessons were learned?
 
 ## Follow-up
 

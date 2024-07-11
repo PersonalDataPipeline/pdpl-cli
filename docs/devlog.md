@@ -3,7 +3,7 @@
 Notes taken during development, newest to oldest. 
 
 ## TODO:
-- [ ] Data transformation (see 2024-06-22 entry below)
+- [ ] [ADR 011: Type transformations during processing](./decisions/011-type-transformations)
 - [ ] Export DuckDB in current state to CSV
 - [ ] Recipes as files are hard to browse and would become unwieldy at some point
 - [ ] Need a way to skip values (like my name) and replace values (like names that should point elsewhere) during processing
@@ -13,17 +13,16 @@ Notes taken during development, newest to oldest.
 - [ ] Test against all LTS Node versions
 - [ ] ADR++: Testing strategy for API/import contracts + core functionality
 	- https://mswjs.io
-- [ ] Add Reddit API (getting an authorization error when trying to get an access token)
+- [ ] Fix Reddit API (getting an authorization error when trying to get an access token)
 - [ ] Add Twitter API
+- [ ] Add LinkedIn API
 - [ ] [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
 - [ ] [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ ] Fix: Secondary endpoints fail with no way to re-run
-- --- THE LINE ---
 - [ ] https://nutjs.dev for data export
 - [ ] ADR++: How to handle multiple accounts so data can be checked against previous or added to previous
 - [ ] [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
-- [ ] https://developer.nytimes.com/apis - not sure how to get the most popular headlines rather than all
 
 ## [[2024-07-10]]
 
