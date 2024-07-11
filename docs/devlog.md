@@ -13,19 +13,15 @@ Notes taken during development, newest to oldest.
 - [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 
-
-- [ ] Export DuckDB in current state to CSV
 - [ ] Need a way to skip values (like my name) and replace values (like names that should point elsewhere) during processing
 - [ ] Need a way to delete and replace content on subsequent processing runs
 - [ ] Need better reporting/logging for processing and control over when an error is thrown versus no output
 - [ ] Update `--help` commands
 - [ ] Test against all LTS Node versions
 - [ ] ADR++: Recipes as files are hard to browse and would become unwieldy at some point
-- [ ] ADR++: Testing strategy for API/import contracts + core functionality
+- [ ] ADR++: Testing strategy for API/import contracts + core functionality (maybe [Mock Service Worker](ttps://mswjs.io))
 - [ ] ADR++: How to handle multiple accounts so data can be checked against previous or added to previous
-	- https://mswjs.io
 - [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
-- [ ] Fix Reddit API (getting an authorization error when trying to get an access token)
 - [ ] Add Twitter API
 - [ ] Add LinkedIn API
 - [ ] Fix: Secondary endpoints fail with no way to re-run

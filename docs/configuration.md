@@ -34,4 +34,6 @@ There are a few environment variables that can be used when running the script o
 - `DEBUG_OUTPUT`: Output data to the `debugOutputDir` path explained above and use `debugCompressJson` to determine JSON compression.
 - `DEBUG_SAVE_MOCKS`: Save raw JSON from the API to a mock file.
 - `DEBUG_ALL`: Run the script with all the options above.
-- `PATH_TO_CONFIG`: Direct path to a configuration file to use (see above for options and format)
+- `PATH_TO_CONFIG`: Direct path to a configuration file to use (see above for options and format).
+- `PATH_TO_ENV`: Direct path to a file to use for environment variables.
+- `EXPORT_DB_PATH`: Populate this with a direct path to a directory to export the resulting DB to CSV.
