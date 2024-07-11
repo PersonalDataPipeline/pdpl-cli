@@ -36,7 +36,7 @@ const getAuthorizeConfig = (): AuthorizeServerConfig => ({
   formDataForToken: true,
   refreshToken: REDDIT_REFRESH_TOKEN,
   refreshTokenEnvKey: "REDDIT_REFRESH_TOKEN",
-  scope: "identity, flair, history, mysubreddits, privatemessages, read, wikiread",
+  scope: "identity flair history mysubreddits privatemessages read wikiread",
   authorizeEndpoint: "https://www.reddit.com/api/v1/authorize",
   tokenEndpoint: tokenEndpoint,
   authorizeParams: {
