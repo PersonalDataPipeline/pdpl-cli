@@ -11,6 +11,7 @@ import transformations from "../../utils/transformations.js";
 import { KeyVal } from "../../utils/types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const { EXPORT_DB_PATH } = process.env;
 
 export default class Process extends BaseCommand<typeof Process> {
   static override summary = "Process data using recipes";
@@ -233,7 +234,8 @@ export default class Process extends BaseCommand<typeof Process> {
       await handler.handler(duckDb, recipe.fields, handler.data);
     }
 
-    // console.log(recipe);
-    // console.log(describeTables);
+    if (EXPORT_DB_PATH) {
+      await duckDb.all(`EXPORT DATABASE '${EXPORT_DB_PATH}' (FORMAT CSV)`);
+    }
   }
 }
