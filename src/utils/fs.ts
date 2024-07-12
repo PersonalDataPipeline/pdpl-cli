@@ -48,7 +48,7 @@ export const envWrite = (key: string, newValue: string, replaceValue: string): v
   const currentContents = readFileSync(envPath, "utf8");
 
   let newContents;
-  if (typeof replaceValue === "string") {
+  if (typeof replaceValue === "string" && replaceValue) {
     newContents = currentContents.replace(
       `${key}="${replaceValue}"`,
       `${key}="${newValue}"`
