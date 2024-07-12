@@ -6,6 +6,7 @@ import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import { isObjectWithKeys } from "../../utils/object.js";
 import { envWrite } from "../../utils/fs.js";
 import axios, { AxiosResponse } from "axios";
+import { Flags } from "@oclif/core";
 
 ////
 /// Helpers
@@ -53,15 +54,23 @@ export default class ApiAuthorize extends ApiBaseCommand<typeof ApiAuthorize> {
     ...apiNameArg,
   };
 
+  static override flags = {
+    "stop-at": Flags.string({
+      summary: "Stop at a certain stage of the authorization process",
+      description: `Accepts "authorize" or "callback" or "exchange"`,
+    }),
+  };
+
   public override async run(): Promise<void> {
-    const { default: apiHandler } = (await import(
-      `../../apis/${this.args.apiName}/index.js`
-    )) as {
+    const { apiName } = this.args;
+    const { "stop-at": stopAt = "" } = this.flags;
+
+    const { default: apiHandler } = (await import(`../../apis/${apiName}/index.js`)) as {
       default: ApiHandler;
     };
 
     if (!apiHandler.getAuthorizeConfig) {
-      throw new Error(`API "${this.args.apiName}" does not need to be authorized.`);
+      throw new Error(`API "${apiName}" does not need to be authorized.`);
     }
 
     const options = apiHandler.getAuthorizeConfig();
@@ -92,6 +101,10 @@ export default class ApiAuthorize extends ApiBaseCommand<typeof ApiAuthorize> {
     console.log("Follow this URL to authorize:");
     console.log(authorizeUrl.toString());
 
+    if (stopAt === "authorize") {
+      process.exit(0);
+    }
+
     /* eslint-disable @typescript-eslint/no-misused-promises */
     http
       .createServer(async (request: http.IncomingMessage) => {
@@ -121,11 +134,19 @@ export default class ApiAuthorize extends ApiBaseCommand<typeof ApiAuthorize> {
           authorizeState = "";
 
           try {
-            let tokenData: { [key: string]: string } | FormData = {
+            let tokenData: { [key: string]: string } | string = {
               grant_type: "authorization_code",
               redirect_uri: baseUrl,
               code: codeParam,
             };
+
+            if (stopAt === "callback") {
+              console.log({
+                ...tokenData,
+                state: stateParam,
+              });
+              process.exit(0);
+            }
 
             const tokenHeaders: { [key: string]: string } = {};
 
@@ -139,18 +160,17 @@ export default class ApiAuthorize extends ApiBaseCommand<typeof ApiAuthorize> {
             }
 
             if (options.formDataForToken) {
-              const formData = new FormData();
+              const formTokenData: string[] = [];
               for (const datum in tokenData) {
-                formData.append(datum, tokenData[datum]);
+                formTokenData.push(`${datum}=${tokenData[datum]}`);
               }
-              tokenData = formData;
+              tokenData = formTokenData.join("&");
+              tokenHeaders["Content-Type"] = "application/x-www-form-urlencoded";
             }
 
-            const tokenResponse = await axios.post(
-              options.tokenEndpoint,
-              tokenData,
-              tokenHeaders
-            );
+            const tokenResponse = await axios.post(options.tokenEndpoint, tokenData, {
+              headers: tokenHeaders,
+            });
 
             envWrite(
               options.refreshTokenEnvKey,
