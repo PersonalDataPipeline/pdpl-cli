@@ -7,6 +7,7 @@ import { isObjectWithKeys } from "../../utils/object.js";
 import { envWrite } from "../../utils/fs.js";
 import axios, { AxiosResponse } from "axios";
 import { Flags } from "@oclif/core";
+import { makeBasicAuth } from "../../utils/string.js";
 
 ////
 /// Helpers
@@ -151,9 +152,8 @@ export default class ApiAuthorize extends ApiBaseCommand<typeof ApiAuthorize> {
             const tokenHeaders: { [key: string]: string } = {};
 
             if (options.basicAuth) {
-              const authString = `${encodeURI(options.clientId)}:${encodeURI(options.clientSecret)}`;
               tokenHeaders["Authorization"] =
-                `Basic ${Buffer.from(authString).toString("base64")}`;
+                `Basic ${makeBasicAuth(options.clientId, options.clientSecret)}`;
             } else {
               tokenData["client_id"] = options.clientId;
               tokenData["client_secret"] = options.clientSecret;
