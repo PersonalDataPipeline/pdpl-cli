@@ -13,9 +13,9 @@ Notes taken during development, newest to oldest.
 - [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ADR 012: Recipe storage](./decisions/012-recipe-storage.md)
+- [ADR 013: Handling multiple accounts](./decisions/013-handling-multiple-accounts.md)
 
 - [ ] Update `--help` commands
-- [ ] ADR++: How to handle multiple accounts so data can be checked against previous or added to previous
 - [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
 - [ ] ADR++: Need a way to delete and replace content on subsequent processing runs
 - [ ] Need a way to skip values (like my name) and replace values (like names that should point elsewhere) during processing

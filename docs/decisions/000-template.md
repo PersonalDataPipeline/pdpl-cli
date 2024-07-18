@@ -2,6 +2,10 @@
 
 Template inspiration from [here](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions).
 
+## Discussion
+
+> Link to GitHub discussion
+
 ## Status
 
 `DRAFT`, `PROPOSED`, `ACCEPTED`, `REJECTED`, `DEPRECATED`, or `SUPERCEDED`
