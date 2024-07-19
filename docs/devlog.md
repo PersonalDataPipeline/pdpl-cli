@@ -4,10 +4,10 @@ Notes taken during development, newest to oldest.
 
 ## TODO
 
-**Issues**
+**Open issues:**
 - https://github.com/PersonalDataPipeline/pdpl-cli/issues
 
-**Open ADRs**
+**Open ADRs:**
 - [ADR 003: Handling manual timeline entries](./decisions/003-handling-timeline-entries.md)
 - [ADR 007: API module contribution](./decisions/007-api-modules.md)
 - [ADR 009: Storage API modules](./decisions/009-storage-api-modules)
@@ -15,9 +15,9 @@ Notes taken during development, newest to oldest.
 - [ADR 012: Recipe storage](./decisions/012-recipe-storage.md)
 - [ADR 013: Handling multiple accounts](./decisions/013-handling-multiple-accounts.md)
 - [ADR 014: Replacing processed content](./decisions/014-replacing-processed-content.md)
+- [ADR 015: Merging imported data with API data](./decisions/015-merging-import-with-api.md)
 
 - [ ] Update `--help` commands
-- [ ] ADR++: Merging imported data with duplicate API data; reconciling/augmenting API data ... one way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities. This is somewhat paving the way for the separate library that's used by all the services ...
 - [ ] Need a way to skip values (like my name) and replace values (like names that should point elsewhere) during processing
 - [ ] ADR++: Need better reporting/logging for processing and control over when an error is thrown versus no output
 - [ ] ADR++: Testing strategy ... API modules, file storage modules, core commands (maybe [Mock Service Worker](ttps://mswjs.io)), Node version testing
