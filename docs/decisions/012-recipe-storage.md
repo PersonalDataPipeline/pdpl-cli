@@ -6,8 +6,7 @@
 
 ## Discussion
 
-
-
+https://github.com/PersonalDataPipeline/pdpl-cli/discussions/8
 ## Context
 
 Recipes are currently written in YAML format, parsed to JSON, validated, and ran against a corpus of data. Currently, these recipes are stored in the PDPL repo ([GitHub link](https://github.com/PersonalDataPipeline/pdpl-cli/tree/main/recipes)), which works fine for now but will become difficult to manage when there are 100, 1000, or more recipes.
