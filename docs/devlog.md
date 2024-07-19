@@ -17,12 +17,19 @@ Notes taken during development, newest to oldest.
 - [ADR 014: Replacing processed content](./decisions/014-replacing-processed-content.md)
 - [ADR 015: Merging imported data with API data](./decisions/015-merging-import-with-api.md)
 
+**Tasks:**
 - [ ] Update `--help` commands
 - [ ] Need a way to skip values (like my name) and replace values (like names that should point elsewhere) during processing
-- [ ] ADR++: Need better reporting/logging for processing and control over when an error is thrown versus no output
-- [ ] ADR++: Testing strategy ... API modules, file storage modules, core commands (maybe [Mock Service Worker](ttps://mswjs.io)), Node version testing
+- [ ] Testing ... API modules, file storage modules, core commands ([Mock Service Worker](ttps://mswjs.io)?), Node version testing
 - [ ] Fix: Secondary endpoints fail with no way to re-run
-- [ ] https://nutjs.dev for data export
+- [ ] Explore https://nutjs.dev for data export
+
+## [[2024-07-19]]
+
+Just finished up a big cleanup of the ADRs and TODOs here and on GitHub. 
+
+Combining the two PDPL components into one was a big improvement in terms of managing docs, code, etc. Big improvement!
+
 
 ## [[2024-07-10]]
 
