@@ -29,7 +29,7 @@ One thing to note ... making PDPL more aware of the data structure of the incomi
 
 **Option 1**
 
-One way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities
+One way to do this would be merging APIs and imports into one module when the data is expected to be the same entities. The main named module could export handlers for APIs and/or files that share top-level data and utilities.
 
 ## Decision
 

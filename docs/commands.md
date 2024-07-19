@@ -27,6 +27,7 @@ USAGE
 * [`pdpl config:get`](#pdpl-configget)
 * [`pdpl config:init`](#pdpl-configinit)
 * [`pdpl import IMPORTNAME IMPORTPATH`](#pdpl-import-importname-importpath)
+* [`pdpl process RECIPE_NAME`](#pdpl-process-recipe_name)
 
 ## `pdpl api:authorize APINAME`
 
@@ -34,10 +35,18 @@ Authorize for an API
 
 ```
 USAGE
-  $ pdpl api:authorize APINAME
+  $ pdpl api:authorize APINAME [--stop-at <value>]
+
+FLAGS
+  --stop-at=<value>  Stop at a certain stage of the authorization process
 
 EXAMPLES
   $ pdpl api:authorize API_NAME
+
+FLAG DESCRIPTIONS
+  --stop-at=<value>  Stop at a certain stage of the authorization process
+
+    Accepts "authorize" or "callback" or "exchange"
 ```
 
 ## `pdpl api:curl APINAME`
@@ -194,5 +203,17 @@ USAGE
 
 EXAMPLES
   $ pdpl import IMPORT_NAME
+```
+
+## `pdpl process RECIPE_NAME`
+
+Process data using recipes
+
+```
+USAGE
+  $ pdpl process RECIPE_NAME [--validate-only]
+
+FLAGS
+  --validate-only  Run recipe validation but no changes
 ```
 <!-- commandsstop -->

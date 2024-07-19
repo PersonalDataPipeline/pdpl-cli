@@ -2,13 +2,15 @@
 
 This document assumes you know why you're setting this service up and what it's used for. If you're still exploring what this is all about, [start here](https://www.joshcanhelp.com/personal-data-pipeline)!
 
-This service was built to run unattended in a Unix-like environment. As of this writing, this service was built and tested in macOS 14 so changes may need to be (happily) made to make it work elsewhere. Commands below are for macOS but please submit a PR or issue for other systems if you find they are not working for you.
+PDPL was built to run unattended in a Unix-like environment. As of this writing, this service was built and tested in macOS 14 so changes may need to be (happily) made to make it work elsewhere. Commands below are for macOS but please submit a PR or issue for other systems if you find they are not working for you.
 
-This service was also built to be able to save the resulting JSON files to the filesystem or a different static file service. As of this writing, only local file storage is supported. See the [storage API modules ADR](./decisions/009-storage-api-modules) for status on this functionality. 
+PDPL was also built to be able to save the resulting JSON files to the filesystem or a different static file service. As of this writing, only local file storage is supported. See the [storage API modules ADR](./decisions/009-storage-api-modules) for status on this functionality. 
 
-Once we've completed this tutorial, we'll have this service running on a Unix-like machine saving raw json to the same machine. 
+Once we've completed this tutorial, we'll have PDPL running on a Unix-like machine saving raw json to the same machine and executing a simple processing job.
 
-First, we need to make sure our system has the correct version of Node.js and npm installed. This service was built using Node 20.x and is restricted to that version using the `engines` property in package.json. We'll expand that when we're able to automate tests against other versions. Use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) or [the instructions on nodejs.org](https://nodejs.org/en/download/package-manager) to install Node 20. If you think you might already have Node installed, check the version to make sure:
+## Installation
+
+First, we need to make sure our system has the correct version of Node.js and npm installed. PDPL was built using Node 20.x and is restricted to that version using the `engines` property in package.json. We'll expand that when we're able to automate tests against other versions. Use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) or [the instructions on nodejs.org](https://nodejs.org/en/download/package-manager) to install Node 20. If you think you might already have Node installed, check the version to make sure:
 
 ```sh
 ~ node --version
@@ -34,13 +36,15 @@ VERSION
 # ...
 ```
 
-We need to do three things before we're able to start pulling down data:
+## Get Input Data
 
-1. Configure the service
+We need to do three things before we're able to start pulling down input data:
+
+1. Configure PDPL
 2. Add credentials for the APIs we want to call
 3. Call the service on a regular interval
 
-This service configures itself with a number of defaults. You can see the configuration it's using with the `config:get` command:
+PDPL configures itself with a number of defaults. You can see the configuration it's using with the `config:get` command:
 
 ```sh
 ~ pdpl-get config:get
@@ -248,5 +252,12 @@ Leave your computer on and wait for about an hour. Once the time has passed, che
 ~ pdpl api:logs github
 # ... you should see a few new runs depending on how long you waited
 ```
+
+## Generate Output Data
+
+Now that we have our input data coming in, let's write a simple recipe recipe for what to do with that data.
+
+
+## 🎉 🎉 🎉
 
 Great work! If you're having any trouble with errors in the service or getting this setup, [submit a new issue](https://github.com/PersonalDataPipeline/pdpl-get/issues/new) with reproduction steps and we'll take a look!
