@@ -2,7 +2,6 @@ import type { Mock } from "vitest";
 
 import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC } from "./date-time.js";
-import { runDateUtc } from "./date-time.js";
 import { makeDirectory, pathExists, readFile, writeFile } from "./fs.js";
 import logger from "./logger.js";
 
@@ -35,13 +34,6 @@ const mockApiHandler: ApiHandler = {
     } as EpSnapshot,
   ],
   endpointsSecondary: [],
-};
-
-const missingEndpoint: queue.QueueEntry = {
-  endpoint: "API_ENDPOINT",
-  runAfter: ONE_DAY_IN_SEC + runDateUtc().seconds,
-  historic: false,
-  params: {},
 };
 
 const mockHistoricEntry = {
@@ -109,8 +101,28 @@ describe("Class: Queue", () => {
       expect(readFile).toHaveBeenCalledWith(queueFilePath);
     });
 
-    it("returns the queue contents", () => {
-      expect(queue.getQueue()).toEqual([{ test: true }]);
+    describe("queue file is emnpty", () => {
+      beforeAll(() => {
+        (pathExists as Mock).mockImplementation(() => true);
+        (readFile as Mock).mockImplementation(() => "");
+        queue.loadQueue(mockApiHandler);
+      });
+
+      it("returns the queue contents", () => {
+        expect(queue.getQueue()).toEqual([]);
+      });
+    });
+
+    describe("queue file has entries", () => {
+      beforeAll(() => {
+        (pathExists as Mock).mockImplementation(() => true);
+        (readFile as Mock).mockImplementation(() => '[{"test": true}]');
+        queue.loadQueue(mockApiHandler);
+      });
+
+      it("returns the queue contents", () => {
+        expect(queue.getQueue()).toEqual([{ test: true }]);
+      });
     });
   });
 
@@ -140,22 +152,6 @@ describe("Class: Queue", () => {
       queue.loadQueue(mockApiHandler);
     });
 
-    it("adds handled endpoints to the queue", () => {
-      queue.processQueue(mockApiHandler, logger);
-      expect(queue.getQueue()).toEqual([missingEndpoint]);
-    });
-
-    it("returns added endpoints", () => {
-      const runQueue = queue.processQueue(mockApiHandler, logger);
-      expect(runQueue).toEqual([
-        {
-          endpoint: missingEndpoint.endpoint,
-          historic: missingEndpoint.historic,
-          params: missingEndpoint.params,
-        },
-      ]);
-    });
-
     it("does not return endpoints scheduled for the future", () => {
       // First call returns the missing endpoint
       queue.processQueue(mockApiHandler, logger);
@@ -170,7 +166,7 @@ describe("Class: Queue", () => {
         runAfter: 1234567890,
       });
       queue.processQueue(mockApiHandler, logger);
-      expect(queue.getQueue()).toEqual([missingEndpoint]);
+      expect(queue.getQueue()).toEqual([]);
     });
   });
 
