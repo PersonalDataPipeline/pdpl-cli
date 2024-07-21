@@ -42,7 +42,7 @@ export interface EpHistoric
   getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
   getHistoricDelay: (continuation?: boolean) => number;
   transformPrimary?: (entity: object | []) => unknown[];
-  shouldHistoricContinue?: (responseData: object | [], params: object) => boolean;
+  shouldHistoricContinue?: (responseDataRaw: object | [], params: object) => boolean;
 }
 
 export interface EpSecondary {

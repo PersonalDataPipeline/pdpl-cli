@@ -76,8 +76,8 @@ const endpointsPrimary: EpHistoric[] = [
         offset: 0,
       };
     },
-    shouldHistoricContinue: (responseData: object | [], params: object): boolean => {
-      if (Object.keys(responseData).length === 10) {
+    shouldHistoricContinue: (responseDataRaw: object | [], params: object): boolean => {
+      if (Object.keys(responseDataRaw).length === 10) {
         return true;
       }
 

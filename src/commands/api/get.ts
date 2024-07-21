@@ -71,7 +71,8 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
           getMethod: () => "get",
           getNextCallParams: () => ({}),
           getHistoricDelay: handlerDict[endpoint].getDelay,
-          shouldHistoricContinue: (apiData: [] | object) => !!Object.keys(apiData).length,
+          shouldHistoricContinue: (responseDataRaw: [] | object) =>
+            !!Object.keys(responseDataRaw).length,
           transformResponseData: (response: AxiosResponse): unknown => response.data,
           transformPrimary: (entity: unknown): unknown => entity,
           handleApiError: (): void => {},
@@ -178,7 +179,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       if (runEntry.historic && epHandler.isHistoric()) {
         const didReturnData = !!Object.keys(apiResponseData as []).length;
         const continueHistoric = epHandler.shouldHistoricContinue(
-          apiResponseData as [],
+          (apiResponse as AxiosResponse).data as object | [],
           runEntry.params
         );
 
