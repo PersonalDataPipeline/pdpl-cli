@@ -124,6 +124,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       } while (isObjectWithKeys(nextCallParams));
 
       if (typeof apiResponseData === "undefined") {
+        logger.info({ message: "No data returned from the API", endpoint });
         continue;
       }
 
