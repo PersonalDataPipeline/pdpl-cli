@@ -24,6 +24,9 @@ $ node dist/apis/reddit/get-token.js
 
 5. Go to [localhost:8888](http://localhost:8888) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed.
 
+## Notes on data returned
+
+For [listing endpoints](https://www.reddit.com/dev/api/oauth#listings) like comments and submitted, there are a number of fields that are filtered out because they are either fuzzed (intensionally return changing data) or change rapidly. See the `transformResponseData` method in the [API handler](https://github.com/PersonalDataPipeline/pdpl-cli/blob/main/src/apis/reddit/index.ts) to see what fields are removed.
 
 ## Resources
 
