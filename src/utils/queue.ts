@@ -60,7 +60,7 @@ export const loadQueue = (apiHandler: ApiHandler) => {
     queue = [];
   } else {
     const queueContents = readFile(queueFile);
-    queue = JSON.parse(queueContents) as QueueEntry[];
+    queue = (queueContents ? JSON.parse(queueContents) : []) as QueueEntry[];
   }
 };
 
