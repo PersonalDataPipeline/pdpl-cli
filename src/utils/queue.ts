@@ -146,20 +146,6 @@ export const processQueue = (
     });
   }
 
-  // Find any new endpoints that don't have a queue entry
-  for (const endpoint of handledEndpoints) {
-    if (!hasStandardEntryFor(endpoint)) {
-      logger.info({
-        message: `Adding standard entry for unhandled endpoint`,
-        endpoint,
-      });
-      addEntry({
-        endpoint,
-        runAfter: handlerDict[endpoint].getDelay() + runDate.seconds,
-      });
-      runQueue.push({ endpoint, historic: false, params: {} });
-    }
-  }
   writeQueue();
   return runQueue;
 };
