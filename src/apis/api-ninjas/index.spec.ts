@@ -41,7 +41,7 @@ describe("Module: API Ninja API handler", () => {
           year: `${todaysDate.getFullYear()}`,
           offset: 0,
         },
-        true
+        ["data"]
       )
     ).toEqual({
       year: `${todaysDate.getFullYear()}`,
@@ -57,7 +57,7 @@ describe("Module: API Ninja API handler", () => {
           year: `${todaysDate.getFullYear()}`,
           offset: 0,
         },
-        false
+        []
       )
     ).toEqual({
       year: `${todaysDate.getFullYear() - 1}`,

@@ -2,6 +2,7 @@ import { ONE_DAY_IN_SEC, ONE_YEAR_IN_SEC } from "../../utils/date-time.js";
 import { ApiHandler, EpHistoric, EpSecondary } from "../../utils/types.js";
 import getConfig from "../../utils/config.js";
 import { getFormattedDate } from "../../utils/date-time.js";
+import { isObjectWithKeys } from "../../utils/object.js";
 
 const { API_NINJAS_KEY = "" } = process.env;
 
@@ -63,8 +64,9 @@ const endpointsPrimary: EpHistoric[] = [
     getHistoricDelay: (continuation?) => (continuation ? 0 : ONE_YEAR_IN_SEC),
     getHistoricParams: (
       params?: ApiNinjasHistoricParams,
-      didReturnData?: boolean
+      responseDataRaw?: object | []
     ): ApiNinjasHistoricParams => {
+      const didReturnData = isObjectWithKeys(responseDataRaw);
       if (params && "year" in params && "offset" in params) {
         return {
           year: didReturnData ? params.year : `${parseInt(params.year!, 10) - 1}`,

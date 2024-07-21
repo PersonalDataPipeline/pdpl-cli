@@ -177,7 +177,6 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       /// Historic queue management
       //
       if (runEntry.historic && epHandler.isHistoric()) {
-        const didReturnData = !!Object.keys(apiResponseData as []).length;
         const continueHistoric = epHandler.shouldHistoricContinue(
           (apiResponse as AxiosResponse).data as object | [],
           runEntry.params
@@ -188,7 +187,10 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
         );
 
         const params = continueHistoric
-          ? (epHandler as EpHistoric).getHistoricParams(runEntry.params, didReturnData)
+          ? (epHandler as EpHistoric).getHistoricParams(
+              runEntry.params,
+              (apiResponse as AxiosResponse).data as object | []
+            )
           : {};
 
         queue.updateHistoricEntry({

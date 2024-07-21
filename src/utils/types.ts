@@ -39,10 +39,13 @@ export interface EpHistoric
   extends Omit<EpSnapshot, "isHistoric" | "parseDayFromEntity"> {
   isHistoric: () => true;
   parseDayFromEntity: (entity: object) => string;
-  getHistoricParams: (currentParams?: object, didReturnData?: boolean) => object;
+  getHistoricParams: (currentParams?: object, responseDataRaw?: object | []) => object;
   getHistoricDelay: (continuation?: boolean) => number;
   transformPrimary?: (entity: object | []) => unknown[];
-  shouldHistoricContinue?: (responseDataRaw: object | [], params: object) => boolean;
+  shouldHistoricContinue?: (
+    responseDataRaw: object | [],
+    currentParams: object
+  ) => boolean;
 }
 
 export interface EpSecondary {
