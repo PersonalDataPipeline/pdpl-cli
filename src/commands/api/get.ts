@@ -1,4 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
+import { Flags } from "@oclif/core";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import logger from "../../utils/logger.js";
@@ -8,7 +11,8 @@ import { ApiHandler, DailyData, EpHistoric, EpSnapshot } from "../../utils/types
 import { isObjectWithKeys } from "../../utils/object.js";
 import { getApiData } from "../../utils/api-data.js";
 import { makeOutputPath, writeOutputFile } from "../../utils/fs.js";
-import { Flags } from "@oclif/core";
+
+export const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
   static override summary = "Get API data based on a queue";
@@ -36,7 +40,9 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
     const { force: forceRun } = this.flags;
 
     const runDate = runDateUtc();
-    const { default: apiHandler } = (await import(`../../apis/${apiName}/index.js`)) as {
+    const { default: apiHandler } = (await import(
+      `${__dirname}/../../apis/${apiName}/index.js`
+    )) as {
       default: ApiHandler;
     };
 
