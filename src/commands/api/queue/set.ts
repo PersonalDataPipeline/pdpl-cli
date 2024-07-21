@@ -77,20 +77,13 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
       }
 
       if (!historicOnly) {
-        const hasStandard = queue.hasStandardEntryFor(endpointName);
-        if (hasStandard) {
+        if (queue.hasStandardEntryFor(endpointName)) {
+          let message = `Standard entry already exists`;
           if (runNow) {
             queue.updateStandardEntry(endpointHandler, getEpochNow());
-            logger.info({
-              ...logEntry,
-              message: `Updated existing standard entry to run now`,
-            });
-          } else {
-            logger.info({
-              ...logEntry,
-              message: `Standard entry already exists`,
-            });
+            message = `Updated existing standard entry to run now`;
           }
+          logger.info({ ...logEntry, message });
         } else {
           queue.addEntry({
             endpoint: endpointName,
@@ -105,23 +98,16 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
       }
 
       if (!standardOnly) {
-        const hasHistoric = queue.hasHistoricEntryFor(endpointName);
-        if (hasHistoric) {
+        if (queue.hasHistoricEntryFor(endpointName)) {
+          let message = `Historic entry already exists`;
           if (runNow) {
             queue.updateHistoricEntry({
               endpoint: endpointName,
               runAfter: getEpochNow(),
             });
-            logger.info({
-              ...logEntry,
-              message: `Updated existing historic entry to run now`,
-            });
-          } else {
-            logger.info({
-              ...logEntry,
-              message: `Historic entry already exists`,
-            });
+            message = `Updated existing historic entry to run now`;
           }
+          logger.info({ ...logEntry, message });
         } else if (endpointHandler.isHistoric()) {
           queue.addEntry({
             endpoint: endpointName,
