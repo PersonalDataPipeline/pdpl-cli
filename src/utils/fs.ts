@@ -56,7 +56,7 @@ export const makeDirectory = (dirPath: string) => {
   return mkdirSync(dirPath, { recursive: true });
 };
 
-export const envWrite = (key: string, newValue: string, replaceValue: string): void => {
+export const envWrite = (key: string, newValue: string, replaceValue?: string): void => {
   const envPath = path.join(DEFAULT_CONFIG_DIR, ".env");
   const currentContents = readFileSync(envPath, "utf8");
 
@@ -66,6 +66,8 @@ export const envWrite = (key: string, newValue: string, replaceValue: string): v
       `${key}="${replaceValue}"`,
       `${key}="${newValue}"`
     );
+    newContents = newContents.replace(`${key}='${replaceValue}'`, `${key}="${newValue}"`);
+    newContents = newContents.replace(`${key}=${replaceValue}`, `${key}="${newValue}"`);
   } else {
     newContents = currentContents + `\n${key}="${newValue}"`;
   }
