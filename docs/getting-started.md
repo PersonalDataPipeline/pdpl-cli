@@ -10,7 +10,7 @@ Once we've completed this tutorial, we'll have PDPL running on a Unix-like machi
 
 ## Installation
 
-First, we need to make sure our system has the correct version of Node.js and npm installed. PDPL was built using Node 20.x and is restricted to that version using the `engines` property in package.json. We'll expand that when we're able to automate tests against other versions. Use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) or [the instructions on nodejs.org](https://nodejs.org/en/download/package-manager) to install Node 20. If you think you might already have Node installed, check the version to make sure:
+First, we need to make sure our system has the correct version of Node.js and npm installed. PDPL was built using Node 20.x and is restricted to that version or newer using the `engines` property in package.json. We'll expand that when we're able to automate tests against other versions. Use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) or [the instructions on nodejs.org](https://nodejs.org/en/download/package-manager) to install Node 20. If you think you might already have Node installed, check the version to make sure:
 
 ```sh
 ~ node --version
@@ -47,7 +47,7 @@ We need to do three things before we're able to start pulling down input data:
 PDPL configures itself with a number of defaults. You can see the configuration it's using with the `config:get` command:
 
 ```sh
-~ pdpl-get config:get
+~ pdpl config:get
 {
   timezone: 'GMT',
   outputDir: '/Users/home/api-data',
@@ -98,7 +98,7 @@ export default {
 Run the `config:get` command to see your configuration changes and confirm that the file is being read and used:
 
 ```sh
-~ pdpl-get config:get
+~ pdpl config:get
 
 Config file: /Users/home/.pdpl/get.config.mjs
 
@@ -138,7 +138,7 @@ export default {
 Now run the `api:get` command for your API:
 
 ```sh
-~ pdpl-get api:get github
+~ pdpl api:get github
 2024-07-10 08:38:37 [LEVEL: success] [ENDPOINT: user/followers] Got 1 total for 0 days; 0 files written and 1 files skipped.
 # ... more
 ```
