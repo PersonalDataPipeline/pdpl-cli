@@ -1,5 +1,5 @@
 import { homedir } from "os";
-import { existsSync, readdirSync } from "fs";
+import { accessSync, constants, existsSync, readdirSync } from "fs";
 import path, { dirname } from "path";
 import { config as dotenvConfig } from "dotenv";
 
@@ -137,7 +137,9 @@ export default (): Config => {
     processedConfig.outputDir = path.join(homedir(), processedConfig.outputDir.slice(1));
   }
 
-  if (!pathExists(processedConfig.outputDir)) {
+  if (pathExists(processedConfig.outputDir)) {
+    accessSync(processedConfig.outputDir, constants.R_OK | constants.W_OK);
+  } else {
     makeDirectory(processedConfig.outputDir);
   }
 
