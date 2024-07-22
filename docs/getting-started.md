@@ -83,7 +83,6 @@ Edit the file to add values for the following properties in the exported object:
 
 - `timezone` - your local timezone
 - `outputDir` - direct path to where you want the raw JSON to be saved
-- `originDate` - the earliest date for data in `YYYY-MM-DD` format
 
 See the [configuration option documentation](./configuration) for specifics on content and format. Your final file should look something like this:
 
@@ -91,7 +90,6 @@ See the [configuration option documentation](./configuration) for specifics on c
 export default {
   timezone: "America/Los_Angeles",
   outputDir: "/Users/home/Documents/pdpl",
-  originDate: "1985-10-11",
 }
 ```
 
@@ -114,15 +112,7 @@ Next, we're going to configure an API so we can start downloading data. To show 
 - The **Ready?** column indicates whether the correct credentials are present. This should say "no" for all rows.
 - The **Conf?** column indicates whether the API has been added to the configuration file. This should also say "no" for all rows.
 
-Choose one of the available APIs, [find it in this list](https://github.com/PersonalDataPipeline/pdpl-get/tree/main/src/apis), and click on the name to see the configuration instructions. This will typically involve saving credentials to environment variables, which can be done one of a few ways:
-
-- This service will look for and read the file `~/.pdpl/.env` on the machine that's running the command.
-- You can prepend commands with `PATH_TO_ENV="/path/to/.env"` and the service will look in that path instead.
-- You can define them system-wide [using these instructions](https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html)
-
-Once you have these variables defined, run the `api:list` command and you should see the **Conf?** column for the API you're configuring show "yes." You are now ready to get data!
-
-Before we wire up the automation, we want to make sure that our API is configured properly and is pulling down data. We'll do that by enabling the API in the config file and running the command once. In the configuration file we created above, add an `apis` property set to an object. Add a property set to the name of the API you want to use (`github` is used as an example below but could be any of the provided APIs) set to `true`:
+In the configuration file we created above, add an `apis` property set to an object. Add a property set to the name of the API you want to use (`github` is used as an example below but could be any of the provided APIs) set to `true`:
 
 ```js
 // get.config.mjs
@@ -135,7 +125,17 @@ export default {
 }
 ```
 
-Now run the `api:get` command for your API:
+If you run the `api:list` command again, you should see the **Conf?** column say "yes."
+
+Next, [find your API in this list](https://github.com/PersonalDataPipeline/pdpl-cli/tree/main/src/apis), and click on the name to see the configuration instructions README. The instructions for each API is different but, in general, the steps are:
+
+1. Log into the service and create credentials of some kind
+2. Save these credentials as environment variables, [as described here](./configuration#environment-variables)
+3. Run an authorization process from the command line (not required for all APIs)
+
+Follow the instructions for the API you're adding carefully and, once you have these variables defined, run the `api:list` command. You should see the **Ready?** column for the API you're configuring show "yes." 
+
+You are now ready to get data! Run the `api:get` command for your API:
 
 ```sh
 ~ pdpl api:get github
@@ -217,8 +217,6 @@ We're now ready to setup automation so this API pull happens regularly. We'll do
 First, we'll create a script that will load our service-specific environment variables and trigger the API run. Create and open a file `run_pdpl.sh` in your home directory:
 
 ```sh
-~ touch ~/run_pdpl.sh
-
 ~ vim ~/run_pdpl.sh
 # ... or
 ~ code ~/run_pdpl.sh
@@ -240,8 +238,9 @@ Add a cron job running every 15 minutes by editing the crontab file and add the 
 
 ```sh
 ~ crontab -e
-# ... add the following then type :wq
-*/15 * * * * $HOME/Code/tapestry/run_api_get.sh
+# ... add the following
+*/15 * * * * $HOME/run_pdpl.sh
+# ... type :wq then enter
 # ... editor closes with the message:
 crontab: installing new crontab
 ```

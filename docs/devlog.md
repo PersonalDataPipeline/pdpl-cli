@@ -39,6 +39,10 @@ I'm very close to being able to publish the blog post about this system. The las
 
 The trouble here is that while all of this would be helpful, it's also probably not the highest priority right now. These are all nice to have until the processor is a little more fully-featured (transformations, more outputs, etc). I think the [getting started docs](./getting-started) can walk through the manual steps, including validation. I'm certain I'll find improvements as I go. Decided!
 
+Had a great pairing session with a former colleague and found a bunch of things to fix and improve. Putting through quick commits now and parsing the rest into TODOs above.
+
+RE: `outputDir` configuration ... two things came up here ... first, does it create the directory if it does not exist? Found out that, yes, it does. This seems fine but might result in the data ending up somewhere unexpected. Which brings us to the second issue/question which is ... what to do with paths starting with `~`? When we tried that it created a directory `./~/` in the directory that the command was run. I think converting a leading `~` to the home directory is the right move here.
+
 ## [[2024-07-19]]
 
 Just finished up a big cleanup of the ADRs and TODOs here and on GitHub. 
