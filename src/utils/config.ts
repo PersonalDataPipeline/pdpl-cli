@@ -1,9 +1,9 @@
 import { homedir } from "os";
-import { accessSync, constants, existsSync, readdirSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 import path, { dirname } from "path";
 import { config as dotenvConfig } from "dotenv";
 
-import { makeDirectory, pathExists } from "./fs.js";
+import { makeDirectory, pathAccessible, pathExists } from "./fs.js";
 import { ValidLogLevels } from "./logger.js";
 import { DEFAULT_CONFIG_DIR, DEFAULT_CONFIG_PATH } from "./constants.js";
 import { fileURLToPath } from "url";
@@ -137,10 +137,14 @@ export default (): Config => {
     processedConfig.outputDir = path.join(homedir(), processedConfig.outputDir.slice(1));
   }
 
-  if (pathExists(processedConfig.outputDir)) {
-    accessSync(processedConfig.outputDir, constants.R_OK | constants.W_OK);
-  } else {
+  if (!pathExists(processedConfig.outputDir)) {
     makeDirectory(processedConfig.outputDir);
+  }
+
+  if (!pathAccessible(processedConfig.outputDir)) {
+    throw new Error(
+      `Configured output dir "${processedConfig.outputDir}" cannot be accessed`
+    );
   }
 
   // If the output dir is defined locally, the files dir should follow

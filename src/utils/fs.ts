@@ -1,10 +1,11 @@
 import {
   readFileSync,
   writeFileSync,
-  existsSync,
   mkdirSync,
   readdirSync,
   cpSync,
+  accessSync,
+  constants,
 } from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -18,9 +19,21 @@ export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
 export const pathExists = (filePath: string) => {
-  // TODO: Update this to accessSync
-  // https://nodejs.org/docs/latest-v20.x/api/fs.html#fsaccesssyncpath-mode
-  return existsSync(filePath);
+  try {
+    accessSync(filePath, constants.F_OK);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const pathAccessible = (filePath: string) => {
+  try {
+    accessSync(filePath, constants.R_OK | constants.W_OK);
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 export const readFile = (filePath: string) => {

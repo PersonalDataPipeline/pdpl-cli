@@ -2,13 +2,14 @@ import type { Mock } from "vitest";
 
 import getConfig from "./config.js";
 import { ONE_DAY_IN_SEC } from "./date-time.js";
-import { makeDirectory, pathExists, readFile, writeFile } from "./fs.js";
+import { makeDirectory, pathAccessible, pathExists, readFile, writeFile } from "./fs.js";
 import logger from "./logger.js";
 
 vi.mock("./fs.js", () => ({
   __dirname: "",
   ensureOutputPath: vi.fn(),
   pathExists: vi.fn(() => true),
+  pathAccessible: vi.fn(() => true),
   readFile: vi.fn(() => "[]"),
   writeFile: vi.fn(),
   makeDirectory: vi.fn(),
@@ -74,6 +75,7 @@ describe("Class: Queue", () => {
   describe("queue file does not exist", () => {
     beforeAll(() => {
       (pathExists as Mock).mockImplementation(() => false);
+      (pathAccessible as Mock).mockImplementation(() => false);
       queue.loadQueue(mockApiHandler);
     });
 
