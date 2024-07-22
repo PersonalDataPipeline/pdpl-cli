@@ -8,19 +8,18 @@ export default {
 	outputDir: "/path/to/data/output",
 	debugOutputDir: "/path/to/debug-data/output",
 	debugCompressJson: false,
-	originDate: "1985-03-22",
 }
 ```
 
 - `timezone`: [IANA timezone identifier](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) used for calculating dates used when gathering data. The timezone will not be checked by the service so an invalid timezone setting will default to GMT. Note that UTC is always used in logs and filenames. 
 - `outputDir`: A direct path to where gathered data should be saved. If this is not valid, the script will exit with an error.
-- `originDate`: The date used as the earliest date for gathered data. Data received that is older than this date will be ignored.
 - `filesOutputDir`: Direct path to the directory where files will be saved. If it does not exist it will be created. Defaults to `_files` in `outputDir`.
 - `saveEmptyLogs`: Boolean to allow runs without log entries to be saved. If this is `true`, all runs will generate a log file in their respective directories. If this is `false`, only runs that call out to APIs will save logs.
 - `logLevel`: Accepts the values "debug", "info", "warn", "success", and "error". Values here are listed in the order of more logging to less logging. The "debug" level could contain sensitive information (not credentials) so this should not be used in production.
 - `apis`: Object with properties that correspond to valid API names (folders in `src/apis` [here](https://github.com/PersonalDataPipeline/pdpl-get/tree/main/src/apis)) to indicate what APIs should be run. Values are either `true` to run all endpoints or an array of strings to indicate what endpoints should be run. An API must be ready (configured properly) and indicated here to be able to pull. Run `pdpl-get api:list` to see all possible APIs and whether they are ready or not. Run `pdpl-get api:info API_NAME` to see all possible endpoints for a specific API.
 - `imports`: Similar to `apis`, this is simply an array of strings indicating imports that are valid to run. 
 - `compressJson`: Boolean to save the gathered data as compressed (`true`) or pretty-printed (`false`). Default is `true`.
+- `originDate`: The date used as the earliest date for gathered data. Data received that is older than this date will be ignored. Note that some APIs do not currently support this and will pull down all historic data available.
 
 **Debugging options**
 
