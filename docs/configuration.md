@@ -28,7 +28,18 @@ export default {
 - `debugSaveMocks`: Save raw JSON from the API to a mock file. This can also be set using the `DEBUG_SAVE_MOCKS` environment variable, explained below.
 ## Environment variables
 
-There are a few environment variables that can be used when running the script or in a `.env` file in the root of the project. 
+Environment variables are used in two ways:
+
+1. As a way to set certain configuration options during a single command operation
+2. Storage for API credentials used when getting data from APIs
+
+The variables can be stored a few different ways:
+
+- PDPL will look for and read the file `~/.pdpl/.env` on the machine that's running the command. Variables can be saved in that file and will be pulled in automatically.
+- You can prepend commands with `PATH_TO_ENV="/path/to/.env"` and the service will look in that path instead.
+- You can define them system-wide [using these instructions](https://www.twilio.com/en-us/blog/how-to-set-environment-variables-html)
+
+The configuration options that can be set via environment variables are the following:
 
 - `DEBUG_OUTPUT`: Output data to the `debugOutputDir` path explained above and use `debugCompressJson` to determine JSON compression.
 - `DEBUG_SAVE_MOCKS`: Save raw JSON from the API to a mock file.
