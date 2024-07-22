@@ -19,10 +19,25 @@ Notes taken during development, newest to oldest.
 
 **Tasks:**
 - [ ] Update `--help` commands
-- [ ] Need a way to skip values (like my name) and replace values (like names that should point elsewhere) during processing
 - [ ] Testing ... API modules, file storage modules, core commands ([Mock Service Worker](ttps://mswjs.io)?), Node version testing
+- [ ] Need a way to filter out values (e.g. filtering me out of events) and replace values (like names that should point elsewhere) during processing
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Explore https://nutjs.dev for data export
+
+## [[2024-07-22]]
+
+Finished up the Reddit API yesterday. This ended up being harder than expected because of the pagination scheme Reddit uses and the fuzzing that's done on vote counts. I also found a number of issues with queue processing that I had to take care of. This put testing at the top of my mind.
+
+Starting with the `api:get` command, I tried to test the logic directly by calling the `run()` method for the command. This works fine in terms of running the logic that's there but passing in arguments and flags is difficult. You basically need to redefine the arguments, which means that you're skipping the internal validation logic. The oclif project provides a [testing library](https://github.com/oclif/test) but it uses a different testing library underneath, which means those tests will operate differently (though the [example tests](https://github.com/oclif/test/blob/main/test/run-command.test.ts) look to use pretty similar language, `it` and `describe` and `expect`). I'd rather not introduce a bunch more packages here if I can avoid it. At the same time, I don't want to spend a bunch of time on the low-value activity of deciding *how* to test when I could start writing tests now. 
+
+I'm very close to being able to publish the blog post about this system. The last couple of steps are finishing up the getting started steps for the processor and finishing the post itself (just a bit left to do there). The big thing I'm getting hung up on here is how to get someone started writing recipes. The processing system is working but not at all feature complete so the tutorial has to be pretty bare bones. I'm trying to figure out if it makes sense to spend the time writing CLI tools to make the process easier. It could:
+
+- Look through the configured data sources (this would exclude any data that you already have stored but are not actively getting) or stored raw data (the latter might be harder if the files are stored remotely). This could give you options in the terminal to select sources to add as `inputs`. And could go a step further and show the fields that are available. Of course, would the time be better used to work on a GUI to do this?
+- Also on the topic of inputs, it might be possible to display the duck typing for all the fields possible within an input. So there could be a command like `data:examine INPUT_SOURCE` that would output what can be used there.
+- Outputs are easier to automate since they have to be written and available somewhere the script can read (in the repo or locally). It would be easy to give a selection here and then populate prompts in the terminal based on what's possible.
+- Pipeline transformations are similar in that they are defined in the repo so could be used in prompts. 
+
+The trouble here is that while all of this would be helpful, it's also probably not the highest priority right now. These are all nice to have until the processor is a little more fully-featured (transformations, more outputs, etc). I think the [getting started docs](./getting-started) can walk through the manual steps, including validation. I'm certain I'll find improvements as I go. Decided!
 
 ## [[2024-07-19]]
 

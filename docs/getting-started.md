@@ -255,9 +255,9 @@ Leave your computer on and wait for about an hour. Once the time has passed, che
 
 ## Generate Output Data
 
-Now that we have our input data coming in, let's write a simple recipe recipe for what to do with that data.
+Now that we have our input data coming in, let's write a simple recipe for what to do with that data.
 
-
+`// TODO: Still working on this ...`
 ## 🎉 🎉 🎉
 
 Great work! If you're having any trouble with errors in the service or getting this setup, [submit a new issue](https://github.com/PersonalDataPipeline/pdpl-get/issues/new) with reproduction steps and we'll take a look!
