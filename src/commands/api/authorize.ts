@@ -108,87 +108,97 @@ export default class ApiAuthorize extends ApiBaseCommand<typeof ApiAuthorize> {
 
     /* eslint-disable @typescript-eslint/no-misused-promises */
     http
-      .createServer(async (request: http.IncomingMessage) => {
-        const requestUrl = new URL(baseUrl + request.url);
-        const errorParam = requestUrl.searchParams.get("error");
+      .createServer(
+        async (request: http.IncomingMessage, response: http.OutgoingMessage) => {
+          const requestUrl = new URL(baseUrl + request.url);
+          const errorParam = requestUrl.searchParams.get("error");
 
-        if (errorParam) {
-          console.log(`Error returned from authorization server: ${errorParam}`);
-          const errorDesc = requestUrl.searchParams.get("error_description");
-          if (errorDesc) {
-            console.log(`Description: ${errorDesc}`);
+          if (errorParam) {
+            response.write("Error! See the terminal for more information");
+            response.end();
+            console.log(`Error returned from authorization server: ${errorParam}`);
+            const errorDesc = requestUrl.searchParams.get("error_description");
+            if (errorDesc) {
+              console.log(`Description: ${errorDesc}`);
+            }
+            process.exit(1);
           }
-          process.exit(1);
-        }
 
-        const codeParam = requestUrl.searchParams.get("code");
-        const stateParam = requestUrl.searchParams.get("state");
+          const codeParam = requestUrl.searchParams.get("code");
+          const stateParam = requestUrl.searchParams.get("state");
 
-        if (codeParam) {
-          console.log("Auth code returned from authorization server:");
-          if (options.checkState === true && stateParam !== authorizeState) {
+          if (codeParam) {
+            console.log("Auth code returned from authorization server:");
+            if (options.checkState === true && stateParam !== authorizeState) {
+              response.write("Error! See the terminal for more information");
+              response.end();
+              authorizeState = "";
+              console.log("State parameter mis-match.");
+              process.exit(1);
+            }
+
             authorizeState = "";
-            console.log("State parameter mis-match.");
-            process.exit(1);
-          }
 
-          authorizeState = "";
+            try {
+              let tokenData: { [key: string]: string } | string = {
+                grant_type: "authorization_code",
+                redirect_uri: baseUrl,
+                code: codeParam,
+              };
 
-          try {
-            let tokenData: { [key: string]: string } | string = {
-              grant_type: "authorization_code",
-              redirect_uri: baseUrl,
-              code: codeParam,
-            };
-
-            if (stopAt === "callback") {
-              console.log({
-                ...tokenData,
-                state: stateParam,
-              });
-              process.exit(0);
-            }
-
-            const tokenHeaders: { [key: string]: string } = {};
-
-            if (options.basicAuth) {
-              tokenHeaders["Authorization"] =
-                `Basic ${makeBasicAuth(options.clientId, options.clientSecret)}`;
-            } else {
-              tokenData["client_id"] = options.clientId;
-              tokenData["client_secret"] = options.clientSecret;
-            }
-
-            if (options.formDataForToken) {
-              const formTokenData: string[] = [];
-              for (const datum in tokenData) {
-                formTokenData.push(`${datum}=${tokenData[datum]}`);
+              if (stopAt === "callback") {
+                console.log({
+                  ...tokenData,
+                  state: stateParam,
+                });
+                process.exit(0);
               }
-              tokenData = formTokenData.join("&");
-              tokenHeaders["Content-Type"] = "application/x-www-form-urlencoded";
+
+              const tokenHeaders: { [key: string]: string } = {};
+
+              if (options.basicAuth) {
+                tokenHeaders["Authorization"] =
+                  `Basic ${makeBasicAuth(options.clientId, options.clientSecret)}`;
+              } else {
+                tokenData["client_id"] = options.clientId;
+                tokenData["client_secret"] = options.clientSecret;
+              }
+
+              if (options.formDataForToken) {
+                const formTokenData: string[] = [];
+                for (const datum in tokenData) {
+                  formTokenData.push(`${datum}=${tokenData[datum]}`);
+                }
+                tokenData = formTokenData.join("&");
+                tokenHeaders["Content-Type"] = "application/x-www-form-urlencoded";
+              }
+
+              const tokenResponse = await axios.post(options.tokenEndpoint, tokenData, {
+                headers: tokenHeaders,
+              });
+
+              envWrite(
+                options.refreshTokenEnvKey,
+                tokenResponse.data.refresh_token,
+                options.refreshToken
+              );
+
+              response.write("Success! You can close this tab");
+              response.end();
+              console.log(`${options.refreshTokenEnvKey} written to .env.`);
+              process.exit(0);
+            } catch (tokenError: any) {
+              response.write("Error! See the terminal for more information");
+              response.end();
+              console.log(`Error exchanging code for token: ${tokenError.message}`);
+              console.log(
+                `${JSON.stringify((tokenError.response as AxiosResponse).data, null, 2)}`
+              );
+              process.exit(1);
             }
-
-            const tokenResponse = await axios.post(options.tokenEndpoint, tokenData, {
-              headers: tokenHeaders,
-            });
-
-            envWrite(
-              options.refreshTokenEnvKey,
-              tokenResponse.data.refresh_token,
-              options.refreshToken
-            );
-
-            console.log(`${options.refreshTokenEnvKey} written to .env.`);
-            process.exit(0);
-          } catch (tokenError: any) {
-            console.log(`Error exchanging code for token: ${tokenError.message}`);
-            console.log(
-              `${JSON.stringify((tokenError.response as AxiosResponse).data, null, 2)}`
-            );
-            process.exit(1);
           }
         }
-      })
+      )
       .listen(serverPort);
   }
 }
