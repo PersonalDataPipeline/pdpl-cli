@@ -52,7 +52,7 @@ interface RedditListingParams {
 /// Exports
 //
 
-const isReady = () => !!REDDIT_REFRESH_TOKEN || !REDDIT_USER_NAME;
+const isReady = () => !!REDDIT_REFRESH_TOKEN || !!REDDIT_USER_NAME;
 const tokenEndpoint = "https://www.reddit.com/api/v1/access_token";
 const getApiName = () => "reddit";
 const getApiBaseUrl = () => "https://oauth.reddit.com/";
