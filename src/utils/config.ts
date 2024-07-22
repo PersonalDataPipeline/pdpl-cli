@@ -1,7 +1,6 @@
 import { homedir } from "os";
 import { existsSync, readdirSync } from "fs";
 import path, { dirname } from "path";
-
 import { config as dotenvConfig } from "dotenv";
 
 import { makeDirectory, pathExists } from "./fs.js";
@@ -134,13 +133,17 @@ export default (): Config => {
     processedConfig.logLevel = "debug";
   }
 
-  // If the ouput dir is defined locally, the files dir should follow
-  processedConfig.filesOutputDir =
-    localConfig.filesOutputDir || path.join(processedConfig.outputDir, "_files");
+  if (processedConfig.outputDir.at(0) === "~") {
+    processedConfig.outputDir = path.join(homedir(), processedConfig.outputDir.slice(1));
+  }
 
   if (!pathExists(processedConfig.outputDir)) {
     makeDirectory(processedConfig.outputDir);
   }
+
+  // If the output dir is defined locally, the files dir should follow
+  processedConfig.filesOutputDir =
+    localConfig.filesOutputDir || path.join(processedConfig.outputDir, "_files");
 
   if (!pathExists(processedConfig.filesOutputDir)) {
     makeDirectory(processedConfig.filesOutputDir);
