@@ -6,31 +6,18 @@
 
 This API requires an access token which is retrieved using a rotating refresh token. In order to get this process started the first time, you'll need to authorize the local application for the Strava API.
 
-First, create an application using [the steps in section B here](https://developers.strava.com/docs/getting-started/#account). Use the information shown to add the following to the `.env` file here:
+First, create an application using [the steps in section B here](https://developers.strava.com/docs/getting-started/#account). Use the information shown to add the following [environment variables](https://github.com/PersonalDataPipeline/pdpl-cli/blob/main/docs/configuration.md#environment-variables):
+
+- `STRAVA_AUTHORIZE_CLIENT_ID` set to the API application Client ID"
+- `STRAVA_AUTHORIZE_CLIENT_SECRET` set to the API application Client Secret"
+
+Next, start the authorization process:
 
 ```bash
-# .env
-STRAVA_AUTHORIZE_CLIENT_ID="Replace with API application Client ID"
-STRAVA_AUTHORIZE_CLIENT_SECRET="Replace with API application Client Secret"
-AUTHORIZE_APP_SERVER_PORT="If needed, default is 8888"
+~ pdpl api:authorize strava
 ```
 
-Next, start the local server:
-
-```bash
-$ node dist/apis/strava/get-token.js
-```
-
-... and go to [localhost:8888](http://localhost:8888) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed.
-
-The refresh token returned will be saved automatically in your `.env` file like the following:
-
-```bash
-# .env
-STRAVA_REFRESH_TOKEN="Replace with refresh token returned"
-```
-
-This token will include `read_all`, `profile:read_all`, and `activity:read_all` scopes.
+Click the link that appears in the terminal and follow the instructions to get an access token. If there is a problem with the process, check any displayed error messages or the terminal for how to proceed. The refresh token returned will be saved automatically to an environment variable named `STRAVA_REFRESH_TOKEN`. This token will include `read_all`, `profile:read_all`, and `activity:read_all` scopes.
 
 ## Resources
 

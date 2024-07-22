@@ -4,5 +4,7 @@
 
 No API keys and no rate limit, currently.
 
+## Resources
+
 - [Documentation](https://github.com/HackerNews/API)
 - [Thread with questions](https://news.ycombinator.com/item?id=32540883)

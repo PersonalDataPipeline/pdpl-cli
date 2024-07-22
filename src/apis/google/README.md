@@ -12,14 +12,11 @@
   - Client ID (in the credentials file and Service Account Details > Unique ID)
   - Scope for Calendar: `https://www.googleapis.com/auth/calendar`
 
-5. Save the following:
+5. Add the following [environment variables](https://github.com/PersonalDataPipeline/pdpl-cli/blob/main/docs/configuration.md#environment-variables):
 
-```bash
-# .env
-GOOGLE_KEYS_FILE_PATH="/path/to/credentials/file.json"
-GOOGLE_SERVICE_ACCOUNT_EMAIL="something@something.iam.gserviceaccount.com"
-GOOGLE_USER_EMAIL="user@domain.com"
-```
+- `GOOGLE_KEYS_FILE_PATH` set to `/path/to/credentials/file.json`
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL` set to the email address generated above, something like `service-name@service-name-123456.iam.gserviceaccount.com`
+- `GOOGLE_USER_EMAIL` set to your Google email address, like `user@domain.com`
 
 ## Resources
 

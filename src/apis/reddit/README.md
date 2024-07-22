@@ -6,23 +6,18 @@
 
 This API requires you to create an application that can be used to generate access tokens that will authorize calls to the API. 
 
-1. Go [here](https://www.reddit.com/prefs/apps/) and create a new application 
-2. Select "script" for the type and use `http://localhost:8888` as the callback URL
-3. Create the application and add the client ID (random string of characters at the top) and the client secret (labelled **secret**) to your `.env` file:
+Go [here](https://www.reddit.com/prefs/apps/) and create a new application. Select "script" for the type and use `http://localhost:8888` as the callback URL. Create the application and add the client ID and the client secret as [environment variables](https://github.com/PersonalDataPipeline/pdpl-cli/blob/main/docs/configuration.md#environment-variables):
+
+- `REDDIT_AUTHORIZE_CLIENT_ID` set to the shorter random string of characters at the top of the page
+- `REDDIT_AUTHORIZE_CLIENT_SECRET` set to the longer shorter random string of characters labelled **secret**
+
+Next, start the authorization process:
 
 ```bash
-# .env
-REDDIT_AUTHORIZE_CLIENT_ID="Shorter string of random characters"
-REDDIT_AUTHORIZE_CLIENT_SECRET="Longer string of random characters"
+~ pdpl api:authorize reddit
 ```
 
-4. Start the local server:
-
-```bash
-$ node dist/apis/reddit/get-token.js
-```
-
-5. Go to [localhost:8888](http://localhost:8888) in a browser. Click the link and follow the instructions to get a refresh token with the correct scopes. If there is a problem with the process, check any displayed error messages or the Node console for how to proceed.
+Click the link that appears in the terminal and follow the instructions to get an access token. If there is a problem with the process, check any displayed error messages or the terminal for how to proceed. The refresh token returned will be saved automatically to an environment variable named `REDDIT_REFRESH_TOKEN`.
 
 ## Notes on data returned
 
