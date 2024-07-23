@@ -1,7 +1,3 @@
-import { Args, Flags } from "@oclif/core";
-import { accessSync, constants, readFileSync } from "fs";
-import { fileURLToPath } from "url";
-import path, { dirname } from "path";
 import yaml from "js-yaml";
 import { Database } from "duckdb-async";
 
@@ -9,78 +5,20 @@ import { BaseCommand } from "./_base.js";
 import { RecipeObject, validateRecipe } from "../../utils/validate-recipe.js";
 import transformations from "../../utils/transformations.js";
 import { KeyVal } from "../../utils/types.js";
-import { DEFAULT_CONFIG_DIR } from "../../utils/constants.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const { EXPORT_DB_PATH } = process.env;
 
-export default class Process extends BaseCommand<typeof Process> {
+export default class RecipeRun extends BaseCommand<typeof RecipeRun> {
   static override summary = "Process data using recipes";
 
-  static override args = {
-    RECIPE_NAME: Args.string({
-      required: true,
-    }),
-  };
-
-  static override flags = {
-    "validate-only": Flags.boolean({
-      summary: "Run recipe validation but no changes",
-      default: false,
-    }),
-  };
-
   public async run(): Promise<void> {
-    const duckDb = await Database.create(":memory:");
-    const dbConn = await duckDb.connect();
-
-    const { RECIPE_NAME: recipeName } = this.args;
-    const { "validate-only": validateOnly } = this.flags;
-
-    let recipePath = "";
-    try {
-      // Treat the argument as a direct path to a recipe
-      accessSync(recipeName, constants.R_OK);
-      recipePath = recipeName;
-    } catch (error) {
-      // Check the local recipe store
-      recipePath = path.join(DEFAULT_CONFIG_DIR, "recipes", `${recipeName}.yml`);
-      try {
-        accessSync(recipePath, constants.R_OK);
-      } catch (error) {
-        // Check the glocal recipe store
-        recipePath = path.join(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          "recipes",
-          `${recipeName}.yml`
-        );
-        try {
-          accessSync(recipePath, constants.R_OK);
-        } catch (error) {
-          throw new Error("Recipe not found");
-        }
-      }
-    }
-
-    let recipeContent = "";
-    try {
-      recipeContent = readFileSync(recipePath, { encoding: "utf8" });
-    } catch (error) {
-      throw new Error(`Unknown recipe: ${recipeName}`);
-    }
-
     const recipe: RecipeObject = await validateRecipe(
-      yaml.load(recipeContent) as object,
+      yaml.load(this.recipe) as object,
       this.conf
     );
 
-    if (validateOnly) {
-      this.log("✅ Validation complete");
-      return;
-    }
+    const duckDb = await Database.create(":memory:");
+    const dbConn = await duckDb.connect();
 
     ////
     /// Load input data
