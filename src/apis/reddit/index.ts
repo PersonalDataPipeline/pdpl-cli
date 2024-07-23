@@ -5,7 +5,7 @@ import {
   ONE_DAY_IN_SEC,
   QUARTER_HOUR_IN_SEC,
 } from "../../utils/date-time.js";
-import { ApiHandler, EpHistoric, EpSnapshot } from "../../utils/types.js";
+import { ApiHandler, EpChronological, EpSnapshot } from "../../utils/types.js";
 import { makeBasicAuth } from "../../utils/string.js";
 import { envWrite } from "../../utils/fs.js";
 
@@ -145,39 +145,39 @@ const listingEndpointHandler = {
     !!(responseDataRaw as RedditListingResponse).data.after,
 };
 
-const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
+const endpointsPrimary: (EpChronological | EpSnapshot)[] = [
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => `user/${REDDIT_USER_NAME}/comments`,
     getDirName: () => "user--comments",
     ...listingEndpointHandler,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => `user/${REDDIT_USER_NAME}/submitted`,
     getDirName: () => "user--submitted",
     ...listingEndpointHandler,
   },
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => `api/v1/me`,
     getDirName: () => "me",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => `api/v1/trophies`,
     getDirName: () => "trophies",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => `api/v1/prefs`,
     getDirName: () => "prefs",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => `api/v1/karma`,
     getDirName: () => "karma",
     getDelay: () => ONE_DAY_IN_SEC,

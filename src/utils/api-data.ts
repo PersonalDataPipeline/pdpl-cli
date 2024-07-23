@@ -4,7 +4,7 @@ import axiosRetry, { exponentialDelay } from "axios-retry";
 
 import { existsSync, mkdirSync } from "fs";
 import getConfig from "./config.js";
-import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "./types.js";
+import { ApiHandler, EpChronological, EpSecondary, EpSnapshot } from "./types.js";
 import { __dirname, writeFile } from "./fs.js";
 import logger from "./logger.js";
 
@@ -36,13 +36,13 @@ const makeMockPath = (apiName: string, endpointDir: string) => {
 
 export const getApiData = async (
   apiHandler: ApiHandler,
-  handler: EpHistoric | EpSnapshot | EpSecondary,
+  handler: EpChronological | EpSnapshot | EpSecondary,
   entity?: object
 ): Promise<AxiosResponse> => {
   const isEnriching = typeof entity !== "undefined";
   const endpoint = isEnriching
     ? (handler as EpSecondary).getEndpoint(entity)
-    : (handler as EpHistoric | EpSnapshot).getEndpoint();
+    : (handler as EpChronological | EpSnapshot).getEndpoint();
 
   const axiosConfig: AxiosRequestConfig = {
     url: endpoint,

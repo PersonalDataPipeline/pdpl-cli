@@ -35,7 +35,7 @@ const getApiAuthHeaders = async () => ({
 
 const endpointsPrimary: EpSnapshot[] = [
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => "get",
     getDirName: () => "get",
     getMethod: () => "post",

@@ -1,5 +1,5 @@
 import { ONE_DAY_IN_SEC, ONE_YEAR_IN_SEC } from "../../utils/date-time.js";
-import { ApiHandler, EpHistoric, EpSecondary } from "../../utils/types.js";
+import { ApiHandler, EpChronological, EpSecondary } from "../../utils/types.js";
 import getConfig from "../../utils/config.js";
 import { getFormattedDate } from "../../utils/date-time.js";
 import { isObjectWithKeys } from "../../utils/object.js";
@@ -54,9 +54,9 @@ const getApiAuthHeaders = async () => ({
   "X-Api-Key": API_NINJAS_KEY,
 });
 
-const endpointsPrimary: EpHistoric[] = [
+const endpointsPrimary: EpChronological[] = [
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "historicalevents",
     getDirName: () => "historicalevents",
     getParams: () => defaultParams,

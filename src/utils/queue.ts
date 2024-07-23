@@ -3,7 +3,7 @@ import getConfig from "./config.js";
 import { makeDirectory, pathExists, readFile, writeFile } from "./fs.js";
 import { RunLogger } from "./logger.js";
 import { runDateUtc } from "./date-time.js";
-import { ApiHandler, EpHistoric, EpSnapshot } from "./types.js";
+import { ApiHandler, EpChronological, EpSnapshot } from "./types.js";
 
 ////
 /// Types
@@ -103,7 +103,7 @@ export const processQueue = (
   const runQueue: RunEntry[] = [];
   const runDate = runDateUtc();
   const handledEndpoints: string[] = [];
-  const handlerDict: { [key: string]: EpHistoric | EpSnapshot } = {};
+  const handlerDict: { [key: string]: EpChronological | EpSnapshot } = {};
   for (const endpointHandler of apiHandler.endpointsPrimary) {
     handledEndpoints.push(endpointHandler.getEndpoint());
     handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
@@ -160,7 +160,7 @@ export const hasHistoricEntryFor = (endpoint: string) => {
 };
 
 export const updateStandardEntry = (
-  epHandler: EpHistoric | EpSnapshot,
+  epHandler: EpChronological | EpSnapshot,
   runAfter?: number
 ) => {
   const runDate = runDateUtc();

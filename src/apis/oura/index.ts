@@ -1,7 +1,12 @@
 import { AxiosResponse } from "axios";
 
 import { adjustDateByDays, getFormattedDate } from "../../utils/date-time.js";
-import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import {
+  ApiHandler,
+  EpChronological,
+  EpSecondary,
+  EpSnapshot,
+} from "../../utils/types.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -101,9 +106,9 @@ const getApiAuthHeaders = async () => ({
 const getHistoricDelay = (continuation?: boolean) =>
   continuation ? HALF_HOUR_IN_SEC : QUARTER_YEAR_IN_SEC;
 
-const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
+const endpointsPrimary: (EpChronological | EpSnapshot)[] = [
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/workout",
     getDirName: () => "user--workouts",
     getParams: () => defaultParams,
@@ -114,7 +119,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/sleep",
     getDirName: () => "user--sleep",
     getParams: () => defaultParams,
@@ -125,7 +130,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/daily_stress",
     getDirName: () => "user--daily-stress",
     getParams: () => defaultParams,
@@ -136,7 +141,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/daily_readiness",
     getDirName: () => "user--daily-readiness",
     getParams: () => defaultParams,
@@ -147,7 +152,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/daily_activity",
     getDirName: () => "user--daily-activity",
     getParams: () => defaultParams,
@@ -158,7 +163,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/daily_spo2",
     getDirName: () => "user--daily-spo2",
     getParams: () => defaultParams,
@@ -169,7 +174,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/sleep_time",
     getDirName: () => "user--sleep-time",
     getParams: () => defaultParams,
@@ -180,7 +185,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     transformResponseData,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "usercollection/heartrate",
     getDirName: () => "user--heartrate",
     getParams: getHeartrateParams,

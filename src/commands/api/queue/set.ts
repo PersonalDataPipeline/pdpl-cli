@@ -108,7 +108,7 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             message = `Updated existing historic entry to run now`;
           }
           logger.info({ ...logEntry, message });
-        } else if (endpointHandler.isHistoric()) {
+        } else if (endpointHandler.isChronological()) {
           queue.addEntry({
             endpoint: endpointName,
             runAfter: getEpochNow(),

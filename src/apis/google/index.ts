@@ -9,7 +9,12 @@ import {
   QUARTER_HOUR_IN_SEC,
   getFormattedDate,
 } from "../../utils/date-time.js";
-import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import {
+  ApiHandler,
+  EpChronological,
+  EpSecondary,
+  EpSnapshot,
+} from "../../utils/types.js";
 import { isObjectWithKeys } from "../../utils/object.js";
 
 const {
@@ -126,9 +131,9 @@ const getApiAuthHeaders = async () => {
   };
 };
 
-const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
+const endpointsPrimary: (EpChronological | EpSnapshot)[] = [
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => `calendars/${GOOGLE_USER_EMAIL}/events`,
     getDirName: () => "calendar--events",
     getDelay: () => ONE_DAY_IN_SEC,

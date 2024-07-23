@@ -1,5 +1,10 @@
 import { ONE_DAY_IN_SEC } from "../../utils/date-time.js";
-import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import {
+  ApiHandler,
+  EpChronological,
+  EpSecondary,
+  EpSnapshot,
+} from "../../utils/types.js";
 
 const { HACKER_NEWS_USERNAME = "" } = process.env;
 
@@ -26,9 +31,9 @@ const getApiName = () => "hacker-news";
 const getApiBaseUrl = () => "https://hacker-news.firebaseio.com/v0/";
 const getApiAuthHeaders = async () => ({});
 
-const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
+const endpointsPrimary: (EpChronological | EpSnapshot)[] = [
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => `user/${HACKER_NEWS_USERNAME}.json`,
     getDirName: () => "user",
     getDelay: () => ONE_DAY_IN_SEC,

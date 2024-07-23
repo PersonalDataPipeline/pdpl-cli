@@ -1,7 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 
 import { envWrite } from "../../utils/fs.js";
-import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import {
+  ApiHandler,
+  EpChronological,
+  EpSecondary,
+  EpSnapshot,
+} from "../../utils/types.js";
 import {
   HALF_HOUR_IN_SEC,
   ONE_DAY_IN_SEC,
@@ -76,15 +81,15 @@ const getAuthorizeConfig = (): AuthorizeServerConfig => ({
   tokenEndpoint: tokenEndpoint,
 });
 
-const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
+const endpointsPrimary: (EpChronological | EpSnapshot)[] = [
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => "user",
     getDirName: () => "user",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "workouts",
     getDirName: () => "workouts",
     getParams: (): WahooUrlParams => ({

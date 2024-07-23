@@ -28,7 +28,7 @@ const mockApiHandler: ApiHandler = {
   getApiAuthHeaders: vi.fn(async () => ({})),
   endpointsPrimary: [
     {
-      isHistoric: vi.fn(() => false),
+      isChronological: vi.fn(() => false),
       getEndpoint: vi.fn(() => "API_ENDPOINT"),
       getDirName: () => "API_DIRECTORY",
       getDelay: () => ONE_DAY_IN_SEC,

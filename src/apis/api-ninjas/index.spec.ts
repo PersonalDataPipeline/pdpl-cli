@@ -1,11 +1,11 @@
 import { padLeftZero } from "../../utils/string.js";
-import { EpHistoric } from "../../utils/types.js";
+import { EpChronological } from "../../utils/types.js";
 import apiNinjaHandler from "./index.js";
 
 const todaysDate = new Date();
 
 describe("Module: API Ninja API handler", () => {
-  let epHandler: EpHistoric;
+  let epHandler: EpChronological;
 
   const defaultParams = {
     year: `${todaysDate.getFullYear()}`,
@@ -17,7 +17,7 @@ describe("Module: API Ninja API handler", () => {
   beforeEach(() => {
     epHandler = apiNinjaHandler.endpointsPrimary.filter((handler) => {
       return handler.getEndpoint() === "historicalevents";
-    })[0] as EpHistoric;
+    })[0] as EpChronological;
   });
 
   it("gets the correct default params", () => {

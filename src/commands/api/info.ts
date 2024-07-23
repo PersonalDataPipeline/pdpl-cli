@@ -1,4 +1,4 @@
-import { ApiHandler, EpHistoric } from "../../utils/types.js";
+import { ApiHandler, EpChronological } from "../../utils/types.js";
 import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import path from "path";
 
@@ -23,11 +23,11 @@ export default class ApiInfo extends ApiBaseCommand<typeof ApiInfo> {
     console.log(`Primary endpoints:`);
     for (const endpoint of apiHandler.endpointsPrimary) {
       const params = typeof endpoint.getParams === "function" ? endpoint.getParams() : {};
-      const histParams = endpoint.isHistoric()
-        ? (endpoint as EpHistoric).getHistoricParams()
+      const histParams = endpoint.isChronological()
+        ? (endpoint as EpChronological).getHistoricParams()
         : params;
-      const histDelay = endpoint.isHistoric()
-        ? (endpoint as EpHistoric).getHistoricDelay()
+      const histDelay = endpoint.isChronological()
+        ? (endpoint as EpChronological).getHistoricDelay()
         : endpoint.getDelay();
       console.log(``);
       console.log(`  | Endpoint: ${endpoint.getEndpoint()}`);

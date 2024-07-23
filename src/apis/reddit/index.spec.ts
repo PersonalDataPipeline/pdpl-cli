@@ -1,17 +1,17 @@
 import { AxiosResponse } from "axios";
-import { EpHistoric } from "../../utils/types.js";
+import { EpChronological } from "../../utils/types.js";
 import ouraHandler from "./index.js";
 
 describe("Module: Reddit API handler", () => {
   describe("Comments endpoint", () => {
-    let epHandler: EpHistoric;
+    let epHandler: EpChronological;
 
     beforeEach(() => {
       epHandler = ouraHandler.endpointsPrimary.filter((handler) => {
         return (
           handler.getEndpoint() === `user/${process.env["REDDIT_USER_NAME"]}/comments`
         );
-      })[0] as EpHistoric;
+      })[0] as EpChronological;
     });
 
     it("gets the correct default params", () => {
@@ -49,14 +49,14 @@ describe("Module: Reddit API handler", () => {
   });
 
   describe("Submitted endpoint", () => {
-    let epHandler: EpHistoric;
+    let epHandler: EpChronological;
 
     beforeEach(() => {
       epHandler = ouraHandler.endpointsPrimary.filter((handler) => {
         return (
           handler.getEndpoint() === `user/${process.env["REDDIT_USER_NAME"]}/submitted`
         );
-      })[0] as EpHistoric;
+      })[0] as EpChronological;
     });
 
     it("gets the correct default params", () => {

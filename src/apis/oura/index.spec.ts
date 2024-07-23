@@ -1,15 +1,15 @@
 import { getFormattedDate } from "../../utils/date-time.js";
-import { EpHistoric } from "../../utils/types.js";
+import { EpChronological } from "../../utils/types.js";
 import ouraHandler from "./index.js";
 
 describe("Module: Oura API handler", () => {
   describe("Heartrate endpoint", () => {
-    let epHandler: EpHistoric;
+    let epHandler: EpChronological;
 
     beforeEach(() => {
       epHandler = ouraHandler.endpointsPrimary.filter((handler) => {
         return handler.getEndpoint() === "usercollection/heartrate";
-      })[0] as EpHistoric;
+      })[0] as EpChronological;
     });
 
     it("gets the correct default params", () => {
@@ -47,12 +47,12 @@ describe("Module: Oura API handler", () => {
   });
 
   describe("Workouts endpoint", () => {
-    let epHandler: EpHistoric;
+    let epHandler: EpChronological;
 
     beforeEach(() => {
       epHandler = ouraHandler.endpointsPrimary.filter((handler) => {
         return handler.getEndpoint() === "usercollection/workout";
-      })[0] as EpHistoric;
+      })[0] as EpChronological;
     });
 
     it("gets the correct default params", () => {

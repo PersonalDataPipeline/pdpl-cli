@@ -1,8 +1,8 @@
-import { EpHistoric } from "../../utils/types.js";
+import { EpChronological } from "../../utils/types.js";
 import googleHandler from "./index.js";
 
 describe("Module: Google API handler", () => {
-  let epHandler: EpHistoric;
+  let epHandler: EpChronological;
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -25,7 +25,7 @@ describe("Module: Google API handler", () => {
     beforeEach(() => {
       epHandler = googleHandler.endpointsPrimary.filter((handler) => {
         return handler.getDirName() === "calendar--events";
-      })[0] as EpHistoric;
+      })[0] as EpChronological;
     });
 
     it("gets the correct default params", () => {

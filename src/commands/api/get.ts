@@ -7,7 +7,7 @@ import { ApiBaseCommand, apiNameArg } from "./_base.js";
 import logger from "../../utils/logger.js";
 import * as queue from "../../utils/queue.js";
 import { runDateUtc } from "../../utils/date-time.js";
-import { ApiHandler, DailyData, EpHistoric, EpSnapshot } from "../../utils/types.js";
+import { ApiHandler, DailyData, EpChronological, EpSnapshot } from "../../utils/types.js";
 import { isObjectWithKeys } from "../../utils/object.js";
 import { getApiData } from "../../utils/api-data.js";
 import { makeOutputPath, writeOutputFile } from "../../utils/fs.js";
@@ -46,7 +46,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       default: ApiHandler;
     };
 
-    const handlerDict: { [key: string]: EpHistoric | EpSnapshot } = {};
+    const handlerDict: { [key: string]: EpChronological | EpSnapshot } = {};
     for (const endpointHandler of apiHandler.endpointsPrimary) {
       handlerDict[endpointHandler.getEndpoint()] = endpointHandler;
     }
@@ -87,7 +87,7 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       );
 
       if (runEntry.historic && !isObjectWithKeys(runEntry.params)) {
-        runEntry.params = (epHandler as EpHistoric).getHistoricParams();
+        runEntry.params = (epHandler as EpChronological).getHistoricParams();
       }
 
       if (isObjectWithKeys(runEntry.params)) {
@@ -183,18 +183,18 @@ export default class ApiGet extends ApiBaseCommand<typeof ApiGet> {
       ////
       /// Historic queue management
       //
-      if (runEntry.historic && epHandler.isHistoric()) {
+      if (runEntry.historic && epHandler.isChronological()) {
         const continueHistoric = epHandler.shouldHistoricContinue(
           (apiResponse as AxiosResponse).data as object | [],
           runEntry.params
         );
 
-        const runAfterDelay = (epHandler as EpHistoric).getHistoricDelay(
+        const runAfterDelay = (epHandler as EpChronological).getHistoricDelay(
           continueHistoric
         );
 
         const params = continueHistoric
-          ? (epHandler as EpHistoric).getHistoricParams(
+          ? (epHandler as EpChronological).getHistoricParams(
               runEntry.params,
               (apiResponse as AxiosResponse).data as object | []
             )

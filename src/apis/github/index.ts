@@ -6,7 +6,12 @@ import {
   getFormattedDate,
   runDateUtc,
 } from "../../utils/date-time.js";
-import { ApiHandler, EpHistoric, EpSecondary, EpSnapshot } from "../../utils/types.js";
+import {
+  ApiHandler,
+  EpChronological,
+  EpSecondary,
+  EpSnapshot,
+} from "../../utils/types.js";
 import * as queue from "../../utils/queue.js";
 
 const { GITHUB_PERSONAL_ACCESS_TOKEN = "", GITHUB_USERNAME = "" } = process.env;
@@ -71,15 +76,15 @@ const getApiAuthHeaders = async () => ({
   "X-GitHub-Api-Version": "2022-11-28",
 });
 
-const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
+const endpointsPrimary: (EpChronological | EpSnapshot)[] = [
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => `users/${GITHUB_USERNAME}`,
     getDirName: () => "user",
     getDelay: () => ONE_DAY_IN_SEC,
   },
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => "user/starred",
     getDirName: () => "user--starred",
     getDelay: () => ONE_DAY_IN_SEC,
@@ -87,7 +92,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getNextCallParams: getStandardNextCallParams,
   },
   {
-    isHistoric: () => false,
+    isChronological: () => false,
     getEndpoint: () => "user/followers",
     getDirName: () => "user--followers",
     getDelay: () => ONE_DAY_IN_SEC,
@@ -95,7 +100,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getNextCallParams: getStandardNextCallParams,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => "gists",
     getDirName: () => "user--gists",
     getDelay: () => ONE_DAY_IN_SEC,
@@ -108,7 +113,7 @@ const endpointsPrimary: (EpHistoric | EpSnapshot)[] = [
     getHistoricParams,
   },
   {
-    isHistoric: () => true,
+    isChronological: () => true,
     getEndpoint: () => `users/${GITHUB_USERNAME}/events`,
     getDirName: () => "user--events",
     getDelay: () => ONE_DAY_IN_SEC,

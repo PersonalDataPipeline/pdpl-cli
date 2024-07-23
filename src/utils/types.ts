@@ -13,13 +13,13 @@ export interface ApiHandler {
   getApiName: () => string;
   getApiBaseUrl: () => string;
   getApiAuthHeaders: () => Promise<{ [key: string]: string }>;
-  endpointsPrimary: (EpHistoric | EpSnapshot)[];
+  endpointsPrimary: (EpChronological | EpSnapshot)[];
   endpointsSecondary: EpSecondary[];
   getAuthorizeConfig?: () => AuthorizeServerConfig;
 }
 
 export interface EpSnapshot {
-  isHistoric: () => false;
+  isChronological: () => false;
   getDirName: () => string;
   getEndpoint: () => string;
   getDelay: () => number;
@@ -35,9 +35,9 @@ export interface EpSnapshot {
   handleApiError?: (response: AxiosError) => void;
 }
 
-export interface EpHistoric
-  extends Omit<EpSnapshot, "isHistoric" | "parseDayFromEntity"> {
-  isHistoric: () => true;
+export interface EpChronological
+  extends Omit<EpSnapshot, "isChronological" | "parseDayFromEntity"> {
+  isChronological: () => true;
   parseDayFromEntity: (entity: object) => string;
   getHistoricParams: (currentParams?: object, responseDataRaw?: object | []) => object;
   getHistoricDelay: (continuation?: boolean) => number;
