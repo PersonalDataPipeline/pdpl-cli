@@ -1,5 +1,5 @@
 import { Args, Flags } from "@oclif/core";
-import { readFileSync } from "fs";
+import { accessSync, constants, readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import yaml from "js-yaml";
@@ -9,6 +9,7 @@ import { BaseCommand } from "./_base.js";
 import { RecipeObject, validateRecipe } from "../../utils/validate-recipe.js";
 import transformations from "../../utils/transformations.js";
 import { KeyVal } from "../../utils/types.js";
+import { DEFAULT_CONFIG_DIR } from "../../utils/constants.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const { EXPORT_DB_PATH } = process.env;
@@ -35,14 +36,34 @@ export default class Process extends BaseCommand<typeof Process> {
 
     const { RECIPE_NAME: recipeName } = this.args;
     const { "validate-only": validateOnly } = this.flags;
-    const recipePath = path.join(
-      __dirname,
-      "..",
-      "..",
-      "..",
-      "recipes",
-      `${recipeName}.yml`
-    );
+
+    let recipePath = "";
+    try {
+      // Treat the argument as a direct path to a recipe
+      accessSync(recipeName, constants.R_OK);
+      recipePath = recipeName;
+    } catch (error) {
+      // Check the local recipe store
+      recipePath = path.join(DEFAULT_CONFIG_DIR, "recipes", `${recipeName}.yml`);
+      try {
+        accessSync(recipePath, constants.R_OK);
+      } catch (error) {
+        // Check the glocal recipe store
+        recipePath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "recipes",
+          `${recipeName}.yml`
+        );
+        try {
+          accessSync(recipePath, constants.R_OK);
+        } catch (error) {
+          throw new Error("Recipe not found");
+        }
+      }
+    }
 
     let recipeContent = "";
     try {

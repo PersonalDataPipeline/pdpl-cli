@@ -50,8 +50,8 @@ PDPL configures itself with a number of defaults. You can see the configuration 
 ~ pdpl config:get
 {
   timezone: 'GMT',
-  outputDir: '/Users/home/api-data',
-  filesOutputDir: '/Users/home/api-data/_files',
+  outputDir: '/Users/username/api-data',
+  filesOutputDir: '/Users/username/api-data/_files',
   originDate: '1900-01-01',
   apis: {},
   imports: [],
@@ -59,7 +59,7 @@ PDPL configures itself with a number of defaults. You can see the configuration 
   logLevel: 'info',
   debugSaveMocks: false,
   saveEmptyLogs: true,
-  debugOutputDir: '/Users/home/api-data-DEBUG',
+  debugOutputDir: '/Users/username/api-data-DEBUG',
   debugCompressJson: false
 }
 ```
@@ -70,13 +70,13 @@ We're going to provide definitions for a few important configuration properties 
 
 ```sh
 ~ pdpl config:init
-Created config file /Users/joshcanhelp/.pdpl/get.config.mjs
+Created config file /Users/username/.pdpl/get.config.mjs
 
-~ vim /Users/home/.pdpl/get.config.mjs
+~ vim /Users/username/.pdpl/get.config.mjs
 # ... or
-~ code /Users/home/.pdpl/get.config.mjs
+~ code /Users/username/.pdpl/get.config.mjs
 # ... or
-~ open /Users/home/.pdpl/get.config.mjs
+~ open /Users/username/.pdpl/get.config.mjs
 ```
 
 Edit the file to add values for the following properties in the exported object:
@@ -89,7 +89,7 @@ See the [configuration option documentation](./configuration) for specifics on c
 ```js
 export default {
   timezone: "America/Los_Angeles",
-  outputDir: "/Users/home/Documents/pdpl",
+  outputDir: "/Users/username/Documents/pdpl",
 }
 ```
 
@@ -98,11 +98,11 @@ Run the `config:get` command to see your configuration changes and confirm that 
 ```sh
 ~ pdpl config:get
 
-Config file: /Users/home/.pdpl/get.config.mjs
+Config file: /Users/username/.pdpl/get.config.mjs
 
 {
   timezone: 'America/Los_Angeles',
-  outputDir: '/Users/home/Documents/pdpl',
+  outputDir: '/Users/username/Documents/pdpl',
   originDate: '1985-10-11',
   # ...
 ```
@@ -269,9 +269,15 @@ Leave your computer on and wait for about an hour. Once the time has passed, che
 
 ## Generate Output Data
 
-Now that we have our input data coming in, let's write a simple recipe for what to do with that data.
+Now that we have our input data coming in, let's write a simple set of instructions to transform the data we have now into a CSV file. 
 
-`// TODO: Still working on this ...`
+The instruction files, called recipes, can come from 3 different locations:
+
+- The main store of public recipes distributed with PDPL ([listed here](https://github.com/PersonalDataPipeline/pdpl-cli/tree/main/recipes))
+- The default local configuration directory `~/.pdpl/recipes`
+- Directly from an argument passed to the processor command
+
+
 ## 🎉 🎉 🎉
 
 Great work! If you're having any trouble with errors in the service or getting this setup, [submit a new issue](https://github.com/PersonalDataPipeline/pdpl-get/issues/new) with reproduction steps and we'll take a look!
