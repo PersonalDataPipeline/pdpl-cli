@@ -25,6 +25,7 @@ export default class ApiQueueGet extends ApiBaseCommand<typeof ApiQueueGet> {
 
     queue.loadQueue(handler);
 
+    console.log(`Reading queue file: ${queue.getQueueFile()}`);
     for (const entry of queue.getQueue()) {
       table.push([
         entry.endpoint,
@@ -39,7 +40,6 @@ export default class ApiQueueGet extends ApiBaseCommand<typeof ApiQueueGet> {
           .replaceAll("}", ""),
       ]);
     }
-
     console.log(table.toString());
   }
 }

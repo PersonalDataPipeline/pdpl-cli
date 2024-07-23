@@ -5,6 +5,9 @@ import { RunLogger } from "./logger.js";
 import { runDateUtc } from "./date-time.js";
 import { ApiHandler, EpChronological, EpSnapshot } from "./types.js";
 
+let queue: QueueEntry[] = [];
+let queueFile = "";
+
 ////
 /// Types
 //
@@ -46,9 +49,6 @@ const writeQueue = () => {
 /// Export
 //
 
-let queue: QueueEntry[] = [];
-let queueFile = "";
-
 export const loadQueue = (apiHandler: ApiHandler) => {
   const apiName = apiHandler.getApiName();
   const dirPath = path.join(getConfig().outputDir, apiName);
@@ -70,6 +70,10 @@ export const entryHasParams = (entry: { params?: object }) => {
 
 export const getQueue = () => {
   return queue;
+};
+
+export const getQueueFile = () => {
+  return queueFile;
 };
 
 export const hasStandardEntryFor = (endpoint: string) => {

@@ -65,6 +65,8 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
       throw new Error(`Unsupported API endpoint "${endpointFlag}"`);
     }
 
+    logger.info({ message: `Reading queue file: ${queue.getQueueFile()}` });
+
     for (const endpointHandler of handler.endpointsPrimary) {
       const endpointName = endpointHandler.getEndpoint();
       const logEntry = {
