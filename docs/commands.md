@@ -6,7 +6,7 @@ $ npm install -g pdpl-cli
 $ pdpl COMMAND
 running command...
 $ pdpl (--version)
-pdpl-cli/0.9.0 darwin-arm64 node-v20.11.1
+pdpl-cli/0.11.0 darwin-arm64 node-v20.11.1
 $ pdpl --help [COMMAND]
 USAGE
   $ pdpl COMMAND
