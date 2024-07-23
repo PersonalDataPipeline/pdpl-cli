@@ -20,6 +20,7 @@ Notes taken during development, newest to oldest.
 **Tasks:**
 - [ ] Update `--help` commands
 - [ ] Testing ... API modules, file storage modules, core commands ([Mock Service Worker](ttps://mswjs.io)?), Node version testing
+- [ ] Configuration for delete number of duplicate files for a specific day and delete run logs
 - [ ] Need a way to filter out values (e.g. filtering me out of events) and replace values (like names that should point elsewhere) during processing
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Explore https://nutjs.dev for data export

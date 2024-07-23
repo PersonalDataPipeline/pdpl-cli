@@ -133,53 +133,47 @@ Next, [find your API in this list](https://github.com/PersonalDataPipeline/pdpl-
 2. Save these credentials as environment variables, [as described here](./configuration#environment-variables)
 3. Run an authorization process from the command line (not required for all APIs)
 
-Follow the instructions for the API you're adding carefully and, once you have these variables defined, run the `api:list` command. You should see the **Ready?** column for the API you're configuring show "yes." 
+Follow the instructions for the API you're adding carefully and, once you have these variables defined, run the `api:list` command. You should see the **Ready?** column for the API you're configuring show "yes."
+
+The last thing we need to do before getting data from the API is to generate the queue that's used to determine when an API call should be made by running the `api:queue:set` command:
+
+```
+~ pdpl api:queue:set github --standard-only
+... Reading queue file: /path/to/output/github/_queue.json
+... [ENDPOINT: users/githubuser] Added standard entry
+... [ENDPOINT: user/starred] Added standard entry
+... [ENDPOINT: user/followers] Added standard entry
+... [ENDPOINT: gists] Added standard entry
+... [ENDPOINT: users/githubuser/events] Added standard entry
+```
+
+If you run `api:queue:get`, you'll see the entries that were just created with a **Next run** time of a couple of seconds ago. 
 
 You are now ready to get data! Run the `api:get` command for your API:
 
 ```sh
 ~ pdpl api:get github
-2024-07-10 08:38:37 [LEVEL: success] [ENDPOINT: user/followers] Got 1 total for 0 days; 0 files written and 1 files skipped.
+2024-07-22 17:48:15 [LEVEL: info] [ENDPOINT: users/githubuser] Running standard now ...
+# ... more
+2024-07-22 17:48:15 [LEVEL: success] [ENDPOINT: users/githubuser] Got 1 total for 0 days; 1 files written and 0 files skipped.
 # ... more
 ```
 
 The output should only be `info` and `success` level logs with information about the run. If there is any `error` log entries, read the message and double-check your credentials. If you're having any trouble at this point, [submit a new issue](https://github.com/PersonalDataPipeline/pdpl-get/issues/new) and we can help troubleshoot.
 
-So, what just happened? Assuming the run succeeded, this service:
+So, what just happened? Assuming the run succeeded, PDPL 
 
-1. Looked for a queue file for this API in the configured output directory and, because one was not found, created one at `/path/to/output/API_NAME/_queue.json`.
-2. Walked through all the endpoints for the specific API, calling each one with the provided credentials. 
-3. Saved the resulting JSON files in endpoint-specific directories adjacent to the queue file.
+1. Walked through all the queue entries found at `/path/to/output/API_NAME/_queue.json`, calling each one with the provided credentials. 
+2. Saved the resulting JSON files in endpoint-specific directories adjacent to the queue file.
+3. Updated the queue entries with the next run that should happen
 
-We can see that the first occurred using the `api:queue:get` command:
-
-```sh
-~ pdpl api:queue:get github
-┌──────────────────────────┬───────────────────────┬──────────┬────────────────┐
-│ Endpoint                 │ Next run (your time)  │ Historic │ Params         │
-├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
-│ user/followers           │ 7/11/2024, 8:37:37 AM │ no       │ None           │
-├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
-│ users/joshcanhelp/events │ 7/11/2024, 8:37:37 AM │ no       │ None           │
-├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
-│ users/joshcanhelp        │ 7/11/2024, 8:37:37 AM │ no       │ None           │
-├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
-│ user/starred             │ 7/11/2024, 8:37:37 AM │ no       │ None           │
-├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
-│ gists                    │ 7/11/2024, 8:37:37 AM │ no       │ None           │
-└──────────────────────────┴───────────────────────┴──────────┴────────────────┘
-# ... more
-```
-
-This shows us the endpoints that run and the earliest that the API pull can happen. If you run the `api:get` command again, you should see no output because the service was called earlier than the next runs are allowed.
-
-We can verify the second and third occurred by listing out the files in the API folder in the output directory:
+We can verify the first and second occurred by listing out the files in the API folder in the output directory:
 
 ```sh
 ~ find /path/to/output/github -type f
-/path/to/output/github/user--gists/2019-09-27--run-2024-04-03T04-15-10-298Z.json
-/path/to/output/github/user--gists/2020-06-01--run-2024-04-03T04-15-10-298Z.json
-/path/to/output/github/user--gists/2013-07-29--run-2024-04-03T04-44-14-350Z.json
+/path/to/output/github/user--starred/2024-07-23T00-47-15-292Z.json
+/path/to/output/github/user/2024-07-23T00-47-15-292Z.json
+/path/to/output/github/user--followers/2024-07-23T00-47-15-292Z.json
 # ... more
 ```
 
@@ -190,16 +184,37 @@ We can also see that this run occurred and a summary of the errors and successfu
 ┌────────────┬──────────┬────────┬─────────┬───────────────────────────────┐
 │ Date       │ Time     │ Errors │ Success │ Filename                      │
 ├────────────┼──────────┼────────┼─────────┼───────────────────────────────┤
-│ 2024-07-10 │ 09:51:37 │ 0      │ 7       │ 2024-07-10T16-50-37-860Z.json │
+│ 2024-07-22 │ 17:48:15 │ 0      │ 7       │ 2024-07-23T00-47-15-292Z.json │
 └────────────┴──────────┴────────┴─────────┴───────────────────────────────┘
 ```
+
+We can see that the third occurred using the `api:queue:get` command:
+
+```sh
+~ pdpl api:queue:get github
+┌──────────────────────────┬───────────────────────┬──────────┬────────────────┐
+│ Endpoint                 │ Next run (your time)  │ Historic │ Params         │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ users/joshcanhelp        │ 7/23/2024, 5:47:15 PM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ user/starred             │ 7/23/2024, 5:47:15 PM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ user/followers           │ 7/23/2024, 5:47:15 PM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ gists                    │ 7/23/2024, 5:47:15 PM │ no       │ None           │
+├──────────────────────────┼───────────────────────┼──────────┼────────────────┤
+│ users/joshcanhelp/events │ 7/23/2024, 5:47:15 PM │ no       │ None           │
+└──────────────────────────┴───────────────────────┴──────────┴────────────────┘
+```
+
+This shows us the endpoints that run and the earliest that the API pull can happen. If you run the `api:get` command again, you should see log events saying the runs were skipped because PDPL was called earlier than the next runs are allowed.
 
 At this point, we can be pretty sure that this run was successful and that files can be saved in the proper place.
 
 The last step before we automate these calls is to add queue entries for runs to start pulling data from all time. These historic runs will run more often than the daily ones and use changing URL parameters to gather all data for all time. Run the `api:queue:set` command with a `--historic-only` flag to generate these entries then trigger another run:
 
 ```sh
-~ pdpl api:queue:set github --historic-only
+~ pdpl api:queue:set github --historic-only --run-now
 
 ~ pdpl api:queue:get github
 # ... note Historic = yes on 2 new rows
@@ -228,6 +243,7 @@ Add the following lines:
 
 ```sh
 #!/bin/bash
+
 export $(egrep -v '^#' $HOME/.pdpl/.env | xargs)
 pdpl api:get github
 ```
@@ -238,10 +254,9 @@ Add a cron job running every 15 minutes by editing the crontab file and add the 
 
 ```sh
 ~ crontab -e
-# ... add the following
+# Type "i"
 */15 * * * * $HOME/run_pdpl.sh
-# ... type :wq then enter
-# ... editor closes with the message:
+# Type ":wq" then <enter>
 crontab: installing new crontab
 ```
 
