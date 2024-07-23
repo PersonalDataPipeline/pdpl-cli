@@ -1,9 +1,12 @@
 import { Args, Command, Flags, Interfaces } from "@oclif/core";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+import { accessSync, constants, readFileSync } from "fs";
 
 import getConfig, { Config } from "../../utils/config.js";
-import { accessSync, constants, readFileSync } from "fs";
-import path from "path";
 import { DEFAULT_CONFIG_DIR } from "../../utils/constants.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 ////
 /// Types
