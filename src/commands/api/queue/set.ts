@@ -76,7 +76,7 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
         continue;
       }
 
-      if (!historicOnly && !endpointHandler.isHistoric()) {
+      if (!historicOnly) {
         if (queue.hasStandardEntryFor(endpointName)) {
           let message = `Standard entry already exists`;
           if (runNow) {
@@ -97,7 +97,7 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
         }
       }
 
-      if (!standardOnly && endpointHandler.isHistoric()) {
+      if (!standardOnly) {
         if (queue.hasHistoricEntryFor(endpointName)) {
           let message = `Historic entry already exists`;
           if (runNow) {
@@ -108,7 +108,7 @@ export default class ApiQueueSet extends ApiBaseCommand<typeof ApiQueueSet> {
             message = `Updated existing historic entry to run now`;
           }
           logger.info({ ...logEntry, message });
-        } else {
+        } else if (endpointHandler.isHistoric()) {
           queue.addEntry({
             endpoint: endpointName,
             runAfter: getEpochNow(),
