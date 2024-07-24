@@ -58,7 +58,7 @@ const handler: OutputHandler = {
       isReady: strategyIsReady,
       handle: async (db: Database, fields: KeyVal, data?: StrategyData) => {
         const {
-          path: outputPath = "",
+          path: outputPath = DEFAULT_FILE_PATH,
           filename = `${runDateUtc().fileName}.csv`,
           fields: outputFields = [],
         } = data as StrategyData;
