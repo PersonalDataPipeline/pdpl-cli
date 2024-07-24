@@ -134,7 +134,7 @@ export const validateRecipe = async (
   ////
   /// Validate pipeline
   //
-  for (const action of recipe.pipeline) {
+  for (const action of recipe.pipeline || []) {
     const { field, transform, toField, linkTo, toFieldUpdateIfEmpty } = action;
 
     if (!Object.keys(recipe.fields).includes(field)) {

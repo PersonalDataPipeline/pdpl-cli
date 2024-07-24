@@ -85,7 +85,7 @@ export default class RecipeRun extends BaseCommand<typeof RecipeRun> {
     ////
     /// Process pipeline
     //
-    for (const action of recipe.pipeline) {
+    for (const action of recipe.pipeline || []) {
       const {
         field: fromField,
         transform = [],
