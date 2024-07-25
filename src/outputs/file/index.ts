@@ -82,7 +82,7 @@ const handler: OutputHandler = {
           FROM '${fieldSources[0]}'
         `);
 
-        const outputCsv = stringify(results);
+        const outputCsv = stringify(results, { header: true });
         writeFileSync(path.join(outputPath, filename), outputCsv, { encoding: "utf8" });
       },
     },
