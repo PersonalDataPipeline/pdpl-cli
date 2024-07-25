@@ -1,5 +1,8 @@
-# API Getter
+# PDPL CLI
 
-This service is a WIP project to create a way to download cloud data from the APIs we use. It's ambitious, mainly because of the near-infinite API contracts, but, at the very least, I'll have something for myself. 
+The Personal Data Pipeline (PDPL) CLI is a tool that can be used to gather your data from 3rd party sources and process it using simple recipes. 
 
-**👉 [Documentation](docs)**
+![NPM Version](https://img.shields.io/npm/v/pdpl-cli)
+
+- All [Documentation](docs), including [getting started](docs/getting-started)
+- [More about what this is and what it does](https://www.joshcanhelp.com/personal-data-pipeline/)
