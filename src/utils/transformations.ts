@@ -2,6 +2,7 @@
 /// Types
 //
 
+import { getFormattedDate } from "./date-time.js";
 import { padLeftZero } from "./string.js";
 
 export interface PipelineTransforms {
@@ -24,10 +25,7 @@ const toStandardDate = (dateString: string) => {
   if (!dateString || date.toString() === "Invalid Date") {
     return "";
   }
-  const yyyy = date.getFullYear();
-  const mm = date.getMonth() + 1;
-  const dd = date.getDate();
-  return `${yyyy}-${padLeftZero(mm)}-${padLeftZero(dd)}`;
+  return getFormattedDate(0, date);
 };
 
 const toStandardTime = (dateString: string) => {
