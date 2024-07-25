@@ -273,10 +273,116 @@ Now that we have our input data coming in, let's write a simple set of instructi
 
 The instruction files, called recipes, can come from 3 different locations:
 
-- The main store of public recipes distributed with PDPL ([listed here](https://github.com/PersonalDataPipeline/pdpl-cli/tree/main/recipes))
-- The default local configuration directory `~/.pdpl/recipes`
-- Directly from an argument passed to the processor command
+1. The main store of public recipes distributed with PDPL ([listed here](https://github.com/PersonalDataPipeline/pdpl-cli/tree/main/recipes))
+2. The default local configuration directory `~/.pdpl/recipes`
+3. Directly from an argument passed to the processor command
 
+To keep things simple, well use the third option here and write our recipe locally. Start by creating a file called `output-to-csv.yml` anywhere on your machine and open it in an editor. Add the following and save the file:
+
+```yaml
+input:
+pipeline:
+output:
+```
+
+Run the recipe validation command to check whether this recipe can be run successfully or not. You should receive a recipe validation error:
+
+```bash
+~ pdpl recipe:validate output-to-csv.yml
+    Error: Recipe validation: "input" must be of type object
+```
+
+Recipes need to point to input data and an output handler to be considered valid. For the former, we'll need to get somewhat familiar with the data that we are getting. This part of the tutorial depends a bit on specific API data but is hopefully general enough that you can apply the steps to whatever API you used above. 
+
+The GitHub API pulls down data from an events endpoint that we'll use to generate a CSV of events. In the output directory configured above, open one of the JSON files in the `github/user--events` folder. If you're using a different API, choose an endpoint that creates JSON files prepended with a date so the format will be similar. In that file, you should see data for an array of objects with a shape like this:
+
+```json
+[
+  {
+    "type": "PushEvent",
+    "repo": {
+      "name": "joshcanhelp/josh-to-11",
+      // ... more data
+    },
+    "created_at": "2024-02-05T01:19:43Z"
+    // ... more data
+  },
+  // ... other objects
+]
+```
+
+We're going to represent the three properties above in the recipe under `input` and assign an internal field name to each of the data points we want to use:
+
+```yaml
+input:
+	github:
+		user--events:
+			type: 'event_type'
+			repo.name: 'repo_name'
+			created_at: 'event_timecode'
+# ...
+```
+
+The name of the property within object is on the left and the name we'll be using in the recipe is on the right.
+
+Next, we want to adjust the incoming date to be a little easier to read in the output. Under the `pipeline` property in the recipe, add an array with a single object with the following properties:
+
+```yaml
+# ...
+pipeline:
+	- field: 'event_timecode'
+    transform:
+      - 'toStandardDate'
+    toField: 'event_date'
+# ...
+```
+
+We're telling the processor that we want to take the `event_timecode` field we identified above, run it through the `toStandardDate` function, and save that to a new field called `event_date`.
+
+Finally, we're going to define the output that we want and the fields to be included. Under the `output` property in the recipe, add a `file` property that contains a single object describing the CSV output:
+
+```yaml
+# ...
+output:
+  file:
+    - strategy: 'csv'
+      data:
+        fields:
+          - 'event_date'
+          - 'event_type'
+          - 'repo_name'
+```
+
+With all this in place, it's time to try our recipe out for real. Run `recipe:run` command in your terminal:
+
+```bash
+~ pdpl recipe:run output-to-csv.yml
+Run took 0.007 seconds
+    Error: Output strategy file.csv is not configured: 
+    No file path to use
+```
+
+Oops! We've got one problem left to solve and that's where the file should be saved. This output strategy can use a `path` property in the `data` object or a `DEFAULT_OUTPUT_FILE_PATH` environment variable to determine the directory where the CSV will be saved. Add a valid path in one of those locations and try the command again:
+
+```
+~ DEFAULT_OUTPUT_FILE_PATH="/path/to/output" pdpl recipe:run output-to-csv.yml
+Run took 0.27 seconds
+```
+
+In the output path, you should see a new CSV file named with the date and time that the processing run completed. That file should be formatted something like this:
+
+```sh
+# 2024-07-25T18-48-41-785Z.csv
+┌────────────┬─────────────┬───────────────────────────────┐
+│ event_date │ event_type  │ repo_name                     │
+├────────────┼─────────────┼───────────────────────────────┤
+| 2024-07-19 | PushEvent   | PersonalDataPipeline/pdpl-cli |
+| 2024-07-19 | PushEvent   | PersonalDataPipeline/pdpl-cli |
+| 2024-07-21 | PushEvent   | PersonalDataPipeline/pdpl-cli |
+| 2024-07-21 | CreateEvent | PersonalDataPipeline/pdpl-cli |
+| 2024-07-21 | PushEvent   | PersonalDataPipeline/pdpl-cli |
+└────────────┴─────────────┴───────────────────────────────┘
+```
 
 ## 🎉 🎉 🎉
 

@@ -63,6 +63,16 @@ pipeline:
 	toType: 'string' 
 ```
 
+This is a last resort as the DX feels clunky. Someone would have to know what the type is from the last function used. That feels like something that the processing logic can do. 
+
+**Option 4**
+
+Using `typeof` after a pipeline entry to determine if a new type is necessary. 
+
+**Option 5**
+
+Use duck typing in DuckDB (not sure if this is possible), similar to what happens on import. I haven't seen an explicit function to do this but it seems like it should be possible ([asking on Discord](https://discordapp.com/channels/909674491309850675/921073327009853451/1266101251968335892)).
+
 ## Decision
 
 > What is the change that we're proposing and/or doing?
