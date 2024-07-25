@@ -6,7 +6,7 @@ $ npm install -g pdpl-cli
 $ pdpl COMMAND
 running command...
 $ pdpl (--version)
-pdpl-cli/0.11.0 darwin-arm64 node-v20.11.1
+pdpl-cli/0.12.0 darwin-arm64 node-v20.11.1
 $ pdpl --help [COMMAND]
 USAGE
   $ pdpl COMMAND
@@ -27,7 +27,8 @@ USAGE
 * [`pdpl config:get`](#pdpl-configget)
 * [`pdpl config:init`](#pdpl-configinit)
 * [`pdpl import IMPORTNAME IMPORTPATH`](#pdpl-import-importname-importpath)
-* [`pdpl process RECIPE_NAME`](#pdpl-process-recipe_name)
+* [`pdpl recipe:run RECIPE_NAME`](#pdpl-reciperun-recipe_name)
+* [`pdpl recipe:validate RECIPE_NAME`](#pdpl-recipevalidate-recipe_name)
 
 ## `pdpl api:authorize APINAME`
 
@@ -205,15 +206,21 @@ EXAMPLES
   $ pdpl import IMPORT_NAME
 ```
 
-## `pdpl process RECIPE_NAME`
+## `pdpl recipe:run RECIPE_NAME`
 
 Process data using recipes
 
 ```
 USAGE
-  $ pdpl process RECIPE_NAME [--validate-only]
+  $ pdpl recipe:run RECIPE_NAME
+```
 
-FLAGS
-  --validate-only  Run recipe validation but no changes
+## `pdpl recipe:validate RECIPE_NAME`
+
+Process data using recipes
+
+```
+USAGE
+  $ pdpl recipe:validate RECIPE_NAME
 ```
 <!-- commandsstop -->
