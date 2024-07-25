@@ -371,7 +371,7 @@ Run took 0.27 seconds
 
 In the output path, you should see a new CSV file named with the date and time that the processing run completed. That file should be formatted something like this:
 
-```sh
+```
 # 2024-07-25T18-48-41-785Z.csv
 ┌────────────┬─────────────┬───────────────────────────────┐
 │ event_date │ event_type  │ repo_name                     │
