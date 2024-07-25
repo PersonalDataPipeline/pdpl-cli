@@ -296,7 +296,7 @@ Recipes need to point to input data and an output handler to be considered valid
 
 The GitHub API pulls down data from an events endpoint that we'll use to generate a CSV of events. In the output directory configured above, open one of the JSON files in the `github/user--events` folder. If you're using a different API, choose an endpoint that creates JSON files prepended with a date so the format will be similar. In that file, you should see data for an array of objects with a shape like this:
 
-```json
+```js
 [
   {
     "type": "PushEvent",
@@ -315,11 +315,11 @@ We're going to represent the three properties above in the recipe under `input` 
 
 ```yaml
 input:
-	github:
-		user--events:
-			type: 'event_type'
-			repo.name: 'repo_name'
-			created_at: 'event_timecode'
+  github:
+    user--events:
+      type: 'event_type'
+      repo.name: 'repo_name'
+      created_at: 'event_timecode'
 # ...
 ```
 
@@ -330,7 +330,7 @@ Next, we want to adjust the incoming date to be a little easier to read in the o
 ```yaml
 # ...
 pipeline:
-	- field: 'event_timecode'
+  - field: 'event_timecode'
     transform:
       - 'toStandardDate'
     toField: 'event_date'
