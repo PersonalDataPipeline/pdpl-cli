@@ -6,8 +6,9 @@ import { stringify } from "csv-stringify/sync";
 import { KeyVal, OutputHandler } from "../../utils/types.js";
 import { arrayMissingValue } from "../../utils/array.js";
 import { runDateUtc } from "../../utils/date-time.js";
+import { pathAccessible } from "../../utils/fs.js";
 
-const { DEFAULT_FILE_PATH = "" } = process.env;
+const { DEFAULT_OUTPUT_FILE_PATH = "" } = process.env;
 
 ////
 /// Types
@@ -35,8 +36,13 @@ const strategyIsReady = (fields: object, data?: StrategyData) => {
     return errors;
   }
 
-  if (!data.path && !DEFAULT_FILE_PATH) {
+  const outputPath = data.path || DEFAULT_OUTPUT_FILE_PATH;
+  if (!outputPath) {
     errors.push("No file path to use");
+  }
+
+  if (outputPath && !pathAccessible(outputPath)) {
+    errors.push(`Output path ${outputPath} cannot be written to`);
   }
 
   const maybeMissingField = arrayMissingValue(Object.keys(fields), data.fields);
@@ -58,7 +64,7 @@ const handler: OutputHandler = {
       isReady: strategyIsReady,
       handle: async (db: Database, fields: KeyVal, data?: StrategyData) => {
         const {
-          path: outputPath = DEFAULT_FILE_PATH,
+          path: outputPath = DEFAULT_OUTPUT_FILE_PATH,
           filename = `${runDateUtc().fileName}.csv`,
           fields: outputFields = [],
         } = data as StrategyData;
