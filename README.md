@@ -4,5 +4,5 @@ The Personal Data Pipeline (PDPL) CLI is a tool that can be used to gather your 
 
 ![NPM Version](https://img.shields.io/npm/v/pdpl-cli)
 
-- All [Documentation](docs), including [getting started](docs/getting-started)
+- All [Documentation](docs), including [getting started](https://github.com/PersonalDataPipeline/pdpl-cli/blob/main/docs/getting-started.md)
 - [More about what this is and what it does](https://www.joshcanhelp.com/personal-data-pipeline/)
