@@ -64,7 +64,7 @@ PDPL configures itself with a number of defaults. You can see the configuration 
 }
 ```
 
-For more information about this and the other commands used in this tutorial, see the [commands documentation](./commands).
+For more information about this and the other commands used in this tutorial, see the [commands documentation](./commands.md).
 
 We're going to provide definitions for a few important configuration properties in a file on your machine. Create this file with the `config:init` command, then edit the resulting file:
 
