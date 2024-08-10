@@ -19,11 +19,23 @@ Notes taken during development, newest to oldest.
 
 **Tasks:**
 - [ ] Update `--help` commands
+- [ ] Add a built-in "output to log" output option
 - [ ] Testing ... API modules, file storage modules, core commands ([Mock Service Worker](ttps://mswjs.io)?), Node version testing
 - [ ] Configuration for delete number of duplicate files for a specific day and delete run logs
 - [ ] Need a way to filter out values (e.g. filtering me out of events) and replace values (like names that should point elsewhere) during processing
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Explore https://nutjs.dev for data export
+
+## [[2024-08-10]]
+
+I [launched this thing](https://www.joshcanhelp.com/personal-data-pipeline/) a couple of weeks ago and the response was ... crickets! I'll be honest, it was a little disappointing but, in the end, the time I took to build this was definitely worth it!
+
+Today, I wanted to get an idea of how many bike rides I've taken since February. Pretty much the perfect use case for this whole thing I just built! What I wanted was just a calculation of the sum of a few fields for Strava activities of a certain type and within a certain date range. What I was able to do was build out a CSV pretty fast and sort from there (see the recipe in this commit). But it got me thinking about how I want to use this tool. 
+
+- I definitely need a way to filter values in some way. In this case, a date range would have been helpful, as well as "this column should equal one of these values." This could, at first, just be an arbitrary DuckDB query that's imported.
+- In that vein, some kind of sum or average needs to be possible but that might open up a can of worms for rebuilding a query language in YAML ...
+- I didn't need a file so there should be a default "output to the terminal" in the case where you're just asking a question. 
+- There should be a way to examine the output data in the terminal ... just import it with DuckDB and output what's available with the types.
 
 ## [[2024-07-22]]
 

@@ -1,0 +1,24 @@
+version: 0.1
+input:
+  strava:
+    athlete--activities:
+      moving_time: 'moving_time'
+      distance: 'distance'
+      total_elevation_gain: 'elevation'
+      sport_type: 'sport_type'
+      start_date_local: 'start_date'
+output:
+  file:
+    - strategy: 'csv'
+      data:
+        path: '/Users/joshcanhelp/Downloads/'
+        fields:
+          - start_date
+          - moving_time
+          - distance
+          - elevation
+          - sport_type
+pipeline:
+  - field: 'start_date'
+    transform:
+      - 'toStandardDate'
