@@ -26,9 +26,33 @@ Notes taken during development, newest to oldest.
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Explore https://nutjs.dev for data export
 
+## [[2024-09-21]]
+
+I noticed that the API getter was not working. Eeks! Turns out that I had switched Node versions and the command was not installed so I had to switch versions and run it again. Once it worked, I realized that I had missed some of my data from a few sources. That's a problem, in general, because it's hard to notice that there was anything missed. Also, if you do catch that you're missing data, there are no controls for adjusting the amount of time that the script looks back. 
+
+A few ideas:
+- Allow a flag on the command that passes in the range of time that the script should use. 
+- Trigger a chronological backwards walk that stops at the last event
+\
+I just used help commands to set the historic walker and run it a few times and it actually worked quite well!
+
+```
+ 3974  2024-09-21 19:24  pdpl --help
+ 3975  2024-09-21 19:24  pdpl api --help
+ 3976  2024-09-21 19:24  pdpl api:queue --help
+ 3977  2024-09-21 19:24  pdpl api:queue:set --help
+ 3979  2024-09-21 19:25  pdpl api:queue:set google --historic-only
+ 3980  2024-09-21 19:25  pdpl api:queue:get google
+ 3981  2024-09-21 19:25  pdpl api:get google --force
+ 3981  2024-09-21 19:25  pdpl api:get google --force
+ 3981  2024-09-21 19:25  pdpl api:get google --force
+```
+
 ## [[2024-08-10]]
 
 I [launched this thing](https://www.joshcanhelp.com/personal-data-pipeline/) a couple of weeks ago and the response was ... crickets! I'll be honest, it was a little disappointing but, in the end, the time I took to build this was definitely worth it!
+
+[A friend posted it on Hacker News](https://news.ycombinator.com/item?id=41183795) and got some great feedback. 
 
 Today, I wanted to get an idea of how many bike rides I've taken since February. Pretty much the perfect use case for this whole thing I just built! What I wanted was just a calculation of the sum of a few fields for Strava activities of a certain type and within a certain date range. What I was able to do was build out a CSV pretty fast and sort from there (see the recipe in this commit). But it got me thinking about how I want to use this tool. 
 
