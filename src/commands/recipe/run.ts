@@ -55,7 +55,7 @@ export default class RecipeRun extends BaseCommand<typeof RecipeRun> {
       const readJsonOptions = [
         "union_by_name = true",
         "convert_strings_to_integers = true",
-        "format = 'array'",
+        "format = 'auto'",
         "records = true",
       ].join(", ");
 
