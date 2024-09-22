@@ -263,9 +263,6 @@ const handler: OutputHandler = {
         const savePath = path.join(OBSIDIAN_PATH_TO_NOTES, OBSIDIAN_LOGS_PATH);
         const notesSep = "---\n##### Notes:\n";
 
-        console.log(metadata);
-        
-        
         // const errorPrefix = "obsidian.logs handler: ";
         const results = await db.all(`
           SELECT ${Object.keys(fields).join(", ")}
