@@ -21,6 +21,7 @@ interface DailyNoteStrategyData {
 
 interface LogsStrategyData {
   title_template?: string;
+  body_template?: string;
   log_datetime?: string;
   metadata?: string;
   source?: string;
@@ -222,11 +223,7 @@ const handler: OutputHandler = {
         const errors: string[] = [];
 
         if (!strategyData || typeof strategyData !== "object") {
-          return ["Missing output data fields: title_template, log_datetime"];
-        }
-
-        if (!strategyData.title_template) {
-          return ["Missing output data fields: title_template"];
+          return ["Missing output data fields"];
         }
 
         if (!strategyData.log_datetime) {
@@ -234,13 +231,16 @@ const handler: OutputHandler = {
         }
 
         const allFields = Object.keys(fields);
-        const templateFields = getTemplateFields(strategyData.title_template);
-        for (const templateField of templateFields) {
-          if (!allFields.includes(templateField)) {
-            errors.push(`Field ${templateField} not found in input fields`);
-          }
-          if (errors.length) {
-            return errors;
+
+        if (strategyData.title_template) {
+          const templateFields = getTemplateFields(strategyData.title_template);
+          for (const templateField of templateFields) {
+            if (!allFields.includes(templateField)) {
+              errors.push(`Field ${templateField} not found in input fields`);
+            }
+            if (errors.length) {
+              return errors;
+            }
           }
         }
 
@@ -254,23 +254,28 @@ const handler: OutputHandler = {
       handle: async (db: Database, fields: KeyVal, data?: LogsStrategyData) => {
         const { 
           title_template: titleTemplate,
+          body_template: bodyTemplate,
           log_datetime: logDatetime, 
           source: source = "",
           metadata = []
         } = data as Required<LogsStrategyData>;
+
+        const bodyTemplateFields = getTemplateFields(bodyTemplate);
 
         const databaseTable = Object.values(fields)[0];
         const savePath = path.join(OBSIDIAN_PATH_TO_NOTES, OBSIDIAN_LOGS_PATH);
         const notesSep = "---\n##### Notes:\n";
 
         // const errorPrefix = "obsidian.logs handler: ";
-        const results = await db.all(`
-          SELECT ${Object.keys(fields).join(", ")}
-          FROM '${databaseTable}'
-        `);
+        const results = await db.all(`SELECT * FROM '${databaseTable}'`);
 
         for (const result of results) {
-          const title = buildLogTime((result as any)[logDatetime]) + " - " + mustache.render(titleTemplate || "", result);
+        
+          let title = buildLogTime((result as any)[logDatetime]);
+          if (titleTemplate) {
+            title += " - " + mustache.render(titleTemplate || "", result);
+          }
+
           const filePath = path.join(savePath, title + ".md");
           
           let existingContent = "";
@@ -280,15 +285,28 @@ const handler: OutputHandler = {
 
           const frontMatter: { [key: string]: any; } = {};
           for (const prop of metadata) {
-            frontMatter[prop] = result[prop];
+            frontMatter[prop.replace("__LINKED", "")] = Array.isArray(result[prop]) ? result[prop][0] : result[prop];
           }
 
           if (source) {
             frontMatter["source"] = source;
           }
+          
+
+          let mainContent = "";
+          if (bodyTemplate) {
+            const templateValues = Object.keys(result)
+              .filter(key => bodyTemplateFields.includes(key))
+              .map(key => Array.isArray(result[key]) ? result[key][0] : result[key]);
+
+            const templateVars = bodyTemplateFields.map((key, index) => [key, templateValues[index]])
+            console.log(templateVars);
+            
+            mainContent = mustache.render(bodyTemplate || "", Object.fromEntries(templateVars));
+          }
 
           const frontMatterContent = `---\n${yaml.dump(frontMatter)}---\n`;
-          writeFileSync(filePath, frontMatterContent + (existingContent ? notesSep + existingContent : ""))
+          writeFileSync(filePath, frontMatterContent + mainContent + (existingContent ? "\n" + notesSep + existingContent : ""))
         } 
       },
     },
