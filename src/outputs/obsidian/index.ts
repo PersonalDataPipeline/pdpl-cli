@@ -1,20 +1,29 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import path from "path";
 import { Database } from "duckdb-async";
+import yaml from "js-yaml";
 import mustache from "mustache";
 mustache.escape = (text) => text;
 
 import { KeyVal, OutputHandler } from "../../utils/types.js";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
+import { getFormattedDate, getFormattedTime } from "../../utils/date-time.js";
 
-const { OBSIDIAN_PATH_TO_NOTES = "" } = process.env;
+const { OBSIDIAN_PATH_TO_NOTES = "", OBSIDIAN_LOGS_PATH = "" } = process.env;
 
 ////
 /// Types
 //
 
-interface StrategyData {
+interface DailyNoteStrategyData {
   date?: string;
   template?: string;
+}
+
+interface LogsStrategyData {
+  title_template?: string;
+  log_datetime?: string;
+  metadata?: string;
+  source?: string;
 }
 
 interface DailyNotesSettings {
@@ -36,6 +45,10 @@ const getTemplateFields = (template: string): string[] => {
   return templateFields;
 };
 
+const buildLogTime = (date: Date) => {
+  return (getFormattedDate(0, date) + "T" + getFormattedTime(date)).replaceAll(":", "-");
+}
+
 ////
 /// Export
 //
@@ -45,7 +58,7 @@ const handler: OutputHandler = {
   handlers: [
     {
       name: () => "daily_notes_append",
-      isReady: (fields: object, strategyData?: StrategyData) => {
+      isReady: (fields: object, strategyData?: DailyNoteStrategyData) => {
         const errors: string[] = [];
 
         if (!strategyData || typeof strategyData !== "object") {
@@ -77,8 +90,8 @@ const handler: OutputHandler = {
 
         return errors;
       },
-      handle: async (db: Database, fields: KeyVal, data?: StrategyData) => {
-        const { date: dateField, template = "" } = data as StrategyData;
+      handle: async (db: Database, fields: KeyVal, data?: DailyNoteStrategyData) => {
+        const { date: dateField, template = "" } = data as DailyNoteStrategyData;
         const templateFields = getTemplateFields(template);
         const errorPrefix = "obsidian.daily_notes_append handler: ";
         const yearToken = "{{ year }}";
@@ -203,7 +216,87 @@ const handler: OutputHandler = {
         }
       },
     },
+    {
+      name: () => "logs",
+      isReady: (fields: object, strategyData?: LogsStrategyData) => {
+        const errors: string[] = [];
+
+        if (!strategyData || typeof strategyData !== "object") {
+          return ["Missing output data fields: title_template, log_datetime"];
+        }
+
+        if (!strategyData.title_template) {
+          return ["Missing output data fields: title_template"];
+        }
+
+        if (!strategyData.log_datetime) {
+          return ["Missing output data fields: log_datetime"];
+        }
+
+        const allFields = Object.keys(fields);
+        const templateFields = getTemplateFields(strategyData.title_template);
+        for (const templateField of templateFields) {
+          if (!allFields.includes(templateField)) {
+            errors.push(`Field ${templateField} not found in input fields`);
+          }
+          if (errors.length) {
+            return errors;
+          }
+        }
+
+        if (strategyData.metadata && !Array.isArray(strategyData.metadata)) {
+          errors.push("Field metadata must be an array");
+          return errors;
+        }
+
+        return errors;
+      },
+      handle: async (db: Database, fields: KeyVal, data?: LogsStrategyData) => {
+        const { 
+          title_template: titleTemplate,
+          log_datetime: logDatetime, 
+          source: source = "",
+          metadata = []
+        } = data as Required<LogsStrategyData>;
+
+        const databaseTable = Object.values(fields)[0];
+        const savePath = path.join(OBSIDIAN_PATH_TO_NOTES, OBSIDIAN_LOGS_PATH);
+        const notesSep = "---\n##### Notes:\n";
+
+        console.log(metadata);
+        
+        
+        // const errorPrefix = "obsidian.logs handler: ";
+        const results = await db.all(`
+          SELECT ${Object.keys(fields).join(", ")}
+          FROM '${databaseTable}'
+        `);
+
+        for (const result of results) {
+          const title = buildLogTime((result as any)[logDatetime]) + " - " + mustache.render(titleTemplate || "", result);
+          const filePath = path.join(savePath, title + ".md");
+          
+          let existingContent = "";
+          if (existsSync(filePath)) {
+            existingContent = readFileSync(filePath, {encoding: "utf8"}).split(notesSep)[1];
+          }
+
+          const frontMatter: { [key: string]: any; } = {};
+          for (const prop of metadata) {
+            frontMatter[prop] = result[prop];
+          }
+
+          if (source) {
+            frontMatter["source"] = source;
+          }
+
+          const frontMatterContent = `---\n${yaml.dump(frontMatter)}---\n`;
+          writeFileSync(filePath, frontMatterContent + (existingContent ? notesSep + existingContent : ""))
+        } 
+      },
+    },
   ],
 };
+
 
 export default handler;

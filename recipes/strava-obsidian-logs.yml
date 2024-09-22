@@ -1,0 +1,53 @@
+version: 0.1
+input:
+  strava:
+    athlete--activities:
+      moving_time: 'moving_time_seconds'
+      distance: 'distance'
+      name: 'title'
+      total_elevation_gain: 'elevation'
+      start_latlng[1]: 'lat'
+      start_latlng[2]: 'long'
+      average_speed: 'average_speed'
+      max_speed: 'max_speed'
+      average_watts: 'average_watts'
+      gear_id: 'gear_id'
+      sport_type: 'sport_type'
+      start_date: 'start_date'
+output:
+  obsidian:
+    - strategy: 'logs'
+      data:
+        title_template: "Strava - {{sport_type}}"
+        log_datetime: "start_date"
+        source: "Strava"
+        metadata:
+          - distance
+          - elevation
+          - lat
+          - long
+          - average_speed
+          - max_speed
+          - average_watts
+          - gear_id
+          - moving_time
+pipeline:
+  - field: 'sport_type'
+    transform:
+      - 'camelCaseToSpaces'
+  - field: 'moving_time_seconds'
+    transform:
+      - 'secondsToTimeString'
+    toField: 'moving_time'
+  - field: 'distance'
+    transform:
+      - 'metersToMiles'
+  - field: 'elevation'
+    transform:
+      - 'metersToFeet'
+  - field: 'average_speed'
+    transform:
+      - 'metersPerSecondToMph'
+  - field: 'max_speed'
+    transform:
+      - 'metersPerSecondToMph'
