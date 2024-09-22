@@ -2,23 +2,29 @@ version: 0.1
 input:
   strava:
     athlete--activities:
+      id: id
       moving_time: 'moving_time_seconds'
       distance: 'distance'
-      name: 'title'
+      name: 'name'
       total_elevation_gain: 'elevation'
       start_latlng[1]: 'lat'
       start_latlng[2]: 'long'
       average_speed: 'average_speed'
       max_speed: 'max_speed'
       average_watts: 'average_watts'
-      gear_id: 'gear_id'
       sport_type: 'sport_type'
       start_date: 'start_date'
+    activities:
+      id: activity_id
+      description: description
+      calories: calories
+      gear.name: gear_name
 output:
   obsidian:
     - strategy: 'logs'
       data:
         title_template: "Strava - {{sport_type}}"
+        body_template: "\n**{{name}}** {{description__LINKED}}\n"
         log_datetime: "start_date"
         source: "Strava"
         metadata:
@@ -29,8 +35,10 @@ output:
           - average_speed
           - max_speed
           - average_watts
-          - gear_id
+          - gear_name
           - moving_time
+          - calories__LINKED
+          - gear_name__LINKED
 pipeline:
   - field: 'sport_type'
     transform:
@@ -51,3 +59,5 @@ pipeline:
   - field: 'max_speed'
     transform:
       - 'metersPerSecondToMph'
+  - field: 'id'
+    linkTo: 'activity_id'
