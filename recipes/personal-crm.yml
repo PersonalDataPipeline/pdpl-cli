@@ -15,7 +15,6 @@ output:
   file:
     - strategy: 'csv'
       data:
-        path: '/Users/joshcanhelp/Downloads/'
         fields:
           - date
           - start_time
