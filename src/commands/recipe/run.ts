@@ -162,8 +162,9 @@ export default class RecipeRun extends BaseCommand<typeof RecipeRun> {
       }
 
       for (const result of results) {
-        let value = result[fromField] as string;
+        let value = result[fromField] as string | number | bigint;
         for (const tranf of transform) {
+          // @ts-expect-error - Need to handle this type error (TS2345) correctly
           value = transformations[tranf](value);
         }
 
