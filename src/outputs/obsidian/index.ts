@@ -291,17 +291,13 @@ const handler: OutputHandler = {
           if (source) {
             frontMatter["source"] = source;
           }
-          
 
           let mainContent = "";
           if (bodyTemplate) {
             const templateValues = Object.keys(result)
               .filter(key => bodyTemplateFields.includes(key))
-              .map(key => Array.isArray(result[key]) ? result[key][0] : result[key]);
-
+              .map(key => ((Array.isArray(result[key]) ? result[key][0] : result[key]) || "").trim());
             const templateVars = bodyTemplateFields.map((key, index) => [key, templateValues[index]])
-            console.log(templateVars);
-            
             mainContent = mustache.render(bodyTemplate || "", Object.fromEntries(templateVars));
           }
 
