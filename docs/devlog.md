@@ -26,6 +26,22 @@ Notes taken during development, newest to oldest.
 - [ ] Fix: Secondary endpoints fail with no way to re-run
 - [ ] Explore https://nutjs.dev for data export
 
+## [[2024-09-22]]
+
+On a whim, I added an Obsidian output handler for creating log files from data. I think it turned out well and I just ran it on my main vault with good results. The main problem, though, is adding information to the log and having it persist on multiple runs. I want to add notes to the bottom and, ideally, adjust the front matter to allow for people, places, etc. Right now, the best it can do is look for a separator, split the content, and keep everything after the separator. That's great and all but there are a few problems:
+
+- The separator has to be *exact* (spaces seem to be a common culprit) or else you lose the added content. Sync history helps but if this is all automated then we might never know. 
+- Changes to the title will result in duplicate files
+- Changes to the front matter will be overwritten
+
+As with so many software problems, there might just not be a way to do this perfectly right. 
+
+One thing to note is that rides that have been imported don't really need to be *perfectly* up-to-date with exactly what's on Strava. We have the raw data locally so, really, this is just a representation. It could be that if the content is different, we just don't update it and maybe leave a little note of some kind saying that it's been left alone. 
+
+The other option is going for some kind of merging. Merging the front matter should be too terribly hard, we should be able to convert the YAML to JSON, alphabetically sort the keys, and compare what's missing. Since we're just on a single level, this feels like it would be fairly stable (though I'm probably missing something). The title and body content are a problem though (in fact the title is ready a problem since the `sport_type` can be changed, making a duplicate). The date and source don't change, so those could be what make up the title but there is still a problem with the body content.
+
+Thinking about it ... the title definitely needs to be unchangeable. We have to be able to find the files we've imported already and either replace/augment or just ignore. 
+
 ## [[2024-09-21]]
 
 I noticed that the API getter was not working. Eeks! Turns out that I had switched Node versions and the command was not installed so I had to switch versions and run it again. Once it worked, I realized that I had missed some of my data from a few sources. That's a problem, in general, because it's hard to notice that there was anything missed. Also, if you do catch that you're missing data, there are no controls for adjusting the amount of time that the script looks back. 
