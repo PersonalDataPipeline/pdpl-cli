@@ -264,7 +264,7 @@ const handler: OutputHandler = {
 
         const databaseTable = Object.values(fields)[0];
         const savePath = path.join(OBSIDIAN_PATH_TO_NOTES, OBSIDIAN_LOGS_PATH);
-        const notesSep = "---\n##### Notes:\n";
+        const notesSep = "---\n---";
 
         // const errorPrefix = "obsidian.logs handler: ";
         const results = await db.all(`SELECT * FROM '${databaseTable}'`);
